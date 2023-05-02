@@ -178,7 +178,7 @@ def command_response(command,prefix,userid,username):
             if not userid_to_show in cardgame_data.keys():
                 return f"<@{userid_to_show}> chưa từng chơi con game tuyệt tác này :("
             user = cardgame_data[userid_to_show]
-            exp_to_next_level = (150*(user["level"])+10*(user["level"]-1)**2) - user["exp"]
+            exp_to_next_level = (150*(user["level"])+10*(user["level"]-1)**3) - user["exp"]
             return f"Người chơi \"{user['username']}\":\n- Level: {user['level']}\n- Exp: {user['exp']}. Cần thêm {exp_to_next_level} exp để lên cấp tiếp theo.\n- BachNob Credit: {user['pts']}\n- Số lần đã roll: {user['roll']}"
         case 'daily':
             if userid in cardgame_data.keys():
@@ -488,9 +488,9 @@ def command_response(command,prefix,userid,username):
                         if already_hav == False:
                             match card_list_name:
                                 case "S":
-                                    bonus_exp = 512
-                                case "A":
                                     bonus_exp = 128
+                                case "A":
+                                    bonus_exp = 64
                                 case "B":
                                     bonus_exp = 32
                                 case "C":
