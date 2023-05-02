@@ -60,17 +60,19 @@ def cardgame_new_user(userid,username):
     cardgame_data[userid]["roll"] = 0
     cardgame_data[userid]["level"] = 1
 def cardgame_user_check_level(userid):
-    user_lvl = cardgame_data[userid]["level"]
-    if cardgame_data[userid]["exp"] >= (150*user_lvl + 10*(user_lvl-1)**3):
-        total_bonus_pts = 0
-        while cardgame_data[userid]["exp"] >= (150*user_lvl + 10*(user_lvl-1)**3):
-            bonus_pts = cardgame_data[userid]["level"]*200
-            cardgame_data[userid]["pts"] += bonus_pts
-            total_bonus_pts += bonus_pts
-            cardgame_data[userid]["level"] += 1
-            user_lvl = cardgame_data[userid]["level"]
-        return (cardgame_data[userid]["level"], total_bonus_pts)
-    return None      
+    if userid in cardgame_data.keys():
+        user_lvl = cardgame_data[userid]["level"]
+        if cardgame_data[userid]["exp"] >= (150*user_lvl + 10*(user_lvl-1)**3):
+            total_bonus_pts = 0
+            while cardgame_data[userid]["exp"] >= (150*user_lvl + 10*(user_lvl-1)**3):
+                bonus_pts = cardgame_data[userid]["level"]*200
+                cardgame_data[userid]["pts"] += bonus_pts
+                total_bonus_pts += bonus_pts
+                cardgame_data[userid]["level"] += 1
+                user_lvl = cardgame_data[userid]["level"]
+            return (cardgame_data[userid]["level"], total_bonus_pts)
+        return None      
+    else: return None    
 def card_sell(userid,card_to_sell,price,card_rank):
     seller_name = cardgame_data[userid]["username"]
     item_id = str(len(cardshop_data.keys()) + 1)
