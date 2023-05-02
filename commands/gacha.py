@@ -472,7 +472,7 @@ def command_response(command,prefix,userid,username):
             if roll_time <= 0 or roll_time > 10:
                 return "Số lần roll không hợp lệ! Số lần roll phải là số tự nhiên n với 0 < n ≤ 10."
             if userid in cardgame_data.keys():
-                if cardgame_data[userid]['pts'] >= 100*roll_time - roll_time**2*(roll_time-1)/2:
+                if cardgame_data[userid]['pts'] >= 100*roll_time:
                     msg = ""
                     for i in range(roll_time):
                         rolled_card = card_roll(2,5,8,20,65) #2%,5%,8%,20%,65%
@@ -483,7 +483,7 @@ def command_response(command,prefix,userid,username):
                         if not card in cardgame_data[userid][card_list_name]: 
                             cardgame_data[userid][card_list_name].append(card)
                             already_hav = False   
-                        cardgame_data[userid]['pts'] -= 100 - roll_time*i
+                        cardgame_data[userid]['pts'] -= 100
                         cardgame_data[userid]["roll"]+=1
                         if already_hav == False:
                             match card_list_name:
