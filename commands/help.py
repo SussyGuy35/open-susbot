@@ -1,6 +1,6 @@
 import config
 prefix = config.prefix
-help_text = f"""Cách lệnh:
+help_text = f"""Các lệnh:
     -`{prefix}help`: hiện cái đoạn hướng dẫn này.
     -`{prefix}ping`: Ping pong ping pong!
     -`{prefix}echo <tin nhắn>`: Làm con bot nói gì đó.
