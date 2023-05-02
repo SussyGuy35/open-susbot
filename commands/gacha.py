@@ -113,7 +113,7 @@ def card_roll(s_percent,a_percent,b_percent,c_percent,d_percent):
         card_rank = cardgame.card_rare
         card_rank_name = "Rare"
         card_list_name = "B"
-    elif random_num <= 100-a_percent:
+    elif random_num <= 100-s_percent:
         card_rank = cardgame.card_epic
         card_rank_name = "Epic"
         card_list_name = "A"
