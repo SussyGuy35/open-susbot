@@ -6,6 +6,6 @@ def command_response(command):
     message_output = []
     for i in range(len(user_input)):
         char = user_input[i]
-        chooses = [char.lower(),char.upper()]
-        message_output.append(random.choice(chooses))
+        char = [char.lower(),char.upper()]
+        message_output.append(random.choice(char))
     return ''.join(message_output)
