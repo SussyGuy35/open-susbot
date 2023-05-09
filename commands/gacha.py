@@ -27,7 +27,7 @@ gacha_help = f"""Các lệnh `gacha`:
 
 gacha_credit = f"""Original idea: `Diamond_Dr#5183`
 Main developer: `imnotbachnob#7878`
-Adviser: `Sera#0028`
+Adviser: `CornM#0028`
 Contributor: 
     `LeiZanTheng#2084`
     `đông#3227`
@@ -325,8 +325,10 @@ def command_response(command,prefix,userid,username):
             if len(lb) > 0:
                 rank = 1
                 for key in reversed(lb):
-                    msg += f"#{rank}: `{lb[key]}` - {key} exp\n"
-                    rank += 1
+                    if key != 0:
+                        msg += f"#{rank}: `{lb[key]}` - {key} exp\n"
+                        rank += 1
+                    else: break
                 return "Bảng xếp hạng:\n" + msg
         case 'rps':
             if userid in cardgame_data.keys():
