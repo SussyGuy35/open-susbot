@@ -30,7 +30,7 @@ Main developer: `imnotbachnob#7878`
 Adviser: `CornM#0028`
 Contributor: 
     `LeiZanTheng#2084`
-    `đông#3227`
+    `izuki / đông#3227`
     `Waka#1477`
 Main obstructor: `iambachnob#2645`
 """
@@ -241,7 +241,7 @@ def command_response(command,prefix,userid,username):
                             elif card_rank == "B": card_rank_name = "Rare"
                             elif card_rank == "C": card_rank_name = "Uncommon"
                             elif card_rank == "D": card_rank_name = "Common"
-                            msg += f"- Item `{item}`:\n+ Card: `{sell_item['card']}` - Độ hiếm: {card_rank_name} - Giá bán: `{sell_item['price']}`\n+ Người bán: `{sell_item['seller_name']}`\n"
+                            msg += f"### Item `{item}`:\n- Card: `{sell_item['card']}` - Độ hiếm: {card_rank_name} - Giá bán: `{sell_item['price']}`\n- Người bán: `{sell_item['seller_name']}`\n"
                         return "Các card đang được bán trên shop:\n"+msg
                 case "buy":
                     try :
@@ -292,23 +292,23 @@ def command_response(command,prefix,userid,username):
                 if legendary_num > 0:
                     msg += f"- Legendary ({legendary_num}/{total_legendary_num}):\n"
                     for card in cardgame_data[userid_to_show]["S"]:
-                        msg += f"+ `\"{card}\"`\n"
+                        msg += f" - `\"{card}\"`\n"
                 if epic_num > 0:
                     msg += f"- Epic ({epic_num}/{total_epic_num}):\n"
                     for card in cardgame_data[userid_to_show]["A"]:
-                        msg += f"+ `\"{card}\"`\n"
+                        msg += f" - `\"{card}\"`\n"
                 if rare_num > 0:
                     msg += f"- Rare ({rare_num}/{total_rare_num}):\n"
                     for card in cardgame_data[userid_to_show]["B"]:
-                        msg += f"+ `\"{card}\"`\n"
+                        msg += f" - `\"{card}\"`\n"
                 if uncommon_num > 0:
                     msg += f"- Uncommon ({uncommon_num}/{total_uncommon_num}):\n"
                     for card in cardgame_data[userid_to_show]["C"]:
-                        msg += f"+ `\"{card}\"`\n"
+                        msg += f" - `\"{card}\"`\n"
                 if common_num > 0:
                     msg += f"- Common ({common_num}/{total_common_num}):\n"
                     for card in cardgame_data[userid_to_show]["D"]:
-                        msg += f"+ `\"{card}\"`\n"    
+                        msg += f" - `\"{card}\"`\n"    
                 if msg != "":
                     return f"Các thẻ {cardgame_data[userid_to_show]['username']} có:\n"+msg
                 else:
@@ -502,11 +502,11 @@ def command_response(command,prefix,userid,username):
                                 case "D":
                                     bonus_exp = 1
                             cardgame_data[userid]["exp"] += bonus_exp
-                            msg += f'-Roll #{i+1}: Bạn nhận được thẻ {card_rank_name}: `"{card}"` và {bonus_exp} exp!\n'
+                            msg += f'- Roll #{i+1}: Bạn nhận được thẻ {card_rank_name}: `"{card}"` và {bonus_exp} exp!\n'
                         else:
                             bonus_pts = 25
                             cardgame_data[userid]['pts'] += bonus_pts
-                            msg += f'-Roll #{i+1}: Bạn roll ra thẻ {card_rank_name}: `"{card}"` nhưng bạn đã có nó rồi! Thay vào đó bạn nhận được {bonus_pts} BachNob Credit.\n'
+                            msg += f'- Roll #{i+1}: Bạn roll ra thẻ {card_rank_name}: `"{card}"` nhưng bạn đã có nó rồi! Thay vào đó bạn nhận được {bonus_pts} BachNob Credit.\n'
                     return msg        
                 else:
                     return f"Bạn không có đủ BachNob Credit để roll! Bạn cần thêm ít nhất {100*roll_time - cardgame_data[userid]['pts']} BachNob Credit nữa để có thể roll {roll_time} lần!"
