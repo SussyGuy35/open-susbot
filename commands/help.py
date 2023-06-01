@@ -7,7 +7,7 @@ help_text = f"""Các lệnh:
     -`{prefix}pick [lựa chọn 1], [lựa chọn 2],...`: Chọn 1 trong các lựa chọn được đưa ra.
     -`{prefix}randcaps <tin nhắn>`: lÀM chO cOn bOT NÓi GÌ đÓ kiểU nhƯ Này.
     -`{prefix}gacha`: Game gacha siêu cân bằng.
-    -`{prefix}osu`: Một số lệnh dùng osu!api.
+    -`{prefix}osu`: Một số lệnh dùng osu!api. (thằng đần Bách làm có 2 lệnh)
 """
 def command_response():
     return help_text

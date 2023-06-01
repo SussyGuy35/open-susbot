@@ -27,7 +27,7 @@ Avatar: {user.avatar_url}
                 return 'Đã có lỗi xảy ra!'
         case 'beatmap':
             try:
-                beatmap = osu_api.search_beatmapsets(query=message.content.replace(prefix+'osu beatmap ','')).beatmapsets[0]
+                beatmap = osu_api.search_beatmapsets(query=command.replace(prefix+'osu beatmap ','')).beatmapsets[0]
                 return f'https://osu.ppy.sh/beatmapsets/{beatmap.id}\n'
             except:
                 return 'Đã có lỗi xảy ra!'
