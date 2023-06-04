@@ -11,6 +11,8 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
+# j4f
+emojis = ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]
 @client.event
 async def on_ready():
     await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
@@ -26,8 +28,16 @@ async def on_message(message):
     if message.author == client.user:
         print(">Bot:",message.content)
         return   
+    if "gvs" in message.content.lower():
+        # it's-a-me, BachNob
+        for emoji in emojis:
+            await message.add_reaction(emoji)
     if message.content.startswith(prefix):
         print(f"{message.author} at {message.channel} channel: {message.content}")  
+        if message.author.bot:
+            if message.author != client.user:
+                await message.channel.send("Bot mà đòi dùng lệnh của bot à 🐧")
+                return
         command = message.content.split()[0].replace(prefix,'')
         match command:
             case 'debug':
