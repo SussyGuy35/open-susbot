@@ -292,23 +292,23 @@ def command_response(command,prefix,userid,username):
                 if legendary_num > 0:
                     msg += f"- Legendary ({legendary_num}/{total_legendary_num}):\n"
                     for card in cardgame_data[userid_to_show]["S"]:
-                        msg += f" - `\"{card}\"`\n"
+                        msg += f" - `{card}`\n"
                 if epic_num > 0:
                     msg += f"- Epic ({epic_num}/{total_epic_num}):\n"
                     for card in cardgame_data[userid_to_show]["A"]:
-                        msg += f" - `\"{card}\"`\n"
+                        msg += f" - `{card}`\n"
                 if rare_num > 0:
                     msg += f"- Rare ({rare_num}/{total_rare_num}):\n"
                     for card in cardgame_data[userid_to_show]["B"]:
-                        msg += f" - `\"{card}\"`\n"
+                        msg += f" - `{card}`\n"
                 if uncommon_num > 0:
                     msg += f"- Uncommon ({uncommon_num}/{total_uncommon_num}):\n"
                     for card in cardgame_data[userid_to_show]["C"]:
-                        msg += f" - `\"{card}\"`\n"
+                        msg += f" - `{card}`\n"
                 if common_num > 0:
                     msg += f"- Common ({common_num}/{total_common_num}):\n"
                     for card in cardgame_data[userid_to_show]["D"]:
-                        msg += f" - `\"{card}\"`\n"    
+                        msg += f" - `{card}`\n"    
                 if msg != "":
                     return f"Các thẻ {cardgame_data[userid_to_show]['username']} có:\n"+msg
                 else:
