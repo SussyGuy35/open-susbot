@@ -7,11 +7,13 @@ base_path = os.path.dirname(os.path.abspath(__file__))
 def absolute_path(relative_path):
     return os.path.join(base_path,relative_path)
 
+# Game data
 cardgame_data_path = absolute_path("card_game_data/data.json")
 cardshop_data_path = absolute_path("card_game_data/shop.json")
 
 prefix = config.prefix
 
+# Help message
 gacha_help = f"""Các lệnh `gacha`:
     -`{prefix}gacha help`: Hiện cái đoạn hướng dẫn này.
     -`{prefix}gacha credit`: Những người đã đóng góp vào dự án này.
@@ -25,16 +27,18 @@ gacha_help = f"""Các lệnh `gacha`:
     -`{prefix}gacha shop <lệnh>`: Shop mua bán card.
 """
 
-gacha_credit = f"""Original idea: `Diamond_Dr#5183`
-Main developer: `imnotbachnob#7878`
-Adviser: `CornM#0028`
+# Credit
+gacha_credit = f"""Original idea: `Diamond_Dr (Hoàng Anh)`
+Main developer: `BachNob`
+Adviser: `NovaMinn (Bắp)`
 Contributor: 
-    `LeiZanTheng#2084`
-    `izuki / đông#3227`
-    `Waka#1477`
-Main obstructor: `iambachnob#2645`
+    `LeiZanTheng`
+    `izuki (Đông)`
+    `Waka`
+Main obstructor: `SussyGuy35`
 """
 
+# Load saved game data
 cardgame_data = json.load(open(cardgame_data_path,"r"))
 cardshop_data = json.load(open(cardshop_data_path,"r"))
 date = cardgame_data["date"]
@@ -45,6 +49,7 @@ total_rare_num = len(cardgame.card_rare)
 total_epic_num = len(cardgame.card_epic)
 total_legendary_num = len(cardgame.card_legendary)
 
+# Some functions
 def cardgame_new_user(userid,username):
     cardgame_data[userid] = {}
     cardgame_data[userid]["username"] = username
@@ -86,13 +91,13 @@ def card_sell_bot():
     card_rank = random.choice(["S","A","B"])
     if card_rank == "S":
         card_to_sell = random.choice(cardgame.card_legendary)
-        price = 6900
+        price = 969
     elif card_rank == "A":
         card_to_sell = random.choice(cardgame.card_epic)
-        price = 3500
+        price = 502
     elif card_rank == "B":
         card_to_sell = random.choice(cardgame.card_rare)
-        price = 800    
+        price = 105
     seller_name = "Bot bán hàng đỉnh cao của Bách"
     item_id = str(len(cardshop_data.keys()) + 1)
     cardshop_data[item_id] = {}
@@ -136,9 +141,14 @@ def save():
     json.dump(cardgame_data,open(cardgame_data_path,"w"))     
     json.dump(cardshop_data,open(cardshop_data_path,"w"))  
 
+# Main function
 def command_response(command,prefix,userid,username):
     global date, cardgame_data, cardshop_data
     
+    total_items = len(cardshop_data.keys())
+    max_shop_items = 10
+    
+    # Daily reset and seller bot
     today = datetime.datetime.today()
     newdate = int(str(today.year)+str(today.month)+str(today.day))
     if newdate != date:
@@ -147,18 +157,27 @@ def command_response(command,prefix,userid,username):
         for key in cardgame_data.keys():
             if key != 'date': 
                 cardgame_data[key]["claimed"] = False
-        if date % 10 == 0:
+        if date % 10 == 0 and total_items < max_shop_items:
             card_sell_bot()
         json.dump(cardgame_data,open("commands/card_game_data/data.json","w"))  
+    
+    # Command handler 6900
     try:
         gacha_command = command.split()[1]
     except:
         return gacha_help
+    # Subcommand
     match gacha_command:
+        
+        # Help
         case 'help':
             return gacha_help
+        
+        # Credit
         case 'credit':
             return gacha_credit
+        
+        # Newplayer
         case 'newplayer':
             if userid in cardgame_data.keys():
                 if cardgame_data[userid]['newbie'] == True:
@@ -172,6 +191,8 @@ def command_response(command,prefix,userid,username):
                 cardgame_data[userid]['pts'] += 1500
                 cardgame_data[userid]['newbie'] = False
                 return f"Chúc mừng bạn nhận được 1500 BachNob Credit! Hiện tại bạn có {cardgame_data[userid]['pts']} BachNob Credit."
+        
+        # User info
         case 'userinfo':
             try:
                 userid_to_show = command.split()[2].replace("<@","").replace(">","")
@@ -182,6 +203,8 @@ def command_response(command,prefix,userid,username):
             user = cardgame_data[userid_to_show]
             exp_to_next_level = (150*(user["level"])+10*(user["level"]-1)**3) - user["exp"]
             return f"Người chơi \"{user['username']}\":\n- Level: {user['level']}\n- Exp: {user['exp']}. Cần thêm {exp_to_next_level} exp để lên cấp tiếp theo.\n- BachNob Credit: {user['pts']}\n- Số lần đã roll: {user['roll']}"
+        
+        # Daily
         case 'daily':
             if userid in cardgame_data.keys():
                 if cardgame_data[userid]['claimed'] == False:
@@ -197,13 +220,18 @@ def command_response(command,prefix,userid,username):
                 cardgame_data[userid]["exp"] += 2
                 cardgame_data[userid]["claimed"] = True
                 return f"Bạn nhận được 100 BachNob Credit và 2 exp cho hôm nay. Hiện tại bạn có {cardgame_data[userid]['pts']} BachNob Credit!"
+        
+        # Shop
         case 'shop':
-            total_items = len(cardshop_data.keys())
             try :
                 shop_command = command.split()[2]
             except:
                 return f"Lệnh không hợp lệ!\nCác lệnh `{prefix}gacha shop`:\n- `{prefix}gacha shop sell <giá bán> <card muốn bán>`: Đăng bán card lên shop.\n- `{prefix}gacha shop buy <item id>`: Mua vật phẩm trên shop.\n- `{prefix}gacha shop list`: Hiện các vật phẩm đang được bán trên shop."
+            
+            # SubSubCommand
             match shop_command:
+                
+                # Sell
                 case "sell":
                     if not userid in cardgame_data.keys():
                         return "Bạn còn không có thẻ 🐧"
@@ -214,20 +242,25 @@ def command_response(command,prefix,userid,username):
                     card_to_sell = command.replace(f"{prefix}gacha shop sell {price} ","")
                     user = cardgame_data[userid]
                     user_own_cards = user["S"]+user["A"]+user["B"]+user["C"]+user["D"]
-                    if 0 < price < 50000 :
-                        if card_to_sell in user_own_cards:
-                            if card_to_sell in cardgame.card_common: card_rank = "D"
-                            elif card_to_sell in cardgame.card_uncommon: card_rank = "C"
-                            elif card_to_sell in cardgame.card_rare: card_rank = "B"
-                            elif card_to_sell in cardgame.card_epic: card_rank = "A"
-                            elif card_to_sell in cardgame.card_legendary: card_rank = "S"
-                            cardgame_data[userid][card_rank].remove(card_to_sell)
-                            card_sell(userid, card_to_sell, price, card_rank)
-                            return f"Bạn đã đăng bán card \"{card_to_sell}\" với giá {price} BachNob Credit thành công!"
+                    if total_items < max_shop_items:
+                        if 0 < price < 50000 :
+                            if card_to_sell in user_own_cards:
+                                if card_to_sell in cardgame.card_common: card_rank = "D"
+                                elif card_to_sell in cardgame.card_uncommon: card_rank = "C"
+                                elif card_to_sell in cardgame.card_rare: card_rank = "B"
+                                elif card_to_sell in cardgame.card_epic: card_rank = "A"
+                                elif card_to_sell in cardgame.card_legendary: card_rank = "S"
+                                cardgame_data[userid][card_rank].remove(card_to_sell)
+                                card_sell(userid, card_to_sell, price, card_rank)
+                                return f"Bạn đã đăng bán card \"{card_to_sell}\" với giá {price} BachNob Credit thành công!"
+                            else:
+                                return "Bạn còn không có card đó ☠"
                         else:
-                            return "Bạn còn không có card đó ☠"
+                            return "Giá bán không hợp lệ. Giá bán phải là số tự nhiên n với 0 < n < 50000."
                     else:
-                        return "Giá bán không hợp lệ. Giá bán phải là số tự nhiên n với 0 < n < 50000."
+                        return "Shop đã hết chỗ đăng bán"
+                
+                # List
                 case "list":
                     if total_items == 0:
                         return "Hiện tại không có vật phẩm nào đang được bán trên shop!"
@@ -243,6 +276,8 @@ def command_response(command,prefix,userid,username):
                             elif card_rank == "D": card_rank_name = "Common"
                             msg += f"### Item `{item}`:\n- Card: `{sell_item['card']}` - Độ hiếm: {card_rank_name} - Giá bán: `{sell_item['price']}`\n- Người bán: `{sell_item['seller_name']}`\n"
                         return "Các card đang được bán trên shop:\n"+msg
+                
+                # Buy
                 case "buy":
                     try :
                         item_id = command.split()[3]
@@ -275,8 +310,12 @@ def command_response(command,prefix,userid,username):
                         return f"Bạn đã mua card \"{card_to_buy}\" từ {item_to_buy['seller_name']} với giá {item_to_buy['price']} BachNob Credit thành công! "+msg
                     else:
                         return "Bạn còn không có đủ tiền <:raiseismok:1094913694531592213>"
+                
+                # Invalid subsubcommand
                 case _:
                     return f"Lệnh không hợp lệ!\nCác lệnh `{prefix}gacha shop`:\n- `{prefix}gacha shop sell <giá bán> <card muốn bán>`: Đăng bán card lên shop.\n- `{prefix}gacha shop buy <item id>`: Mua vật phẩm trên shop.\n- `{prefix}gacha shop list`: Hiện các vật phẩm đang được bán trên shop."
+        
+        # Show card
         case 'show':
             try:
                 userid_to_show = command.split()[2].replace("<@","").replace(">","")
@@ -315,6 +354,8 @@ def command_response(command,prefix,userid,username):
                     return f"{cardgame_data[userid_to_show]['username']} không có thẻ nào cả :("
             else:
                 return f"<@{userid_to_show}> chưa từng chơi con game tuyệt tác này :("
+        
+        # Leaderboard
         case 'lb':
             lb = {}
             msg = ""
@@ -330,6 +371,8 @@ def command_response(command,prefix,userid,username):
                         rank += 1
                     else: break
                 return "Bảng xếp hạng:\n" + msg
+        
+        # Rock paper scissors
         case 'rps':
             if userid in cardgame_data.keys():
                 try:
@@ -468,6 +511,8 @@ def command_response(command,prefix,userid,username):
                         return "Bạn còn có không có đủ BachNob Credit cược <:raiseismok:1094913694531592213>"
             else:
                 return "Bạn còn không có thẻ ☠"
+        
+        # Roll card
         case 'roll':
             try:
                 roll_time = int(command.split()[2])
@@ -513,5 +558,7 @@ def command_response(command,prefix,userid,username):
             else:
                 cardgame_new_user(userid,username)
                 return 'Bạn không có đủ BachNob Credit để roll. Bạn cần ít nhất 100 BachNob Credit để có thể roll!'
+        
+        # Invalid subcommand
         case _:
             return gacha_help

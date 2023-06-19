@@ -1,5 +1,10 @@
 import commands
-import config, discord, os
+import discord, os
+
+try:
+    import config_override as config
+except:
+    import config
 
 prefix = config.prefix
 bot_version = config.bot_version
@@ -13,6 +18,8 @@ client = discord.Client(intents=intents)
 
 # j4f
 emojis = ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]
+
+# On ready event
 @client.event
 async def on_ready():
     await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
@@ -22,6 +29,7 @@ async def on_ready():
     for guild in client.guilds:
         print(guild)
 
+# On message event
 @client.event
 async def on_message(message):
     global date, cardgame_data, cardshop_data

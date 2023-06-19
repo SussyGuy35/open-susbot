@@ -1,3 +1,5 @@
+# Import all commands here
+
 import commands.help 
 import commands.ping 
 import commands.echo 

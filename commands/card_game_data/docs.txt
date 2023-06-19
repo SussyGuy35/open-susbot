@@ -221,7 +221,7 @@ Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) -
 ********** Hệ thống shop bán hàng **********
 ***** Bot bán hàng *****
 + Bán vào ngày 10, 20, 30 hàng tháng
-+ Bán ngẫu nhiên card Rare giá 800 hoặc card Epic giá 3500 hoặc card Legendary giá 6900
++ Bán ngẫu nhiên card Rare giá 105 hoặc card Epic giá 502 hoặc card Legendary giá 1069
 
 ***** Người bán *****
 + Giá bán là số tự nhiên n với 0 < n < 50000
