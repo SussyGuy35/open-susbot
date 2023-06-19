@@ -33,7 +33,7 @@ Go to `config.py` file and place your discord's bot token (can be receive from d
 
 You can also change bot's version number and prefix here.
 
-### Step 5: Move 2 file from `commands/card_game_data/json_file_template` to `commands/card_game_data`
+### Step 5: Move 2 files from `commands/card_game_data/json_file_template` to `commands/card_game_data`
 
 ### Step 6: Run `susbot.py`
 **_Now your bot is up and running. Have fun!_**
