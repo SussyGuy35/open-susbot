@@ -5,7 +5,7 @@ Just a *fairly simple* Discord bot. Made _by idiots, for idiots_!
 ## Feature
 - Some command to make bot say sth or maybe other
 - Super balance gacha game
-- Some osu!api thing
+- Some osu!api things
 - EPIC ping pong moment
 - AutoReactWhenSomeoneSayGVS™
 - Nijika?

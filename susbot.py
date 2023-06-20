@@ -17,12 +17,20 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
+tree = discord.app_commands.CommandTree(client)
+
 # j4f
 emojis = ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]
+
+# Slash command
+@tree.command(name = "ping", description = "Ping pong ping pong") 
+async def ping(interaction):
+    await interaction.response.send_message('pong! <:njnk:1094916486029639710>')
 
 # On ready event
 @client.event
 async def on_ready():
+    await tree.sync()
     await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
     print(f'open-susbot v{bot_version}')
     print(f'Logged in as {client.user}. Currently on {str(len(client.guilds))} server(s)!')
@@ -49,7 +57,7 @@ async def on_message(message):
     if message.content.startswith(prefix):
         
         # log console
-        print(f"{message.author} at {message.channel} channel: {message.content}")  
+        print(f"{message.author.global_name} at #{message.channel} on {message.guild} : {message.content}")  
         
         # bot user can not use this bot's command
         if message.author.bot:
@@ -90,7 +98,7 @@ async def on_message(message):
             # Gacha
             case 'gacha':
                 userid = str(message.author.id)
-                username = message.author.name
+                username = message.author.global_name
                 command_response = commands.gacha.command_response(message.content,prefix,userid,username)
                 user_level_up_response = commands.gacha.check_if_user_level_up(userid,username)
                 if command_response != None:
