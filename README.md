@@ -1,9 +1,9 @@
 # Open Susbot
 
-Just a *fairly simple* Discord bot. Made _by idiots, for idiots_!
+Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
 
 ## Feature
-- Some command to make bot say sth or maybe other
+- Some commands to make bot say sth or maybe other
 - Super balance gacha game
 - Some osu!api things
 - EPIC ping pong moment
@@ -26,7 +26,7 @@ Just a *fairly simple* Discord bot. Made _by idiots, for idiots_!
 
 - Windows: `python -m pip install -r requirements.txt`
 - Linux: `python3 -m pip install -r requirements.txt`
-- Mac: idk im not a mac guy
+- Mac: idk im not a mac guy (maybe same as Linux i think)
 
 ### Step 4: Token config
 Go to `config.py` file and place your discord's bot token (can be receive from discord dev portal, just google it) and your osu!api's client id and client secret (you can get it from your osu! account setting page) here.
