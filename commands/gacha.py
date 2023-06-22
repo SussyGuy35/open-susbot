@@ -488,15 +488,16 @@ def command_response(command,prefix,userid,username):
                                 case "tie":
                                     if card_rank > opponent_card_rank:
                                         user["pts"] += bet_point
-                                        user["exp"] += 1
+                                        bonus_exp = round(0.07*bet_point)
+                                        user["exp"] += bonus_exp
                                         already_hav = True
                                         if not opponent_card in user[opponent_card_list_name]:
                                             already_hav = False
                                             user[opponent_card_list_name].append(opponent_card)
                                         if already_hav:
-                                            return f'Đối thủ ra bài "{opponent_card}"!\nCả bài của bạn và đối thủ đều là {card_class} nhưng do bài của bạn hiếm hơn nên bạn thắng!\nBạn nhận được {bet_point} BachNob Credit và 1 exp!\nBạn đã có bài "{opponent_card}" rồi nên không thể nhận bài của đối thủ được nữa <:njnk:1094916486029639710>'
+                                            return f'Đối thủ ra bài "{opponent_card}"!\nCả bài của bạn và đối thủ đều là {card_class} nhưng do bài của bạn hiếm hơn nên bạn thắng!\nBạn nhận được {bet_point} BachNob Credit và {bonus_exp} exp!\nBạn đã có bài "{opponent_card}" rồi nên không thể nhận bài của đối thủ được nữa <:njnk:1094916486029639710>'
                                         else:
-                                            return f'Đối thủ ra bài "{opponent_card}"!\nCả bài của bạn và đối thủ đều là {card_class} nhưng do bài của bạn hiếm hơn nên bạn thắng!\nBạn nhận được {bet_point} BachNob Credit và 1 exp!\nBạn cũng nhận được bài "{opponent_card}" của đối thủ <:kita:1094978062023667825>'
+                                            return f'Đối thủ ra bài "{opponent_card}"!\nCả bài của bạn và đối thủ đều là {card_class} nhưng do bài của bạn hiếm hơn nên bạn thắng!\nBạn nhận được {bet_point} BachNob Credit và {bonus_exp} exp!\nBạn cũng nhận được bài "{opponent_card}" của đối thủ <:kita:1094978062023667825>'
                                     elif card_rank < opponent_card_rank:
                                         user["pts"] -= bet_point
                                         match card_rank:
