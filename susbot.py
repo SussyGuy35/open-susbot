@@ -29,19 +29,19 @@ class FeedbackButtons(discord.ui.View):
     
     @discord.ui.button(label="Đưa tiền đây",style=discord.ButtonStyle.red,emoji = "💲")
     async def dua_tien_day(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print("ĐƯA TIỀN ĐÂY!!!")
+        print(f"{interaction.user} kêu ĐƯA TIỀN ĐÂY!!!")
         button.disabled = True
         await interaction.response.edit_message(view=self)
     
     @discord.ui.button(label="Bot đào lửa",style=discord.ButtonStyle.gray,emoji = "🔫")
     async def bot_dao_lua(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print("BOT ĐÀO LỬA RR!!!")
+        print(f"{interaction.user} kêu BOT ĐÀO LỬA RR!!!")
         button.disabled = True
         await interaction.response.edit_message(view=self)
         
     @discord.ui.button(label="Dev tư bản",style=discord.ButtonStyle.blurple,emoji = "🐧")
     async def dev_tu_ban(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print("DEV TƯ BẢN QUÁ!!!")
+        print(f"{interaction.user} kêu DEV TƯ BẢN QUÁ!!!")
         button.disabled = True
         await interaction.response.edit_message(view=self)
 
@@ -50,23 +50,33 @@ class FeedbackButtons(discord.ui.View):
 async def button(ctx):
     view = FeedbackButtons()
     view.add_item(discord.ui.Button(label="Forms đòi tiền",style=discord.ButtonStyle.link,url="https://SussyGuy35.github.io/duatienday.html",emoji="😏"))
+    print(f"{ctx.user} used feedback commands!")
     await ctx.response.send_message("Nhấn vào nút để gửi feedback cho dev. Nó sẽ làm ngập cái log của thằng dev luôn 😳",view=view)
 
 @tree.command(name = "help", description = "Hiện hướng dẫn 🐧") 
 async def help(ctx):
+    print(f"{ctx.user} used help commands!")
     await ctx.response.send_message(commands.help.command_response())
 
 @tree.command(name = "ping", description = "Ping pong ping pong") 
 async def ping(interaction):
+    print(f"{ctx.user} used ping commands!")
     await interaction.response.send_message(commands.ping.command_response())
 
 @tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
 async def get_avatar(ctx,user:discord.User):
-    await ctx.response.send_message(user.avatar.url)
+    print(f"{ctx.user} used avatar commands!")
+    if user.avatar != None:
+        embed = discord.Embed(title="Avatar link", description=f"Avatar của {user}", color=0x03e3fc)
+        embed.set_image(url = user.avatar.url)
+        await ctx.response.send_message(embed = embed)
+    else:
+        await ctx.response.send_message(f'{user} còn không có avatar 🐧')
 
 # On ready event
 @client.event
 async def on_ready():
+    #tree.clear_commands(guild = None) # Uncomment this to clear all commands
     await tree.sync()
     await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
     print(f'open-susbot v{bot_version}')
