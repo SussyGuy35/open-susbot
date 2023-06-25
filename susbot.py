@@ -52,9 +52,17 @@ async def button(ctx):
     view.add_item(discord.ui.Button(label="Forms đòi tiền",style=discord.ButtonStyle.link,url="https://SussyGuy35.github.io/duatienday.html",emoji="😏"))
     await ctx.response.send_message("Nhấn vào nút để gửi feedback cho dev. Nó sẽ làm ngập cái log của thằng dev luôn 😳",view=view)
 
+@tree.command(name = "help", description = "Hiện hướng dẫn 🐧") 
+async def help(ctx):
+    await ctx.response.send_message(commands.help.command_response())
+
 @tree.command(name = "ping", description = "Ping pong ping pong") 
 async def ping(interaction):
-    await interaction.response.send_message('pong! <:njnk:1094916486029639710>')
+    await interaction.response.send_message(commands.ping.command_response())
+
+@tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
+async def get_avatar(ctx,user:discord.User):
+    await ctx.response.send_message(user.avatar.url)
 
 # On ready event
 @client.event
