@@ -48,6 +48,12 @@ async def on_message(message):
         print(">Bot:",message.content)
         return   
     
+    # If Eden Eldersong post an annoucemant
+    if message.author.id == 915111567299850270 and message.channel.id == 919945978902106134:
+        for emoji in emojis:
+            await message.add_reaction(emoji)
+        return
+    
     # Auto react when someone say "gvs"
     if "gvs" in message.content.lower():
         for emoji in emojis:
@@ -59,7 +65,7 @@ async def on_message(message):
         # log console
         print(f"{message.author.global_name} at #{message.channel} on {message.guild} : {message.content}")  
         
-        # bot user can not use this bot's command
+        # bot user can not use this bot's commands
         if message.author.bot:
             if message.author != client.user:
                 await message.channel.send("Bot mà đòi dùng lệnh của bot à 🐧")
@@ -73,7 +79,7 @@ async def on_message(message):
             
             # Debug
             case 'debug':
-                await message.channel.send(f"userid: {message.author.id}")
+                await message.channel.send(f"user_id: {message.author.id}, channel_id: {message.channel.id}, guild: {message.guild}")
             
             # Help
             case 'help':
