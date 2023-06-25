@@ -22,7 +22,36 @@ tree = discord.app_commands.CommandTree(client)
 # j4f
 emojis = ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]
 
+# Send feedback
+class FeedbackButtons(discord.ui.View):
+    def __init__(self, *, timeout=180):
+        super().__init__(timeout=timeout)
+    
+    @discord.ui.button(label="Đưa tiền đây",style=discord.ButtonStyle.red,emoji = "💲")
+    async def dua_tien_day(self,interaction:discord.Interaction,button:discord.ui.Button):
+        print("ĐƯA TIỀN ĐÂY!!!")
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+    
+    @discord.ui.button(label="Bot đào lửa",style=discord.ButtonStyle.gray,emoji = "🔫")
+    async def bot_dao_lua(self,interaction:discord.Interaction,button:discord.ui.Button):
+        print("BOT ĐÀO LỬA RR!!!")
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+        
+    @discord.ui.button(label="Dev tư bản",style=discord.ButtonStyle.blurple,emoji = "🐧")
+    async def dev_tu_ban(self,interaction:discord.Interaction,button:discord.ui.Button):
+        print("DEV TƯ BẢN QUÁ!!!")
+        button.disabled = True
+        await interaction.response.edit_message(view=self)
+
 # Slash command
+@tree.command(name = "feedback", description = "Gửi feedback cho dev")
+async def button(ctx):
+    view = FeedbackButtons()
+    view.add_item(discord.ui.Button(label="Forms đòi tiền",style=discord.ButtonStyle.link,url="https://SussyGuy35.github.io/duatienday.html",emoji="😏"))
+    await ctx.response.send_message("Nhấn vào nút để gửi feedback cho dev. Nó sẽ làm ngập cái log của thằng dev luôn 😳",view=view)
+
 @tree.command(name = "ping", description = "Ping pong ping pong") 
 async def ping(interaction):
     await interaction.response.send_message('pong! <:njnk:1094916486029639710>')
