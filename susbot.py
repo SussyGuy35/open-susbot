@@ -59,13 +59,13 @@ async def button(ctx):
 @tree.command(name = "help", description = "Hiện hướng dẫn 🐧") 
 async def help(ctx):
     print(f"{ctx.user} used help commands!")
-    await ctx.response.send_message(commands.help.command_response())
+    await ctx.response.send_message(commands.help.command_response(prefix))
 
 # Ping
 @tree.command(name = "ping", description = "Ping pong ping pong") 
-async def ping(interaction):
+async def ping(ctx):
     print(f"{ctx.user} used ping commands!")
-    await interaction.response.send_message(commands.ping.command_response())
+    await ctx.response.send_message(commands.ping.command_response())
 
 # Avatar
 @tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
@@ -148,6 +148,8 @@ async def on_message(message):
         # Get requested command
         command = message.content.split()[0].replace(prefix,'')
         
+        arg = message.content.replace(f"{prefix}{command} ","")
+        
         # Main thing
         match command:
             
@@ -157,7 +159,7 @@ async def on_message(message):
             
             # Help
             case 'help':
-                await message.channel.send(commands.help.command_response())
+                await message.channel.send(commands.help.command_response(prefix))
             
             # Ping pong ping pong
             case 'ping':
@@ -165,15 +167,15 @@ async def on_message(message):
 
             # Echo
             case 'echo':
-                await message.channel.send(commands.echo.command_response(message.content))
+                await message.channel.send(commands.echo.command_response(arg))
             
             # Pick
             case 'pick':
-                await message.channel.send(commands.pick.command_response(message.content))  
+                await message.channel.send(commands.pick.command_response(arg))  
             
             # Random caps
             case 'randcaps':
-                await message.channel.send(commands.randcaps.command_response(message.content))  
+                await message.channel.send(commands.randcaps.command_response(arg))  
             
             # Gacha
             case 'gacha':
@@ -190,6 +192,14 @@ async def on_message(message):
             # osu!
             case 'osu':
                 await message.channel.send(commands.osu.command_response(message.content))
+            
+            # emoji
+            case 'emoji':
+                rs = commands.emoji.command_response(client,arg)
+                if type(rs) == str:
+                    await message.channel.send(rs)
+                else:
+                    await message.channel.send(embed = rs)
             
             # Invalid command
             case _:

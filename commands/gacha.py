@@ -17,18 +17,20 @@ cardshop_data_path = absolute_path("card_game_data/shop.json")
 prefix = config.prefix
 
 # Help message
-gacha_help = f"""Các lệnh `gacha`:
-    -`{prefix}gacha help`: Hiện cái đoạn hướng dẫn này.
-    -`{prefix}gacha credit`: Những người đã đóng góp vào dự án này.
-    -`{prefix}gacha newplayer`: Nhận quà tân thủ (chỉ một lần).
-    -`{prefix}gacha daily`: Điểm danh hàng ngày nhận 100 BachNob Credit.
-    -`{prefix}gacha roll [số lần roll]`: Quay thẻ ngẫu nhiên. 100 BachNob Credit/ 1 lần quay.
-    -`{prefix}gacha rps <số BachNob Credit cược> <bài>`: Chơi oẳn tù tì.
-    -`{prefix}gacha show [người dùng]`: Hiện các thẻ bài hiện có.
-    -`{prefix}gacha userinfo [người dùng]`: Hiện thông tin người dùng
-    -`{prefix}gacha lb`: Hiện bảng xếp hạng.
-    -`{prefix}gacha shop <lệnh>`: Shop mua bán card.
+def get_help_text(prefix):
+    gacha_help = f"""Các lệnh `gacha`:
+- `{prefix}gacha help`: Hiện cái đoạn hướng dẫn này.
+- `{prefix}gacha credit`: Những người đã đóng góp vào dự án này.
+- `{prefix}gacha newplayer`: Nhận quà tân thủ (chỉ một lần).
+- `{prefix}gacha daily`: Điểm danh hàng ngày nhận 100 BachNob Credit.
+- `{prefix}gacha roll [số lần roll]`: Quay thẻ ngẫu nhiên. 100 BachNob Credit/ 1 lần quay.
+- `{prefix}gacha rps <số BachNob Credit cược> <bài>`: Chơi oẳn tù tì.
+- `{prefix}gacha show [người dùng]`: Hiện các thẻ bài hiện có.
+- `{prefix}gacha userinfo [người dùng]`: Hiện thông tin người dùng
+- `{prefix}gacha lb`: Hiện bảng xếp hạng.
+- `{prefix}gacha shop <lệnh>`: Shop mua bán card.
 """
+    return gacha_help
 
 # Credit
 gacha_credit = f"""Original idea: `Diamond_Dr (Hoàng Anh)`
@@ -174,7 +176,7 @@ def command_response(command,prefix,userid,username):
         
         # Help
         case 'help':
-            return gacha_help
+            return get_help_text(prefix)
         
         # Credit
         case 'credit':

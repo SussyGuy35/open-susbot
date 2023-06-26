@@ -1,6 +1,5 @@
-import config, random
-prefix = config.prefix
+import random
 
 def command_response(command):
-    options = command.replace(prefix+'pick','').split(',')
+    options = command.split(',')
     return random.choice(options)

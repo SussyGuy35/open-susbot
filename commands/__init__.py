@@ -7,3 +7,4 @@ import commands.pick
 import commands.randcaps 
 import commands.gacha
 import commands.osu
+import commands.emoji

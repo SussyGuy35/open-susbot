@@ -1,8 +1,7 @@
-import config, random
-prefix = config.prefix
+import random
 
 def command_response(command):
-    user_input = command.replace(prefix+'randcaps','')
+    user_input = command
     message_output = []
     for i in range(len(user_input)):
         char = user_input[i]
