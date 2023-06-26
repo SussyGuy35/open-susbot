@@ -1,6 +1,9 @@
 import commands.card_game_data.card as cardgame
 import json,random,datetime,os
-import config
+try:
+    import config_override as config
+except:
+    import config
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 
