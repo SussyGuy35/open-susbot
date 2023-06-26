@@ -46,6 +46,8 @@ class FeedbackButtons(discord.ui.View):
         await interaction.response.edit_message(view=self)
 
 # Slash command
+
+# Feedback
 @tree.command(name = "feedback", description = "Gửi feedback cho dev")
 async def button(ctx):
     view = FeedbackButtons()
@@ -53,16 +55,19 @@ async def button(ctx):
     print(f"{ctx.user} used feedback commands!")
     await ctx.response.send_message("Nhấn vào nút để gửi feedback cho dev. Nó sẽ làm ngập cái log của thằng dev luôn 😳",view=view)
 
+# Help
 @tree.command(name = "help", description = "Hiện hướng dẫn 🐧") 
 async def help(ctx):
     print(f"{ctx.user} used help commands!")
     await ctx.response.send_message(commands.help.command_response())
 
+# Ping
 @tree.command(name = "ping", description = "Ping pong ping pong") 
 async def ping(interaction):
     print(f"{ctx.user} used ping commands!")
     await interaction.response.send_message(commands.ping.command_response())
 
+# Avatar
 @tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
 async def get_avatar(ctx,user:discord.User):
     print(f"{ctx.user} used avatar commands!")
@@ -72,6 +77,26 @@ async def get_avatar(ctx,user:discord.User):
         await ctx.response.send_message(embed = embed)
     else:
         await ctx.response.send_message(f'{user} còn không có avatar 🐧')
+
+# Emoji
+@tree.command(name = "emoji", description = "Lấy emoji nào đó 👀") 
+async def get_emoji(ctx,emoji: str):
+    print(f"{ctx.user} used emoji commands!")
+    
+    try:
+        emoji_to_get = client.get_emoji(int(emoji.split()[0].split(":")[2].replace(">","")))
+    except:
+        print(f"ERROR: Failed to get emoji. Message: {emoji}")
+        emoji_to_get = None
+    
+    if emoji_to_get != None:
+        embed = discord.Embed(title=emoji_to_get.name, description = f"được thêm vào <t:{int(emoji_to_get.created_at.timestamp())}>", color=0x03e3fc)
+        embed.set_image(url = emoji_to_get.url)
+        await ctx.response.send_message(embed = embed)
+    else:
+        await ctx.response.send_message('Đã có lỗi xảy ra 🐧. Có thể là do bạn không cung cấp 1 custom emoji đúng 👀.')
+
+
 
 # On ready event
 @client.event
@@ -84,6 +109,8 @@ async def on_ready():
     print("List of current joined server(s):")
     for guild in client.guilds:
         print(guild)
+
+
 
 # On message event
 @client.event
