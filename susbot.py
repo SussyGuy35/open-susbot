@@ -122,12 +122,6 @@ async def on_message(message):
         print(">Bot:",message.content)
         return   
     
-    # If Eden Eldersong post an annoucemant
-    if message.author.id == 915111567299850270 and message.channel.id == 919945978902106134:
-        for emoji in emojis:
-            await message.add_reaction(emoji)
-        return
-    
     # Auto react when someone say "gvs"
     if "gvs" in message.content.lower():
         for emoji in emojis:
@@ -148,7 +142,7 @@ async def on_message(message):
         # Get requested command
         command = message.content.split()[0].replace(prefix,'')
         
-        arg = message.content.replace(f"{prefix}{command} ","")
+        arg = message.content[len(prefix+command):]
         
         # Main thing
         match command:
