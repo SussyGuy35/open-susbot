@@ -34,7 +34,7 @@ Tên người chơi: {user.username}
 Quốc gia: {user.country.name}
 Avatar: {user.avatar_url}    
 Global rank (osu!standard): #{user_rank}
-Rank cao nhất đã đạt được: #{user.rank_highest.rank} vào <t:{str(user.rank_highest.updated_at.timestamp()).split(".")[0]}>
+Rank cao nhất đã đạt được: #{user.rank_highest.rank} vào <t:{int(user.rank_highest.updated_at.timestamp())}>
 {"Đang {0}".format("trực tuyến 🟢" if user.is_online else "ngoại tuyến 🔴")}
 Đã chơi {user_most_play_beatmap.beatmapset.title} [{user_most_play_beatmap._beatmap.version}] {user_most_play_beatmap.count} lần!'''    
             except:
