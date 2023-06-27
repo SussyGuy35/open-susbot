@@ -12,10 +12,14 @@ bot_version = config.bot_version
 
 TOKEN = config.TOKEN
 
+OSUAPI_CLIENT_ID = config.OSUAPI_CLIENT_ID
+OSUAPI_CLIENT_SECRET = config.OSUAPI_CLIENT_SECRET
+
 intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
+ossapi_client = commands.osu.client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET)
 
 tree = discord.app_commands.CommandTree(client)
 
@@ -83,18 +87,25 @@ async def get_avatar(ctx,user:discord.User):
 async def get_emoji(ctx,emoji: str):
     print(f"{ctx.user} used emoji commands!")
     
-    try:
-        emoji_to_get = client.get_emoji(int(emoji.split()[0].split(":")[2].replace(">","")))
-    except:
-        print(f"ERROR: Failed to get emoji. Message: {emoji}")
-        emoji_to_get = None
-    
-    if emoji_to_get != None:
-        embed = discord.Embed(title=emoji_to_get.name, description = f"được thêm vào <t:{int(emoji_to_get.created_at.timestamp())}>", color=0x03e3fc)
-        embed.set_image(url = emoji_to_get.url)
-        await ctx.response.send_message(embed = embed)
+    rs = commands.emoji.command_response(client,arg)
+    if type(rs) == str:
+        await ctx.response.send_message(rs)
     else:
-        await ctx.response.send_message('Đã có lỗi xảy ra 🐧. Có thể là do bạn không cung cấp 1 custom emoji đúng 👀.')
+        await ctx.response.send_message(embed = rs)
+
+# osu user
+@tree.command(name = "osu_user", description = "Lấy thông tin người chơi osu!") 
+async def osu_user(ctx, username: str):
+    print(f"{ctx.user} used osu user commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"user " + username))
+
+# osu beatmap
+@tree.command(name = "osu_beatmap", description = "Tìm beatmap trong osu!") 
+async def osu_beatmap(ctx, beatmap: str):
+    print(f"{ctx.user} used osu beatmap commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
 
 
 
@@ -142,7 +153,7 @@ async def on_message(message):
         # Get requested command
         command = message.content.split()[0].replace(prefix,'')
         
-        arg = message.content[len(prefix+command):]
+        arg = message.content[len(prefix+command)+1:]
         
         # Main thing
         match command:
@@ -185,7 +196,7 @@ async def on_message(message):
             
             # osu!
             case 'osu':
-                await message.channel.send(commands.osu.command_response(message.content))
+                await message.channel.send(commands.osu.command_response(ossapi_client,prefix,arg))
             
             # emoji
             case 'emoji':

@@ -1,21 +1,14 @@
-try:
-    import config_override as config
-except:
-    import config
 from ossapi import *
 
-prefix = config.prefix
-
-OSUAPI_CLIENT_ID = config.OSUAPI_CLIENT_ID
-OSUAPI_CLIENT_SECRET = config.OSUAPI_CLIENT_SECRET
-
-osu_api = Ossapi(OSUAPI_CLIENT_ID, OSUAPI_CLIENT_SECRET)
+def client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET):
+    osu_api = Ossapi(OSUAPI_CLIENT_ID, OSUAPI_CLIENT_SECRET)
+    return osu_api
 
 # Main function
-def command_response(command):
+def command_response(osu_api,prefix,command):
     # Invalid command handler 6900
     try:
-        osu_command = command.split()[1]
+        osu_command = command.split()[0]
     except:
         return f'Các lệnh {prefix}osu:\n\t-`{prefix}osu user <tên người chơi>`: Lấy thông tin người dùng nào đó\n\t-`{prefix}osu beatmap <tên beatmap>`: Tìm beatmap theo tên'
     
@@ -25,7 +18,7 @@ def command_response(command):
         # User 
         case 'user':
             try:
-                user = osu_api.user(command.replace(prefix+'osu user ',''))
+                user = osu_api.user(command[len(osu_command)+1:])
                 user_most_play_beatmap = osu_api.user_beatmaps(user.id,"most_played")[0]
                 user_rank_history = user.rank_history
                 user_rank = user_rank_history.data[len(user_rank_history.data)-1]
@@ -43,7 +36,7 @@ Rank cao nhất đã đạt được: #{user.rank_highest.rank} vào <t:{int(use
         # Beatmap
         case 'beatmap':
             try:
-                beatmap = osu_api.search_beatmapsets(query=command.replace(prefix+'osu beatmap ','')).beatmapsets[0]
+                beatmap = osu_api.search_beatmapsets(query=command[len(osu_command)+1:]).beatmapsets[0]
                 return f'https://osu.ppy.sh/beatmapsets/{beatmap.id}\n'
             except:
                 return 'Đã có lỗi xảy ra!'

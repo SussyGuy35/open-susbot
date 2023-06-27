@@ -170,7 +170,7 @@ def command_response(command,prefix,userid,username):
     try:
         gacha_command = command.split()[1]
     except:
-        return gacha_help
+        return get_help_text(prefix)
     # Subcommand
     match gacha_command:
         
@@ -568,4 +568,4 @@ def command_response(command,prefix,userid,username):
         
         # Invalid subcommand
         case _:
-            return gacha_help
+            return get_help_text(prefix)
