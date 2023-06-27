@@ -87,7 +87,7 @@ async def get_avatar(ctx,user:discord.User):
 async def get_emoji(ctx,emoji: str):
     print(f"{ctx.user} used emoji commands!")
     
-    rs = commands.emoji.command_response(client,arg)
+    rs = commands.emoji.command_response(client,emoji)
     if type(rs) == str:
         await ctx.response.send_message(rs)
     else:
