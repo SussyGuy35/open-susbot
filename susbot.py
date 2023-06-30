@@ -206,6 +206,10 @@ async def on_message(message):
                 else:
                     await message.channel.send(embed = rs)
             
+            # Ask
+            case 'ask':
+                await message.channel.send(commands.ask.command_response(arg))
+            
             # Invalid command
             case _:
                 await message.channel.send("Lệnh đó không tồn tại!")

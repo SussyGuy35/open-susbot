@@ -8,3 +8,4 @@ import commands.randcaps
 import commands.gacha
 import commands.osu
 import commands.emoji
+import commands.ask
