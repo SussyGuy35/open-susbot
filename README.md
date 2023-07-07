@@ -2,7 +2,7 @@
 
 Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
 
-## Feature
+## Features
 - Some commands to make bot say sth or maybe other
 - Super balance gacha game
 - Some osu!api things
