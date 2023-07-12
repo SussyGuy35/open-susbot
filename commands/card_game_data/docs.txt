@@ -2,11 +2,11 @@
 
 - Game gacha siêu cân bằng cho BachNobBot
 
-- Ý tưởng ban đầu: Diamond_Dr#5183
-- Thằng dev code ngu: imnotbachnob#7878
-- Góp ý gameplay: CornM#0028
-- Đóng góp: LeiZanTheng#2084, izuki / đông#3227, Waka#1477
-- Vật cản trở chính trong quá trình phát triển: iambachnob#2645
+- Ý tưởng ban đầu: Diamond_Dr (Hoàng Anh)
+- Thằng dev code ngu: BachNob
+- Góp ý gameplay: novaminn (Bắp)
+- Đóng góp: LeiZanTheng, izuki, Waka
+- Vật cản trở chính trong quá trình phát triển: SussyGuy35
 
 
 
@@ -155,7 +155,7 @@ Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) -
 - Số tiền cược phải là số tự nhiên n với n ≥ 30
 
 ***** Phần thưởng/hình phạt khi thắng/thua
-+ Thắng: nhận được card của đối phương, số tiền cược và 1 exp
++ Thắng: nhận được card của đối phương, số tiền cược và round(0.07 * số tiền cược) exp
 + Thua: mất số tiền cược và bài đã đánh
 
 ***** Tỉ lệ ra bài đối phương *****
@@ -221,7 +221,7 @@ Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) -
 ********** Hệ thống shop bán hàng **********
 ***** Bot bán hàng *****
 + Bán vào ngày 10, 20, 30 hàng tháng
-+ Bán ngẫu nhiên card Rare giá 105 hoặc card Epic giá 502 hoặc card Legendary giá 1069
++ Bán ngẫu nhiên card Rare giá 105 hoặc card Epic giá 502 hoặc card Legendary giá 969
 
 ***** Người bán *****
 + Giá bán là số tự nhiên n với 0 < n < 50000

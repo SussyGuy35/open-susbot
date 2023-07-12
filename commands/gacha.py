@@ -1,5 +1,5 @@
 import commands.card_game_data.card as cardgame
-import json,random,datetime,os
+import discord,json,random,datetime,os
 try:
     import config_override as config
 except:
@@ -20,7 +20,7 @@ prefix = config.prefix
 def get_help_text(prefix):
     gacha_help = f"""Các lệnh `gacha`:
 - `{prefix}gacha help`: Hiện cái đoạn hướng dẫn này.
-- `{prefix}gacha credit`: Những người đã đóng góp vào dự án này.
+- `{prefix}gacha docs`: Tài liệu game.
 - `{prefix}gacha newplayer`: Nhận quà tân thủ (chỉ một lần).
 - `{prefix}gacha daily`: Điểm danh hàng ngày nhận 100 BachNob Credit.
 - `{prefix}gacha roll [số lần roll]`: Quay thẻ ngẫu nhiên. 100 BachNob Credit/ 1 lần quay.
@@ -178,9 +178,9 @@ def command_response(command,prefix,userid,username):
         case 'help':
             return get_help_text(prefix)
         
-        # Credit
-        case 'credit':
-            return gacha_credit
+        # Docs
+        case 'docs':
+            return discord.File(f'{absolute_path("card_game_data/docs.txt")}')
         
         # Newplayer
         case 'newplayer':

@@ -189,7 +189,10 @@ async def on_message(message):
                 command_response = commands.gacha.command_response(message.content,prefix,userid,username)
                 user_level_up_response = commands.gacha.check_if_user_level_up(userid,username)
                 if command_response != None:
-                    await message.channel.send(command_response)
+                    if type(command_response) == str:
+                        await message.channel.send(command_response)
+                    else:
+                        await message.channel.send(file = command_response)
                 if user_level_up_response != None:
                     await message.channel.send(user_level_up_response)
                 commands.gacha.save()    
