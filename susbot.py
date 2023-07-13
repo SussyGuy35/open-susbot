@@ -150,6 +150,10 @@ async def on_message(message):
                 await message.channel.send("Bot mà đòi dùng lệnh của bot à 🐧")
                 return
         
+        if message.author.id in config.banned_user:
+            await message.channel.send("Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết :penguin:")
+            return
+        
         # Get requested command
         command = message.content.split()[0].replace(prefix,'')
         
