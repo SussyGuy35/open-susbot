@@ -366,13 +366,13 @@ def command_response(command,prefix,userid,username):
             msg = ""
             for key in cardgame_data.keys():
                 if key != "date":
-                    lb[cardgame_data[key]["exp"]] = cardgame_data[key]["username"]
-            lb = dict(sorted(lb.items()))
+                    lb[key] = cardgame_data[key]["exp"]
+            lb = dict(sorted(lb.items(), key=lambda item: item[1]))
             if len(lb) > 0:
                 rank = 1
                 for key in reversed(lb):
-                    if key != 0:
-                        msg += f"#{rank}: `{lb[key]}` - {key} exp\n"
+                    if lb[key] != 0:
+                        msg += f"#{rank}: `{cardgame_data[key]['username']}` - {lb[key]} exp\n"
                         rank += 1
                     else: break
                 return "Bảng xếp hạng:\n" + msg
