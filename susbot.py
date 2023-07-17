@@ -75,23 +75,24 @@ async def ping(ctx):
 @tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
 async def get_avatar(ctx,user:discord.User):
     print(f"{ctx.user} used avatar commands!")
+    await ctx.response.defer()
     if user.avatar != None:
-        embed = discord.Embed(title="Avatar link", description=f"Avatar của {user}", color=0x03e3fc)
+        embed = discord.Embed(title="User avatar", description=f"Avatar của **{user}**", color=0x03e3fc)
         embed.set_image(url = user.avatar.url)
-        await ctx.response.send_message(embed = embed)
+        await ctx.followup.send(embed = embed)
     else:
-        await ctx.response.send_message(f'{user} còn không có avatar 🐧')
+        await ctx.followup.send(f'{user} còn không có avatar 🐧')
 
 # Emoji
 @tree.command(name = "emoji", description = "Lấy emoji nào đó 👀") 
 async def get_emoji(ctx,emoji: str):
     print(f"{ctx.user} used emoji commands!")
-    
+    await ctx.response.defer()
     rs = commands.emoji.command_response(client,emoji)
     if type(rs) == str:
-        await ctx.response.send_message(rs)
+        await ctx.followup.send(rs)
     else:
-        await ctx.response.send_message(embed = rs)
+        await ctx.followup.send(embed = rs)
 
 # osu user
 @tree.command(name = "osu_user", description = "Lấy thông tin người chơi osu!") 
@@ -191,7 +192,8 @@ async def on_message(message):
                 userid = str(message.author.id)
                 username = message.author.global_name
                 command_response = commands.gacha.command_response(message.content,prefix,userid,username)
-                user_level_up_response = commands.gacha.check_if_user_level_up(userid,username)
+                user_level_up_response = commands.gacha.check_if_user_level_up(userid)
+                super_user = commands.gacha.cardgame_user_check_beaten(userid)
                 if command_response != None:
                     if type(command_response) == str:
                         await message.channel.send(command_response)
@@ -199,6 +201,8 @@ async def on_message(message):
                         await message.channel.send(file = command_response)
                 if user_level_up_response != None:
                     await message.channel.send(user_level_up_response)
+                if super_user != None:
+                    await message.channel.send(super_user)
                 commands.gacha.save()    
             
             # osu!

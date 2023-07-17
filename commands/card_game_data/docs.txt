@@ -143,16 +143,47 @@
 
 
 
+********** Guaranteed roll **********
+
+- Số Guarantee cần cho mỗi lần roll: 1
+- Số Credit nhận khi roll ra card đã sở hữu: 25
+
+*** Common ***
++ Tỉ lệ: 10%
++ Tỉ lệ cho mỗi card: ~0,476%
++ Số exp thưởng: 1
+
+*** Uncommon ***
++ Tỉ lệ: 35%
++ Tỉ lệ cho mỗi card: ~2,3%
++ Số exp thưởng: 4
+
+*** Rare ***
++ Tỉ lệ: 25%
++ Tỉ lệ cho mỗi card: ~1,389%
++ Số exp thưởng: 32
+
+*** Epic ***
++ Tỉ lệ: 20%
++ Tỉ lệ cho mỗi card: ~1,3%
++ Số exp thưởng: 64
+
+*** Legendary ***
++ Tỉ lệ: 10%
++ Tỉ lệ cho mỗi card: ~1,1%
++ Số exp thưởng: 128
+
+
 ********** Hệ thống level **********
 
 + Công thức tính: 
 Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) - 1)^3)
-+ Số credit thưởng lên level: (lvl hiện tại) * 200
++ Phần thưởng khi lên level: (lvl hiện tại) * 200 BachNob Credit và 1 BachNob Guarantee
 
 
 
 ********** Minigame oẳn tù tì **********
-- Số tiền cược phải là số tự nhiên n với n ≥ 30
+- Số tiền cược phải là số tự nhiên n với lvl*200 ≥ n ≥ 30
 
 ***** Phần thưởng/hình phạt khi thắng/thua
 + Thắng: nhận được card của đối phương, số tiền cược và round(0.07 * số tiền cược) exp
@@ -219,6 +250,8 @@ Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) -
 
 
 ********** Hệ thống shop bán hàng **********
+- Yêu cầu level 3 trở lên để sử dụng
+
 ***** Bot bán hàng *****
 + Bán vào ngày 10, 20, 30 hàng tháng
 + Bán ngẫu nhiên card Rare giá 105 hoặc card Epic giá 502 hoặc card Legendary giá 969

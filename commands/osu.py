@@ -23,13 +23,13 @@ def command_response(osu_api,prefix,command):
                 user_rank_history = user.rank_history
                 user_rank = user_rank_history.data[len(user_rank_history.data)-1]
                 return f'''https://osu.ppy.sh/users/{user.id}
-Tên người chơi: {user.username}
-Quốc gia: {user.country.name}
+Tên người chơi: **{user.username}**
+Quốc gia: **{user.country.name}**
 Avatar: {user.avatar_url}    
-Global rank (osu!standard): #{user_rank}
-Rank cao nhất đã đạt được: #{user.rank_highest.rank} vào <t:{int(user.rank_highest.updated_at.timestamp())}>
-{"Đang {0}".format("trực tuyến 🟢" if user.is_online else "ngoại tuyến 🔴")}
-Đã chơi {user_most_play_beatmap.beatmapset.title} [{user_most_play_beatmap._beatmap.version}] {user_most_play_beatmap.count} lần!'''    
+Global rank (osu!standard): **#{user_rank}**
+Rank cao nhất đã đạt được: **#{user.rank_highest.rank}** vào <t:{int(user.rank_highest.updated_at.timestamp())}>
+{"Đang {0}".format("**trực tuyến** 🟢" if user.is_online else "**ngoại tuyến** 🔴")}
+Đã chơi **{user_most_play_beatmap.beatmapset.title} [{user_most_play_beatmap._beatmap.version}]** {user_most_play_beatmap.count} lần!'''    
             except:
                 return 'Đã có lỗi xảy ra!'
         
