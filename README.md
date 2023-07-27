@@ -7,7 +7,7 @@ Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
 - Super balance gacha game
 - Some osu!api things
 - EPIC ping pong moment
-- AutoReactWhenSomeoneSayGVS™
+- AutoReactWhenSomeoneSaySomething™
 - Nijika?
 
 ## How to install and make bot running

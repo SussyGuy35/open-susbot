@@ -192,7 +192,7 @@ def command_response(command,prefix,userid,username):
         
         # Docs
         case 'docs':
-            return discord.File(f'{absolute_path("card_game_data/docs.txt")}')
+            return discord.File(absolute_path("card_game_data/docs.txt"))
         
         # Newplayer
         case 'newplayer':

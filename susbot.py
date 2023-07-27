@@ -23,8 +23,8 @@ ossapi_client = commands.osu.client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET)
 
 tree = discord.app_commands.CommandTree(client)
 
-# j4f
-emojis = ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]
+# autoreact emojis
+autoreact_emojis = config.autoreact_emojis
 
 # Send feedback
 class FeedbackButtons(discord.ui.View):
@@ -94,6 +94,13 @@ async def get_emoji(ctx,emoji: str):
     else:
         await ctx.followup.send(embed = rs)
 
+# Nijika command
+@tree.command(name = "nijika", description = "Nijika")
+async def nijika(ctx):
+    print(f"{ctx.user} used nijika commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(file = commands.nijika.command_response())
+
 # osu user
 @tree.command(name = "osu_user", description = "Lấy thông tin người chơi osu!") 
 async def osu_user(ctx, username: str):
@@ -134,10 +141,12 @@ async def on_message(message):
         print(">Bot:",message.content)
         return   
     
-    # Auto react when someone say "gvs"
-    if "gvs" in message.content.lower():
-        for emoji in emojis:
-            await message.add_reaction(emoji)
+    # Auto react emojis
+    for word, emojis in autoreact_emojis.items():
+        if word in message.content.lower():
+            for emoji in emojis:
+                await message.add_reaction(emoji)
+            break
     
     # If someone use command
     if message.content.startswith(prefix):
@@ -151,7 +160,7 @@ async def on_message(message):
                 await message.channel.send("Bot mà đòi dùng lệnh của bot à 🐧")
                 return
         
-        if message.author.id in config.banned_user:
+        if message.author.id in config.banned_users:
             await message.channel.send("Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết :penguin:")
             return
         
@@ -220,6 +229,10 @@ async def on_message(message):
             # Ask
             case 'ask':
                 await message.channel.send(commands.ask.command_response(arg))
+            
+            # Nijika
+            case 'nijika':
+                await message.channel.send(file = commands.nijika.command_response())
             
             # Invalid command
             case _:
