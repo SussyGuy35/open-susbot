@@ -101,6 +101,14 @@ async def nijika(ctx):
     await ctx.response.defer()
     await ctx.followup.send(file = commands.nijika.command_response())
 
+#Amogus command
+# Nijika command
+@tree.command(name = "amogus", description = "Amogus")
+async def amogus(ctx):
+    print(f"{ctx.user} used amogus commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(file = commands.amogus.command_response())
+
 # osu user
 @tree.command(name = "osu_user", description = "Lấy thông tin người chơi osu!") 
 async def osu_user(ctx, username: str):
@@ -233,6 +241,10 @@ async def on_message(message):
             # Nijika
             case 'nijika':
                 await message.channel.send(file = commands.nijika.command_response())
+
+            # Amogus
+            case 'amogus':
+                await message.channel.send(file = commands.amogus.command_response())
             
             # Invalid command
             case _:
