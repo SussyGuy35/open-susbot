@@ -102,7 +102,6 @@ async def nijika(ctx):
     await ctx.followup.send(file = commands.nijika.command_response())
 
 #Amogus command
-# Nijika command
 @tree.command(name = "amogus", description = "Amogus")
 async def amogus(ctx):
     print(f"{ctx.user} used amogus commands!")
