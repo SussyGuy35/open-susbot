@@ -11,7 +11,7 @@ amogusImg = [
     "data/susimg/amogusB.gif",
     "data/susimg/amogusDiscord.gif",
     "data/susimg/amogusdrip.jpg",
-    "/data/susimg/pysus.png",
+    "data/susimg/pysus.png",
 ]
 
 def command_response():
