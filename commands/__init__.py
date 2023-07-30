@@ -10,3 +10,4 @@ import commands.osu
 import commands.emoji
 import commands.ask
 import commands.nijika
+import commands.amogus
