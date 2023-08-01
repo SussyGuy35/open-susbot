@@ -262,15 +262,15 @@ async def on_message(message):
                 await message.channel.send("Lệnh đó không tồn tại!")
            
     else:
+        # gvs
+        if "gvs" in message.content.lower():
+            commands.gvs.gvs(userid, username)
+        
         # Auto react emojis
         for word, emojis in autoreact_emojis.items():
             if word in message.content.lower():
                 for emoji in emojis:
                     await message.add_reaction(emoji)
                 break
-        
-        # gvs
-        if "gvs" in message.content.lower():
-            commands.gvs.gvs(userid, username)
 
 client.run(TOKEN)
