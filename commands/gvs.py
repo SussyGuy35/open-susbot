@@ -41,12 +41,12 @@ def command_response(prefix, userid, command):
             for key in data.keys():
                 lb[key] = data[key]['gvs']
             
-            lb = dict(sorted(data.items(), key=lambda item: item[1]))
+            lb = dict(sorted(lb.items(), key=lambda item: item[1]))
             if len(lb) > 0:
                 rank = 1
                 for key in reversed(lb):
                     if lb[key] != 0:
-                        msg += f"#{rank}: **{data[key]['username']}** - {lb[key]['gvs']} gvs\n"
+                        msg += f"#{rank}: **{data[key]['username']}** - {lb[key]} gvs\n"
                         rank += 1
                     else: break
                 
