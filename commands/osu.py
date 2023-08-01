@@ -10,7 +10,7 @@ def command_response(osu_api,prefix,command):
     try:
         osu_command = command.split()[0]
     except:
-        return f'Các lệnh {prefix}osu:\n\t-`{prefix}osu user <tên người chơi>`: Lấy thông tin người dùng nào đó\n\t-`{prefix}osu beatmap <tên beatmap>`: Tìm beatmap theo tên'
+        return f'Các lệnh {prefix}osu:\n- `{prefix}osu user <tên người chơi>` hoặc `/osu_user <tên người chơi>`: Lấy thông tin người dùng nào đó\n- `{prefix}osu beatmap <tên beatmap>` hoặc `/osu_beatmap <tên beatmap>`: Tìm beatmap theo tên'
     
     # Subcommand
     match osu_command:

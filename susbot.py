@@ -122,6 +122,20 @@ async def osu_beatmap(ctx, beatmap: str):
     await ctx.response.defer()
     await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
 
+# gvs count
+@tree.command(name = "gvs_count", description = "Đếm số lần đã *gvs*")
+async def gvs_count(ctx):
+    print(f"{ctx.user} used gvs count commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),"count"))
+
+# gvs lb
+@tree.command(name = "gvs_leaderboard", description = "Bảng xếp hạng *gvs*")
+async def gvs_lb(ctx):
+    print(f"{ctx.user} used gvs lb commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),"lb"))
+
 
 
 # On ready event
@@ -148,12 +162,8 @@ async def on_message(message):
         print(">Bot:",message.content)
         return   
     
-    # Auto react emojis
-    for word, emojis in autoreact_emojis.items():
-        if word in message.content.lower():
-            for emoji in emojis:
-                await message.add_reaction(emoji)
-            break
+    userid = str(message.author.id)
+    username = message.author.global_name
     
     # If someone use command
     if message.content.startswith(prefix):
@@ -167,7 +177,7 @@ async def on_message(message):
                 await message.channel.send("Bot mà đòi dùng lệnh của bot à 🐧")
                 return
         
-        if message.author.id in config.banned_users:
+        if userid in config.banned_users:
             await message.channel.send("Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết :penguin:")
             return
         
@@ -205,8 +215,6 @@ async def on_message(message):
             
             # Gacha
             case 'gacha':
-                userid = str(message.author.id)
-                username = message.author.global_name
                 command_response = commands.gacha.command_response(message.content,prefix,userid,username)
                 user_level_up_response = commands.gacha.check_if_user_level_up(userid)
                 super_user = commands.gacha.cardgame_user_check_beaten(userid)
@@ -245,8 +253,24 @@ async def on_message(message):
             case 'amogus':
                 await message.channel.send(file = commands.amogus.command_response())
             
+            # Gvs
+            case 'gvs':
+                await message.channel.send(commands.gvs.command_response(prefix,userid,arg))
+            
             # Invalid command
             case _:
                 await message.channel.send("Lệnh đó không tồn tại!")
+           
+    else:
+        # Auto react emojis
+        for word, emojis in autoreact_emojis.items():
+            if word in message.content.lower():
+                for emoji in emojis:
+                    await message.add_reaction(emoji)
+                break
         
+        # gvs
+        if "gvs" in message.content.lower():
+            commands.gvs.gvs(userid, username)
+
 client.run(TOKEN)
