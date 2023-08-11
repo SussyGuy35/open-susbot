@@ -1,5 +1,5 @@
 import commands
-import discord, os
+import discord, os, requests
 
 try:
     import config_override as config
@@ -136,6 +136,13 @@ async def gvs_lb(ctx):
     await ctx.response.defer()
     await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),"lb"))
 
+# random cat girl
+@tree.command(name = "randcat", description = "Ảnh mèo ngẫu nhiên")
+async def randcat(ctx):
+    print(f"{ctx.user} used randcat commands!")
+    await ctx.response.defer()
+    response = requests.get("https://nekos.life/api/v2/img/neko").json()
+    await ctx.followup.send(response["url"])
 
 
 # On ready event

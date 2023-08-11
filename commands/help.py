@@ -13,6 +13,7 @@ def get_help_text(prefix):
 - `{prefix}nijka` hoặc `/nijika`: Nijika <:njnk:1094916486029639710>.
 - `{prefix}amogus` hoặc `/amogus`: Amogus <:amogus:1135048323242397697>.
 - `{prefix}gvs`: Các lệnh gvs.
+- `/randcat`: Ảnh mèo ngẫu nhiên.
 """
     return help_text
 def command_response(prefix):
