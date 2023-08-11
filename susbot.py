@@ -1,4 +1,3 @@
-import commands
 import discord, os, requests
 
 try:
@@ -11,6 +10,10 @@ prefix = config.prefix
 bot_version = config.bot_version
 
 TOKEN = config.TOKEN
+
+print(f'open-susbot v{bot_version}')
+
+import commands
 
 OSUAPI_CLIENT_ID = config.OSUAPI_CLIENT_ID
 OSUAPI_CLIENT_SECRET = config.OSUAPI_CLIENT_SECRET
@@ -151,7 +154,6 @@ async def on_ready():
     #tree.clear_commands(guild = None) # Uncomment this to clear all commands
     await tree.sync()
     await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
-    print(f'open-susbot v{bot_version}')
     print(f'Logged in as {client.user}. Currently on {str(len(client.guilds))} server(s)!')
     print("List of current joined server(s):")
     for guild in client.guilds:

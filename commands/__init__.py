@@ -1,14 +1,10 @@
-# Import all commands here
+import os
+import importlib
 
-import commands.help 
-import commands.ping 
-import commands.echo 
-import commands.pick 
-import commands.randcaps 
-import commands.gacha
-import commands.osu
-import commands.emoji
-import commands.ask
-import commands.nijika
-import commands.amogus
-import commands.gvs
+__globals = globals()
+
+for file in os.listdir(os.path.dirname(__file__)):
+    if file != "__init__.py" and file[len(file)-3:] == ".py":
+        mod_name = file[:-3]   # strip .py at the end
+        __globals[mod_name] = importlib.import_module('.' + mod_name, package=__name__)
+        print("Loaded module:", mod_name)
