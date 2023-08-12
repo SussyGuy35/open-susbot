@@ -10,10 +10,11 @@ def get_help_text(prefix):
 - `{prefix}emoji <emoji>` hoặc `/emoji <emoji>`: Lấy một emoji nào đó.
 - `{prefix}ask <câu hỏi>`: Bạn hỏi, bot trả lời (siêu juan).
 - `/avatar <người dùng>`: Lấy avatar của ai đó.
+- `{prefix}gvs`: Các lệnh gvs.
 - `{prefix}nijka` hoặc `/nijika`: Nijika <:njnk:1094916486029639710>.
 - `{prefix}amogus` hoặc `/amogus`: Amogus <:amogus:1135048323242397697>.
-- `{prefix}gvs`: Các lệnh gvs.
 - `/randcat`: Ảnh mèo ngẫu nhiên.
+- `/randwaifu`: Ảnh waifu ngẫu nhiên.
 """
     return help_text
 def command_response(prefix):

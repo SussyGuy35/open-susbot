@@ -1,4 +1,4 @@
-import discord, os, requests
+import discord, os
 
 try:
     import config_override as config
@@ -144,8 +144,14 @@ async def gvs_lb(ctx):
 async def randcat(ctx):
     print(f"{ctx.user} used randcat commands!")
     await ctx.response.defer()
-    response = requests.get("https://nekos.life/api/v2/img/neko").json()
-    await ctx.followup.send(response["url"])
+    await ctx.followup.send(commands.randcat.command_response())
+
+# random waifu
+@tree.command(name = "randwaifu", description = "Ảnh waifu ngẫu nhiên (lấy từ waifu.pics)")
+async def randwaifu(ctx):
+    print(f"{ctx.user} used randwaifu commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(commands.randwaifu.command_response())
 
 
 # On ready event

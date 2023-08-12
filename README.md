@@ -9,6 +9,8 @@ Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
 - EPIC ping pong moment
 - AutoReactWhenSomeoneSaySomething™
 - Nijika?
+- Waifu?
+- and many things more!
 
 ## How to install and make bot running
 
@@ -43,3 +45,9 @@ You can also change bot's version number and prefix here.
 - Refactor code
 - Add more osu!api things (we have 2 (maybe) now)
 - Add more EPIC FEATURES! (for real!)
+
+## APIs used
+- discord (discord.py)
+- osu!api (ossapi)
+- nekos.life
+- waifu.pics
