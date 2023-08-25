@@ -174,9 +174,9 @@ async def on_message_delete(message):
         return
     else:
         victims = ""
-        for mention in message.mentions:
+        for victim in message.mentions:
             if not victim.bot:
-                victims += f"<@{mention.id}> "
+                victims += f"<@{victim.id}> "
         if victims == "": return
         print(f"{message.author.name} ghostping!")
         ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
