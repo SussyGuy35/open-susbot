@@ -76,12 +76,13 @@ async def ping(ctx):
 
 # Avatar
 @tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
-async def get_avatar(ctx,user:discord.User):
+async def get_avatar(ctx,user:discord.User,server_avatar:bool = True):
     print(f"{ctx.user} used avatar commands!")
     await ctx.response.defer()
-    if user.avatar != None:
+    avatar = user.display_avatar if server_avatar else user.avatar
+    if avatar != None:
         embed = discord.Embed(title="User avatar", description=f"Avatar của **{user}**", color=0x03e3fc)
-        embed.set_image(url = user.avatar.url)
+        embed.set_image(url = avatar.url)
         await ctx.followup.send(embed = embed)
     else:
         await ctx.followup.send(f'{user} còn không có avatar 🐧')
