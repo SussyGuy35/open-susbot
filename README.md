@@ -50,4 +50,5 @@ You can also change bot's version number and prefix here.
 - discord (discord.py)
 - osu!api (ossapi)
 - thecatapi.com
+- nekos.life
 - waifu.pics

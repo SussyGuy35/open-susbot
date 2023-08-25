@@ -142,10 +142,10 @@ async def gvs_lb(ctx):
 
 # random cat girl
 @tree.command(name = "randcat", description = "Ảnh mèo ngẫu nhiên")
-async def randcat(ctx):
+async def randcat(ctx, is_cat_girl:bool = False):
     print(f"{ctx.user} used randcat commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.randcat.command_response())
+    await ctx.followup.send(commands.randcat.command_response(is_cat_girl))
 
 # random waifu
 @tree.command(name = "randwaifu", description = "Ảnh waifu ngẫu nhiên (lấy từ waifu.pics)")
