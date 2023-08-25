@@ -166,6 +166,24 @@ async def on_ready():
     for guild in client.guilds:
         print(guild)
 
+# On message delete event
+@client.event
+async def on_message_delete(message):
+    # Ghost ping detector 6900
+    if len(message.mentions) == 0:
+        return
+    else:
+        print(message.author.name)
+        ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
+        ghostping.add_field(name='**Tên:**', value=f'{message.author} ({message.author.id})')
+        ghostping.add_field(name='**Tin nhắn:**', value=f'{message.content}')
+        try:
+            await message.channel.send(embed=ghostping)
+        except discord.Forbidden:
+            try:
+                await message.author.send(embed=ghostping)
+            except discord.Forbidden:
+                return
 
 
 # On message event
