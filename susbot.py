@@ -81,7 +81,7 @@ async def get_avatar(ctx,user:discord.User,server_avatar:bool = True):
     await ctx.response.defer()
     avatar = user.display_avatar if server_avatar else user.avatar
     if avatar != None:
-        embed = discord.Embed(title="User avatar", description=f"Avatar của **{user}**", color=0x03e3fc)
+        embed = discord.Embed(title="User avatar", description=f"Avatar của **{user}**", color=0x03e3fc, type = "image")
         embed.set_image(url = avatar.url)
         await ctx.followup.send(embed = embed)
     else:
@@ -170,13 +170,19 @@ async def on_ready():
 @client.event
 async def on_message_delete(message):
     # Ghost ping detector 6900
-    if len(message.mentions) == 0 or (len(message.mentions) == 1 and message.mentions[0] == message.author):
+    if len(message.mentions) == 0 or (len(message.mentions) == 1 and (message.mentions[0] == message.author or message.mentions[0].bot)):
         return
     else:
+        victims = ""
+        for mention in message.mentions:
+            if not victim.bot:
+                victims += f"<@{mention.id}> "
+        if victims == "": return
         print(f"{message.author.name} ghostping!")
         ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
-        ghostping.add_field(name='**Tên:**', value=f'{message.author} ({message.author.id})')
+        ghostping.add_field(name='**Tên:**', value=f'{message.author} (<@{message.author.id}>)')
         ghostping.add_field(name='**Tin nhắn:**', value=f'{message.content}')
+        ghostping.add_field(name='**Nạn nhân:**', value=victims)
         try:
             await message.channel.send(embed=ghostping)
         except discord.Forbidden:
@@ -185,6 +191,35 @@ async def on_message_delete(message):
             except discord.Forbidden:
                 return
 
+# On message edit event
+@client.event
+async def on_message_edit(before, after):
+    # Ghost ping detector 6900
+    if len(before.mentions) == 0 or before.author.bot or (len(before.mentions) == 1 and (before.mentions[0] == before.author or before.mentions[0].bot)):
+        return
+    elif (before.mentions != after.mentions):
+        victims_list = before.mentions.copy()
+        for mention in after.mentions:
+            if mention in victims_list:
+                victims_list.remove(mention)
+        victims = ""
+        for victim in victims_list:
+            if not victim.bot:
+                victims += f"<@{victim.id}> "
+        if victims == "": return
+        print(f"{before.author.name} ghostping!")
+        ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=after.created_at, description = "Bắn chết mẹ giờ")
+        ghostping.add_field(name='**Tên:**', value=f'{before.author} (<@{before.author.id}>)')
+        ghostping.add_field(name='**Tin nhắn gốc:**', value=f'{before.content}')
+        ghostping.add_field(name='**Tin nhắn đã chỉnh sửa:**', value=f'{after.content}')
+        ghostping.add_field(name='**Nạn nhân:**', value=victims)
+        try:
+            await before.channel.send(embed=ghostping)
+        except discord.Forbidden:
+            try:
+                await before.author.send(embed=ghostping)
+            except discord.Forbidden:
+                return
 
 # On message event
 @client.event
