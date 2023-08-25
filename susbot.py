@@ -170,10 +170,10 @@ async def on_ready():
 @client.event
 async def on_message_delete(message):
     # Ghost ping detector 6900
-    if len(message.mentions) == 0:
+    if len(message.mentions) == 0 or (len(message.mentions) == 1 and message.mentions[0] == message.author):
         return
     else:
-        print(message.author.name)
+        print(f"{message.author.name} ghostping!")
         ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
         ghostping.add_field(name='**Tên:**', value=f'{message.author} ({message.author.id})')
         ghostping.add_field(name='**Tin nhắn:**', value=f'{message.content}')
