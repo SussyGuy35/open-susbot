@@ -1,4 +1,4 @@
-import discord, os
+import discord, os, datetime
 
 try:
     import config_override as config
@@ -154,22 +154,12 @@ async def randwaifu(ctx):
     await ctx.response.defer()
     await ctx.followup.send(commands.randwaifu.command_response())
 
+# Ghost ping detector
+ghostping_check_time_range = 300
 
-# On ready event
-@client.event
-async def on_ready():
-    #tree.clear_commands(guild = None) # Uncomment this to clear all commands
-    await tree.sync()
-    await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
-    print(f'Logged in as {client.user}. Currently on {str(len(client.guilds))} server(s)!')
-    print("List of current joined server(s):")
-    for guild in client.guilds:
-        print(guild)
-
-# On message delete event
-@client.event
-async def on_message_delete(message):
-    # Ghost ping detector 6900
+async def ghostping_detector_on_delete(message):
+    if (datetime.datetime.now(datetime.timezone.utc) - message.created_at).total_seconds() > ghostping_check_time_range:
+        return
     if len(message.mentions) == 0 or (len(message.mentions) == 1 and (message.mentions[0] == message.author or message.mentions[0].bot)):
         return
     else:
@@ -191,10 +181,9 @@ async def on_message_delete(message):
             except discord.Forbidden:
                 return
 
-# On message edit event
-@client.event
-async def on_message_edit(before, after):
-    # Ghost ping detector 6900
+async def ghostping_detector_on_edit(before, after):
+    if (datetime.datetime.now(datetime.timezone.utc) - before.created_at).total_seconds() > ghostping_check_time_range:
+        return
     if len(before.mentions) == 0 or before.author.bot or (len(before.mentions) == 1 and (before.mentions[0] == before.author or before.mentions[0].bot)):
         return
     elif (before.mentions != after.mentions):
@@ -220,6 +209,29 @@ async def on_message_edit(before, after):
                 await before.author.send(embed=ghostping)
             except discord.Forbidden:
                 return
+
+# On ready event
+@client.event
+async def on_ready():
+    #tree.clear_commands(guild = None) # Uncomment this to clear all commands
+    await tree.sync()
+    await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
+    print(f'Logged in as {client.user}. Currently on {str(len(client.guilds))} server(s)!')
+    print("List of current joined server(s):")
+    for guild in client.guilds:
+        print(guild)
+
+# On message delete event
+@client.event
+async def on_message_delete(message):
+    # Ghost ping detector 6900
+    await ghostping_detector_on_delete(message)
+
+# On message edit event
+@client.event
+async def on_message_edit(before, after):
+    # Ghost ping detector 6900
+    await ghostping_detector_on_edit(before,after)
 
 # On message event
 @client.event
