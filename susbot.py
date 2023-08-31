@@ -159,10 +159,8 @@ async def randwaifu(ctx):
     await ctx.followup.send(commands.randwaifu.command_response())
 
 # Ghost ping detector
-ghostping_check_time_range = 300
-
 async def ghostping_detector_on_delete(message):
-    if (datetime.datetime.now(datetime.timezone.utc) - message.created_at).total_seconds() > ghostping_check_time_range:
+    if (datetime.datetime.now(datetime.timezone.utc) - message.created_at).total_seconds() > config.ghostping_check_time_range:
         return
     if len(message.mentions) == 0 or (len(message.mentions) == 1 and (message.mentions[0] == message.author or message.mentions[0].bot)):
         return
@@ -186,7 +184,7 @@ async def ghostping_detector_on_delete(message):
                 return
 
 async def ghostping_detector_on_edit(before, after):
-    if (datetime.datetime.now(datetime.timezone.utc) - before.created_at).total_seconds() > ghostping_check_time_range:
+    if (datetime.datetime.now(datetime.timezone.utc) - before.created_at).total_seconds() > config.ghostping_check_time_range:
         return
     if len(before.mentions) == 0 or before.author.bot or (len(before.mentions) == 1 and (before.mentions[0] == before.author or before.mentions[0].bot)):
         return
@@ -229,13 +227,15 @@ async def on_ready():
 @client.event
 async def on_message_delete(message):
     # Ghost ping detector 6900
-    await ghostping_detector_on_delete(message)
+    if config.enable_ghostping_detector and not message.guild.id in config.ghostping_detector_blacklist:
+        await ghostping_detector_on_delete(message)
 
 # On message edit event
 @client.event
 async def on_message_edit(before, after):
     # Ghost ping detector 6900
-    await ghostping_detector_on_edit(before,after)
+    if config.enable_ghostping_detector and not message.guild.id in config.ghostping_detector_blacklist:
+        await ghostping_detector_on_edit(before,after)
 
 # On message event
 @client.event
