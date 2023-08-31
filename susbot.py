@@ -138,7 +138,11 @@ async def gvs_count(ctx):
 async def gvs_lb(ctx):
     print(f"{ctx.user} used gvs lb commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),"lb"))
+    response = commands.gvs.command_response(prefix,str(ctx.user.id), ctx.guild,"lb")
+    if type(response) == discord.Embed:
+        await ctx.followup.send(embed = response)
+    elif type(response) == str:
+        await ctx.followup.send(response)
 
 # random cat girl
 @tree.command(name = "randcat", description = "Ảnh mèo ngẫu nhiên")
@@ -336,7 +340,11 @@ async def on_message(message):
             
             # Gvs
             case 'gvs':
-                await message.channel.send(commands.gvs.command_response(prefix,userid,arg))
+                response = commands.gvs.command_response(prefix,userid, message.guild,arg)
+                if type(response) == discord.Embed:
+                    await message.channel.send(embed = response)
+                elif type(response) == str:
+                    await message.channel.send(response)
             
             # Invalid command
             case _:
@@ -346,7 +354,7 @@ async def on_message(message):
         if not message.author.bot:
             # gvs
             if "gvs" in message.content.lower():
-                commands.gvs.gvs(userid, username)
+                commands.gvs.gvs(userid, username, str(message.guild.id))
         
             # Auto react emojis
             for word, emojis in autoreact_emojis.items():
