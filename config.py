@@ -16,6 +16,6 @@ autoreact_emojis = {
 #   "tin chuan chua anh": ["🇯", "🇺", "🇦", "🇳"]
 # }
 
-enable_ghostping_detector = True # enable ghostping detector or not
-ghostping_check_time_range = 60 # time to detect ghostping
+enable_ghostping_detector = False # enable ghostping detector or not
+ghostping_check_time_range = 15 # time to detect ghostping
 ghostping_detector_blacklist = [] # place id of servers that dont use ghostping detector here!
