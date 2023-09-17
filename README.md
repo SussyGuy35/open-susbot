@@ -5,7 +5,7 @@ Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
 ## Features
 - Some commands to make bot say sth or maybe other
 - Super balance gacha game
-- Ghostping detector
+- Ghostping detector (beta)
 - Some osu!api things
 - EPIC ping pong moment
 - AutoReactWhenSomeoneSaySomething™
