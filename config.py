@@ -18,4 +18,5 @@ autoreact_emojis = {
 
 enable_ghostping_detector = False # enable ghostping detector or not
 ghostping_check_time_range = 15 # time to detect ghostping
-ghostping_detector_blacklist = [] # place id of servers that dont use ghostping detector here!
+ghostping_detector_blacklist_guild = [] # place id of servers that dont use ghostping detector here!
+ghostping_detector_blacklist_user = [] # place id of users that should not be warn by the ghostping detector here!
