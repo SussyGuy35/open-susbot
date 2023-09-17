@@ -190,7 +190,7 @@ async def ghostping_detector_on_delete(message):
 async def ghostping_detector_on_edit(before, after):
     if (datetime.datetime.now(datetime.timezone.utc) - before.created_at).total_seconds() > config.ghostping_check_time_range:
         return
-    if message.author.id in config.ghostping_detector_blacklist_user:
+    if before.author.id in config.ghostping_detector_blacklist_user:
         return
     if len(before.mentions) == 0 or before.author.bot or (len(before.mentions) == 1 and (before.mentions[0] == before.author or before.mentions[0].bot)):
         return
