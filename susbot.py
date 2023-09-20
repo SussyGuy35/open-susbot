@@ -233,15 +233,17 @@ async def on_ready():
 @client.event
 async def on_message_delete(message):
     # Ghost ping detector 6900
-    if config.enable_ghostping_detector and not message.guild.id in config.ghostping_detector_blacklist_guild:
-        await ghostping_detector_on_delete(message)
+    if message.guild:
+        if config.enable_ghostping_detector and not message.guild.id in config.ghostping_detector_blacklist_guild:
+            await ghostping_detector_on_delete(message)
 
 # On message edit event
 @client.event
 async def on_message_edit(before, after):
     # Ghost ping detector 6900
-    if config.enable_ghostping_detector and not before.guild.id in config.ghostping_detector_blacklist_guild:
-        await ghostping_detector_on_edit(before,after)
+    if message.guild:
+        if config.enable_ghostping_detector and not before.guild.id in config.ghostping_detector_blacklist_guild:
+            await ghostping_detector_on_edit(before,after)
 
 # On message event
 @client.event
