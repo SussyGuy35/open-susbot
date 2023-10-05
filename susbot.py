@@ -164,15 +164,18 @@ async def ghostping_detector_on_delete(message):
         return
     if message.author.id in config.ghostping_detector_blacklist_user:
         return
-    if len(message.mentions) == 0 or (len(message.mentions) == 1 and (message.mentions[0] == message.author or message.mentions[0].bot)):
-        return
+    if (len(message.mentions) == 0 or (len(message.mentions) == 1 and (message.mentions[0] == message.author or message.mentions[0].bot))):
+        if not message.mention_everyone:
+            return
     if message.author.bot:
         return
     else:
-        victims = ""
-        for victim in message.mentions:
-            if not victim.bot:
-                victims += f"<@{victim.id}> "
+        if message.mention_everyone: victims = "@everyone"
+        else:
+            victims = ""
+            for victim in message.mentions:
+                if not victim.bot:
+                    victims += f"<@{victim.id}> "
         if victims == "": return
         print(f"{message.author.name} ghostping!")
         ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
@@ -192,17 +195,21 @@ async def ghostping_detector_on_edit(before, after):
         return
     if before.author.id in config.ghostping_detector_blacklist_user:
         return
-    if len(before.mentions) == 0 or before.author.bot or (len(before.mentions) == 1 and (before.mentions[0] == before.author or before.mentions[0].bot)):
-        return
-    elif (before.mentions != after.mentions):
-        victims_list = before.mentions.copy()
-        for mention in after.mentions:
-            if mention in victims_list:
-                victims_list.remove(mention)
-        victims = ""
-        for victim in victims_list:
-            if not victim.bot:
-                victims += f"<@{victim.id}> "
+    if len(before.mentions) == 0 or (len(before.mentions) == 1 and (before.mentions[0] == before.author or before.mentions[0].bot)):
+        if not before.mention_everyone:
+            return
+    if before.author.bot: return
+    elif (before.mentions != after.mentions) or (before.mention_everyone and after.mention_everyone == False):
+        if before.mention_everyone: victims = "@everyone"
+        else:
+            victims_list = before.mentions.copy()
+            for mention in after.mentions:
+                if mention in victims_list:
+                    victims_list.remove(mention)
+            victims = ""
+            for victim in victims_list:
+                if not victim.bot:
+                    victims += f"<@{victim.id}> "
         if victims == "": return
         print(f"{before.author.name} ghostping!")
         ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=after.created_at, description = "Bắn chết mẹ giờ")
