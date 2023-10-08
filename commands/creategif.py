@@ -20,8 +20,8 @@ def get_file(url, file_name):
     else:
         return None
 
-def command_response(attactment):
-    file_name = get_file(attactment.url, attactment.filename)
+def command_response(attachment):
+    file_name = get_file(attachment.url, attachment.filename)
 
     if file_name:
         file = discord.File(file_name)
