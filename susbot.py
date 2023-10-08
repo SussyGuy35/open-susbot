@@ -1,3 +1,4 @@
+import re
 import discord, os, datetime
 
 try:
@@ -157,6 +158,18 @@ async def randwaifu(ctx):
     print(f"{ctx.user} used randwaifu commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.randwaifu.command_response())
+
+# convert image to gif (kinda)
+@tree.command(name="create_gif", description="Tạo gif")
+async def create_gif(ctx, file: discord.Attachment):
+    await ctx.response.defer()
+    response = commands.creategif.command_response(file)
+    if type(response) == discord.File:
+        await ctx.followup.send(file=response)
+    elif type(response) == str:
+        await ctx.followup.send(response)
+
+
 
 # Ghost ping detector
 async def ghostping_detector_on_delete(message):
