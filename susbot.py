@@ -162,6 +162,7 @@ async def randwaifu(ctx):
 # convert image to gif (kinda)
 @tree.command(name="create_gif", description="Tạo gif")
 async def create_gif(ctx, file: discord.Attachment):
+    print(f"{ctx.user} used createg_gif commands!")
     await ctx.response.defer()
     response = commands.creategif.command_response(file)
     if type(response) == discord.File:
