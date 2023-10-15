@@ -34,8 +34,8 @@ def gvs(userid, username, guildid):
     
     save()
 
-def command_response(prefix, userid, guild, command):
-    match command:
+def command_response(prefix, userid, guild, args):
+    match args[0]:
         case "count":
             if userid in data.keys():
                 return f"Số lần **{data[guild.id][userid]['username']}** đã **gvs**: {data[guild.id][userid]['gvs']}"

@@ -298,7 +298,8 @@ async def on_message(message):
         # Get requested command
         command = message.content.split()[0].replace(prefix,'')
         
-        arg = message.content[len(prefix+command)+1:]
+        plain_args = message.content[len(prefix+command)+1:]
+        args = plain_args.split()
         
         # Main thing
         match command:
@@ -317,15 +318,15 @@ async def on_message(message):
 
             # Echo
             case 'echo':
-                await message.channel.send(commands.echo.command_response(arg))
+                await message.channel.send(commands.echo.command_response(plain_args))
             
             # Pick
             case 'pick':
-                await message.channel.send(commands.pick.command_response(arg))  
+                await message.channel.send(commands.pick.command_response(plain_args))
             
             # Random caps
             case 'randcaps':
-                await message.channel.send(commands.randcaps.command_response(arg))  
+                await message.channel.send(commands.randcaps.command_response(plain_args))
             
             # Gacha
             case 'gacha':
@@ -345,11 +346,11 @@ async def on_message(message):
             
             # osu!
             case 'osu':
-                await message.channel.send(commands.osu.command_response(ossapi_client,prefix,arg))
+                await message.channel.send(commands.osu.command_response(ossapi_client,prefix,plain_args))
             
             # emoji
             case 'emoji':
-                rs = commands.emoji.command_response(client,arg)
+                rs = commands.emoji.command_response(client,args[0])
                 if type(rs) == str:
                     await message.channel.send(rs)
                 else:
@@ -357,7 +358,7 @@ async def on_message(message):
             
             # Ask
             case 'ask':
-                await message.channel.send(commands.ask.command_response(arg))
+                await message.channel.send(commands.ask.command_response(plain_args))
             
             # Nijika
             case 'nijika':
@@ -369,7 +370,7 @@ async def on_message(message):
             
             # Gvs
             case 'gvs':
-                response = commands.gvs.command_response(prefix,userid, message.guild,arg)
+                response = commands.gvs.command_response(prefix,userid, message.guild,args)
                 if type(response) == discord.Embed:
                     await message.channel.send(embed = response)
                 elif type(response) == str:
