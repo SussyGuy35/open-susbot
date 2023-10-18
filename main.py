@@ -1,5 +1,4 @@
-import re
-import discord, os, datetime
+import discord, datetime
 
 try:
     import config_override as config
