@@ -38,7 +38,7 @@ You can also change bot's version number and prefix here.
 
 ### Step 5: Move 2 files from `commands/card_game_data/json_file_template` to `commands/card_game_data`
 
-### Step 6: Run `susbot.py`
+### Step 6: Run `main.py`
 **_Now your bot is up and running. Have fun!_**
 
 ## To-do
