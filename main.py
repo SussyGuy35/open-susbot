@@ -11,7 +11,7 @@ bot_version = config.bot_version
 
 TOKEN = config.TOKEN
 
-print(f'open-susbot v{bot_version}')
+print(f'{config.bot_name} v{bot_version}')
 
 import commands
 
@@ -244,11 +244,12 @@ async def on_ready():
     #tree.clear_commands(guild = None) # Uncomment this to clear all commands
     await tree.sync()
     await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
-    print(f'Logged in as {client.user}. Currently on {str(len(client.guilds))} server(s)!')
-    print("List of current joined server(s):")
+    prompt = f"""Logged in as {client.user}. Currently on {str(len(client.guilds))} server(s)!
+List of current joined server(s):
+"""
     for guild in client.guilds:
-        print(guild)
-
+        prompt += f"{guild}\n"
+    print(prompt)
 # On message delete event
 @client.event
 async def on_message_delete(message):
@@ -272,7 +273,7 @@ async def on_message(message):
     
     # log console
     if message.author == client.user:
-        print(">Bot:",message.content)
+        print(">Bot:",message.content,"\n")
         return   
     
     userid = str(message.author.id)

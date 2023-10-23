@@ -1,3 +1,5 @@
+.venv/*
+venv/*
 __pycache__/*
 commands/__pycache__/*
 commands/card_game_data/__pycache__/*
