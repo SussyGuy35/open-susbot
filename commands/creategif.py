@@ -1,8 +1,7 @@
-from os import remove
 import discord
 from requests import get
 
-def get_file(url, file_name):
+def get_file(url, file_name) -> str | None:
     """Get a file from given url. Return file's name if the request was successful, None if not."""
     if file_name.split(".")[-1] in ["png", "jpg", "webp", "bmp"]:
         # Send a GET request to the URL
@@ -20,12 +19,11 @@ def get_file(url, file_name):
     else:
         return None
 
-def command_response(attachment):
+def command_response(attachment) -> discord.File | str:
     file_name = get_file(attachment.url, attachment.filename)
 
     if file_name:
         file = discord.File(file_name)
-        remove(file_name)
         return file
     else:
         return "Xin lỗi, đã có lỗi xảy ra!"
