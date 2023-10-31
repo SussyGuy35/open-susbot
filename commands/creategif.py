@@ -1,4 +1,5 @@
 import discord
+from os import remove
 from requests import get
 
 def get_file(url, file_name) -> str | None:
@@ -18,6 +19,10 @@ def get_file(url, file_name) -> str | None:
         return new_file_name
     else:
         return None
+
+def post_response_cleanup(response):
+    if type(response) == discord.File:
+        remove(response.filename)
 
 def command_response(attachment) -> discord.File | str:
     file_name = get_file(attachment.url, attachment.filename)

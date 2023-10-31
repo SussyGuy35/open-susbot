@@ -1,4 +1,4 @@
-import discord, datetime, os
+import discord, datetime
 
 try:
     import config_override as config
@@ -166,10 +166,9 @@ async def create_gif(ctx, file: discord.Attachment):
     response = commands.creategif.command_response(file)
     if type(response) == discord.File:
         await ctx.followup.send(file=response)
-        os.remove(response.filename)
     elif type(response) == str:
         await ctx.followup.send(response)
-
+    commands.creategif.post_response_cleanup(response)
 
 
 # Ghost ping detector
