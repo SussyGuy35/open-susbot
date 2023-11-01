@@ -122,7 +122,7 @@ def card_sell_bot():
     cardshop_data[item_id]["price"] = price    
 def card_roll(s_percent,a_percent,b_percent,c_percent,d_percent):
     if s_percent + a_percent + b_percent + c_percent + d_percent != 100:
-        raise Exception("Total percent must be 100!")
+        raise ValueError("Total percent must be 100!")
     
     random_num = random.randint(1,100)
     if random_num <= d_percent:
