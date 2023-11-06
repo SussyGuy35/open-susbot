@@ -190,7 +190,7 @@ async def ghostping_detector_on_delete(message):
                 if not victim.bot:
                     victims += f"<@{victim.id}> "
         if victims == "": return
-        print(f"{message.author.name} ghostping! in {message.guild}")
+        print(f"{message.author.name} ghostping in {message.guild}!")
         ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
         ghostping.add_field(name='**Tên:**', value=f'{message.author} (<@{message.author.id}>)')
         ghostping.add_field(name='**Tin nhắn:**', value=f'{message.content}')
@@ -224,7 +224,7 @@ async def ghostping_detector_on_edit(before, after):
                 if not victim.bot:
                     victims += f"<@{victim.id}> "
         if victims == "": return
-        print(f"{before.author.name} ghostping! in {before.guild}")
+        print(f"{before.author.name} ghostping in {before.guild}!")
         ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=after.created_at, description = "Bắn chết mẹ giờ")
         ghostping.add_field(name='**Tên:**', value=f'{before.author} (<@{before.author.id}>)')
         ghostping.add_field(name='**Tin nhắn gốc:**', value=f'{before.content}')
