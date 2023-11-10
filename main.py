@@ -56,7 +56,7 @@ class FeedbackButtons(discord.ui.View):
 
 # Feedback
 @tree.command(name = "feedback", description = "Gửi feedback cho dev")
-async def button(ctx):
+async def button(ctx: discord.Interaction):
     view = FeedbackButtons()
     view.add_item(discord.ui.Button(label="Forms đòi tiền",style=discord.ButtonStyle.link,url="https://SussyGuy35.github.io/duatienday.html",emoji="😏"))
     print(f"{ctx.user} used feedback commands!")
@@ -64,19 +64,19 @@ async def button(ctx):
 
 # Help
 @tree.command(name = "help", description = "Hiện hướng dẫn 🐧") 
-async def help(ctx):
+async def help(ctx: discord.Interaction):
     print(f"{ctx.user} used help commands!")
     await ctx.response.send_message(commands.help.command_response(prefix))
 
 # Ping
 @tree.command(name = "ping", description = "Ping pong ping pong") 
-async def ping(ctx):
+async def ping(ctx: discord.Interaction):
     print(f"{ctx.user} used ping commands!")
     await ctx.response.send_message(commands.ping.command_response())
 
 # Avatar
 @tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
-async def get_avatar(ctx,user:discord.User,server_avatar:bool = True):
+async def get_avatar(ctx: discord.Interaction,user:discord.User,server_avatar:bool = True):
     print(f"{ctx.user} used avatar commands!")
     await ctx.response.defer()
     avatar = user.display_avatar if server_avatar else user.avatar
@@ -89,7 +89,7 @@ async def get_avatar(ctx,user:discord.User,server_avatar:bool = True):
 
 # Emoji
 @tree.command(name = "emoji", description = "Lấy emoji nào đó 👀") 
-async def get_emoji(ctx,emoji: str):
+async def get_emoji(ctx: discord.Interaction,emoji: str):
     print(f"{ctx.user} used emoji commands!")
     await ctx.response.defer()
     rs = commands.emoji.command_response(client,emoji)
@@ -100,45 +100,45 @@ async def get_emoji(ctx,emoji: str):
 
 # Nijika command
 @tree.command(name = "nijika", description = "Nijika")
-async def nijika(ctx):
+async def nijika(ctx: discord.Interaction):
     print(f"{ctx.user} used nijika commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = commands.nijika.command_response())
 
 #Amogus command
 @tree.command(name = "amogus", description = "Amogus")
-async def amogus(ctx):
+async def amogus(ctx: discord.Interaction):
     print(f"{ctx.user} used amogus commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = commands.amogus.command_response())
 
 # osu user
 @tree.command(name = "osu_user", description = "Lấy thông tin người chơi osu!") 
-async def osu_user(ctx, username: str):
+async def osu_user(ctx: discord.Interaction, username: str):
     print(f"{ctx.user} used osu user commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"user " + username))
 
 # osu beatmap
 @tree.command(name = "osu_beatmap", description = "Tìm beatmap trong osu!") 
-async def osu_beatmap(ctx, beatmap: str):
+async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
     print(f"{ctx.user} used osu beatmap commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
 
 # gvs count
 @tree.command(name = "gvs_count", description = "Đếm số lần đã *gvs*")
-async def gvs_count(ctx):
+async def gvs_count(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs count commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),"count"))
+    await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
 
 # gvs lb
 @tree.command(name = "gvs_leaderboard", description = "Bảng xếp hạng *gvs*")
-async def gvs_lb(ctx):
+async def gvs_lb(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs lb commands!")
     await ctx.response.defer()
-    response = commands.gvs.command_response(prefix,str(ctx.user.id), ctx.guild,"lb")
+    response = commands.gvs.command_response(prefix,str(ctx.user.id), ctx.guild,["lb"])
     if type(response) == discord.Embed:
         await ctx.followup.send(embed = response)
     elif type(response) == str:
@@ -146,21 +146,21 @@ async def gvs_lb(ctx):
 
 # random cat girl
 @tree.command(name = "randcat", description = "Ảnh mèo ngẫu nhiên")
-async def randcat(ctx, is_cat_girl:bool = False):
+async def randcat(ctx: discord.Interaction, is_cat_girl:bool = False):
     print(f"{ctx.user} used randcat commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.randcat.command_response(is_cat_girl))
 
 # random waifu
 @tree.command(name = "randwaifu", description = "Ảnh waifu ngẫu nhiên (lấy từ waifu.pics)")
-async def randwaifu(ctx):
+async def randwaifu(ctx: discord.Interaction):
     print(f"{ctx.user} used randwaifu commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.randwaifu.command_response())
 
 # convert image to gif (kinda)
 @tree.command(name="create_gif", description="Tạo gif")
-async def create_gif(ctx, file: discord.Attachment):
+async def create_gif(ctx: discord.Interaction, file: discord.Attachment):
     print(f"{ctx.user} used createg_gif commands!")
     await ctx.response.defer()
     response = commands.creategif.command_response(file)

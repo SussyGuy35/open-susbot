@@ -34,17 +34,17 @@ def gvs(userid, username, guildid):
     
     save()
 
-def command_response(prefix, userid, guild, args):
+def command_response(prefix: str, userid: str, guild:discord.Guild, args: list[str]):
+    guildid = str(guild.id)
     match args[0]:
         case "count":
-            if userid in data.keys():
-                return f"Số lần **{data[guild.id][userid]['username']}** đã **gvs**: {data[guild.id][userid]['gvs']}"
+            if guildid in data.keys() and userid in data[guildid]:
+                return f"Số lần **{data[guildid][userid]['username']}** đã **gvs** trong **{guild.name}**: {data[guildid][userid]['gvs']}"
             else:
                 return "Bạn chưa **gvs** lần nào 😳"
         case "lb":
             msg = ""    
             lb = {}
-            guildid = str(guild.id)
             
             if not guildid in data.keys():
                 return "Hiện tại chưa có ai trên bảng xếp hạng"
