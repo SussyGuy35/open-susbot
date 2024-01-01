@@ -43,6 +43,10 @@ def gvs(userid, username, guildid):
 
 def command_response(prefix: str, userid: str, guild:discord.Guild, args: list[str]):
     guildid = str(guild.id)
+    
+    if len(args) <= 0: 
+        return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+    
     match args[0]:
         case "count":
             if guildid in data.keys() and userid in data[guildid]:
