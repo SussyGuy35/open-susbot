@@ -7,3 +7,4 @@ commands/card_game_data/*.json
 commands/data/gvs.json
 config_override.py
 test.py
+lib/__pycache__/*
