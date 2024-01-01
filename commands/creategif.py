@@ -1,6 +1,13 @@
+try:
+    import config_override as config
+except:
+    import config
+from lib.locareader import get_string_by_id
 import discord
 from os import remove
 from requests import get
+
+loca_sheet = "loca/loca - creategif.csv"
 
 def get_file(url, file_name) -> str:
     """Get a file from given url. Return file's name if the request was successful, raise error if not."""
@@ -28,8 +35,8 @@ def command_response(attachment) -> discord.File | str:
     try:
         file_name = get_file(attachment.url, attachment.filename)
     except ValueError:
-        return "File đã là gif hoặc không được hỗ trợ (đi mà hỏi thằng chủ bot)"
+        return get_string_by_id(loca_sheet, "prompt_dont_support",config.language)
     except:
-        return "Đã có lỗi trong quá trình xử lý"
+        return get_string_by_id(loca_sheet, "prompt_exception",config.language)
     else:
         return discord.File(file_name)

@@ -1,9 +1,10 @@
-import commands.card_game_data.card as cardgame
-import discord,json,random,datetime,os
 try:
     import config_override as config
 except:
     import config
+from lib.locareader import get_string_list, get_string_by_id
+import commands.card_game_data.card as cardgame
+import discord, json, random, datetime, os, enum
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -16,22 +17,20 @@ cardshop_data_path = absolute_path("card_game_data/shop.json")
 
 prefix = config.prefix
 
+help_loca_sheet = "loca/loca - gachahelp.csv"
+main_loca_sheet = "loca/loca - gacha.csv"
+
+class RpsClass(enum.Enum):
+    Rock = get_string_by_id(main_loca_sheet, "rps_rock", config.language)
+    Paper = get_string_by_id(main_loca_sheet, "rps_paper", config.language)
+    Scissors = get_string_by_id(main_loca_sheet, "rps_scissors", config.language)
+
 # Help message
 def get_help_text(prefix):
-    gacha_help = f"""Các lệnh `gacha`:
-- `{prefix}gacha help`: Hiện cái đoạn hướng dẫn này.
-- `{prefix}gacha docs`: Tài liệu game.
-- `{prefix}gacha newplayer`: Nhận quà tân thủ (chỉ một lần).
-- `{prefix}gacha daily`: Điểm danh hàng ngày nhận 100 BachNob Credit.
-- `{prefix}gacha roll [số lần roll]`: Quay thẻ ngẫu nhiên. 100 BachNob Credit/ 1 lần quay.
-- `{prefix}gacha supraroll [số lần roll]`: Quay thẻ ngẫu nhiên, nhưng vjp hơn. 1 BachNob Guarantee/ 1 lần quay.
-- `{prefix}gacha rps <số BachNob Credit cược> <bài>`: Chơi oẳn tù tì.
-- `{prefix}gacha show [người dùng]`: Hiện các thẻ bài hiện có.
-- `{prefix}gacha userinfo [người dùng]`: Hiện thông tin người dùng
-- `{prefix}gacha lb`: Hiện bảng xếp hạng.
-- `{prefix}gacha shop <lệnh>`: Shop mua bán card.
-"""
-    return gacha_help
+    help_text = ""
+    for line in get_string_list(help_loca_sheet, config.language):
+        help_text += line + "\n"
+    return help_text.format(prefix)
 
 # Load saved game data
 cardgame_data = json.load(open(cardgame_data_path,"r"))
@@ -71,7 +70,7 @@ def cardgame_user_check_beaten(userid):
                 
             if user_total_card == total_legendary_num + total_epic_num + total_rare_num + total_uncommon_num + total_common_num:
                 cardgame_data[userid]["badges"].append("Super player")
-                return f"Chúc mừng **{cardgame_data[userid]['username']}** đã phá đảo trò này. You are a super player!"
+                return get_string_by_id(main_loca_sheet, "game_complete",config.language).format(cardgame_data[userid]['username'])
     return None
 
 def cardgame_user_check_level(userid):
@@ -112,7 +111,7 @@ def card_sell_bot():
     elif card_rank == "B":
         card_to_sell = random.choice(cardgame.card_rare)
         price = 105
-    seller_name = "Bot bán hàng đỉnh cao của Bách"
+    seller_name = get_string_by_id(main_loca_sheet, "shop_bot_name", config.language)
     item_id = str(len(cardshop_data.keys()) + 1)
     cardshop_data[item_id] = {}
     cardshop_data[item_id]["seller_id"] = "botdangcap"
@@ -151,7 +150,11 @@ def card_roll(s_percent,a_percent,b_percent,c_percent,d_percent):
 def check_if_user_level_up(userid):
     user_check_level = cardgame_user_check_level(userid)
     if user_check_level != None:
-        return f"Chúc mừng **{cardgame_data[userid]['username']}** đã tăng cấp lên **level {user_check_level[0]}**! Bạn nhận được **{user_check_level[1]} BachNob Credit** và **{user_check_level[2]} BachNob Guarantee**!"
+        return get_string_by_id(main_loca_sheet, "level_up_message", config.language).format(
+            cardgame_data[userid]['username'],
+            user_check_level[1],
+            user_check_level[2]
+        )
     return None
 
 def save():
@@ -192,22 +195,17 @@ def command_response(command,prefix,userid,username):
         
         # Docs
         case 'docs':
-            return discord.File(absolute_path("card_game_data/docs.txt"))
+            return discord.File(absolute_path(f"card_game_data/docs/docs-{config.language}.txt"))
         
         # Newplayer
         case 'newplayer':
-            if userid in cardgame_data.keys():
-                if cardgame_data[userid]['newbie'] == True:
-                    cardgame_data[userid]['pts'] += 1500
-                    cardgame_data[userid]['newbie'] = False
-                    return f"Chúc mừng bạn nhận được **1500 BachNob Credit**! Hiện tại bạn có **{cardgame_data[userid]['pts']} BachNob Credit**."
-                else:
-                    return 'Bạn đã nhận nó rồi mà :)'
-            else:
-                cardgame_new_user(userid,username)
+            if not userid in cardgame_data.keys(): cardgame_new_user(userid,username)
+            if cardgame_data[userid]['newbie'] == True:
                 cardgame_data[userid]['pts'] += 1500
                 cardgame_data[userid]['newbie'] = False
-                return f"Chúc mừng bạn nhận được **1500 BachNob Credit**! Hiện tại bạn có **{cardgame_data[userid]['pts']} BachNob Credit**."
+                return get_string_by_id(main_loca_sheet, "newplayer_message", config.language).format(cardgame_data[userid]['pts'])
+            else:
+                return get_string_by_id(main_loca_sheet, "newplayer_claimed_message", config.language)
         
         # User info
         case 'userinfo':
@@ -216,63 +214,70 @@ def command_response(command,prefix,userid,username):
             except:
                 userid_to_show = userid
             if not userid_to_show in cardgame_data.keys():
-                return f"<@{userid_to_show}> chưa từng chơi con game tuyệt tác này :("
+                return get_string_by_id(main_loca_sheet,"user_not_played_message",config.language).format(userid_to_show)
             user = cardgame_data[userid_to_show]
             exp_to_next_level = (150*(user["level"])+10*(user["level"]-1)**3) - user["exp"]
             
             if len(user['badges']) > 0:
-                msg = "- Huy hiệu:\n"
+                msg = "- " + get_string_by_id(main_loca_sheet,"badges",config.language) + "\n"
                 for badge in user['badges']:
                     msg += f" - **{badge}**\n"
             
             else: msg = ""
             
-            return f"Người chơi **{user['username']}**:\n- Level: {user['level']}\n- Exp: {user['exp']}. Cần thêm {exp_to_next_level} exp để lên cấp tiếp theo.\n- BachNob Credit: {user['pts']}\n- BachNob Guarantee: {user['bng']}\n- Số lần đã roll: {user['roll']}\n" + msg
+            return get_string_by_id(main_loca_sheet, "userinfo_template", config.language).format(
+                user['username'],
+                user['level'],
+                user['exp'],
+                exp_to_next_level,
+                user['pts'],
+                user['bng'],
+                user['roll']
+            ) + "\n" + msg
         
         # Daily
         case 'daily':
-            if userid in cardgame_data.keys():
-                if cardgame_data[userid]['claimed'] == False:
-                    cardgame_data[userid]['pts'] += 100
-                    cardgame_data[userid]["exp"] += 2*cardgame_data[userid]["level"]
-                    cardgame_data[userid]['claimed'] = True
-                    return f"Bạn nhận được **100 BachNob Credit** và **{2*cardgame_data[userid]['level']} exp** cho hôm nay. Hiện tại bạn có **{cardgame_data[userid]['pts']} BachNob Credit**!"
-                else:
-                    return 'Hôm nay bạn đã nhận rồi mà :)'
+            if not userid in cardgame_data.keys(): cardgame_new_user(userid,username)
+            if cardgame_data[userid]['claimed'] == False:
+                bonus_exp = 2*cardgame_data[userid]["level"]
+                cardgame_data[userid]['pts'] += 100
+                cardgame_data[userid]["exp"] += bonus_exp
+                cardgame_data[userid]['claimed'] = True
+                return get_string_by_id(main_loca_sheet, "daily_message", config.language).format(bonus_exp, cardgame_data[userid]['pts'])
             else:
-                cardgame_new_user(userid,username)
-                cardgame_data[userid]["pts"] = 100
-                cardgame_data[userid]["exp"] += 2
-                cardgame_data[userid]["claimed"] = True
-                return f"Bạn nhận được **100 BachNob Credit** và **2 exp** cho hôm nay. Hiện tại bạn có **{cardgame_data[userid]['pts']} BachNob Credit**!"
+                return get_string_by_id(main_loca_sheet, "daily_claimed_message", config.language)
         
         # Shop
         case 'shop':
             try :
                 shop_command = command.split()[2]
             except:
-                return f"Lệnh không hợp lệ!\nCác lệnh `{prefix}gacha shop`:\n- `{prefix}gacha shop sell <giá bán> <card muốn bán>`: Đăng bán card lên shop.\n- `{prefix}gacha shop buy <item id>`: Mua vật phẩm trên shop.\n- `{prefix}gacha shop list`: Hiện các vật phẩm đang được bán trên shop."
+                return get_string_by_id(main_loca_sheet, "shop_command_help", config.language).format(prefix)
             
+            minimum_level = 3
+
             # SubSubCommand
             match shop_command:
                 
                 # Sell
                 case "sell":
                     if not userid in cardgame_data.keys():
-                        return "Bạn còn không có thẻ 🐧"
+                        return get_string_by_id(main_loca_sheet, "shop_command_help", config.language)
                     
-                    if cardgame_data[userid]['level'] < 3:
-                        return f"Tính năng shop yêu cầu tối thiểu **level 3** để sử dụng! Hiện tại bạn đang **level {cardgame_data[userid]['level']}**."
+                    minimum_price = 0
+                    maximum_price = 50000
+                    if cardgame_data[userid]['level'] < minimum_level:
+                        return get_string_by_id(main_loca_sheet, "shop_requirement", config.language).format(minimum_level, cardgame_data[userid]['level'])
                     
                     try:
                         price = int(command.split()[3])
                     except:
-                        return f"Lệnh không hợp lệ! Hãy dùng `{prefix}gacha sell <giá bán> <card muốn bán>`."
+                        return get_string_by_id(main_loca_sheet, "shop_sell_invalid_command", config.language).format(prefix)
                     card_to_sell = command.replace(f"{prefix}gacha shop sell {price} ","")
                     user = cardgame_data[userid]
                     user_own_cards = user["S"]+user["A"]+user["B"]+user["C"]+user["D"]
                     if total_items < max_shop_items:
-                        if 0 < price < 50000 :
+                        if minimum_price < price < maximum_price :
                             if card_to_sell in user_own_cards:
                                 if card_to_sell in cardgame.card_common: card_rank = "D"
                                 elif card_to_sell in cardgame.card_uncommon: card_rank = "C"
@@ -281,18 +286,18 @@ def command_response(command,prefix,userid,username):
                                 elif card_to_sell in cardgame.card_legendary: card_rank = "S"
                                 cardgame_data[userid][card_rank].remove(card_to_sell)
                                 card_sell(userid, card_to_sell, price, card_rank)
-                                return f"Bạn đã đăng bán card \"{card_to_sell}\" với giá {price} BachNob Credit thành công!"
+                                return get_string_by_id(main_loca_sheet, "shop_sell_successful_message", config.language).format(card_to_sell, price)
                             else:
-                                return "Bạn còn không có card đó ☠"
+                                return get_string_by_id(main_loca_sheet, "shop_sell_invalid_card", config.language)
                         else:
-                            return "Giá bán không hợp lệ. Giá bán phải là **số tự nhiên n** với **0 < n < 50000**."
+                            return get_string_by_id(main_loca_sheet, "shop_sell_invalid_price", config.language).format(minimum_price, maximum_price)
                     else:
-                        return "Shop đã hết chỗ đăng bán"
+                        return get_string_by_id(main_loca_sheet, "shop_sell_full", config.language)
                 
                 # List
                 case "list":
                     if total_items == 0:
-                        return "Hiện tại không có vật phẩm nào đang được bán trên shop!"
+                        return get_string_by_id(main_loca_sheet, "shop_list_empty_shop", config.language)
                     else:
                         msg = ""
                         for item in cardshop_data.keys():
@@ -303,37 +308,45 @@ def command_response(command,prefix,userid,username):
                             elif card_rank == "B": card_rank_name = "Rare"
                             elif card_rank == "C": card_rank_name = "Uncommon"
                             elif card_rank == "D": card_rank_name = "Common"
-                            msg += f"### Item `{item}`:\n- Card: **{sell_item['card']}** - Độ hiếm: {card_rank_name} - Giá bán: `{sell_item['price']}`\n- Người bán: `{sell_item['seller_name']}`\n"
-                        return "Các card đang được bán trên shop:\n"+msg
+                            msg += get_string_by_id(main_loca_sheet, "shop_list_item_info_template", config.language).format(
+                                sell_item["card"],
+                                card_rank_name,
+                                sell_item["price"],
+                                sell_item["seller_name"]
+                            ) + "\n"
+                        return get_string_by_id(main_loca_sheet, "shop_list_item_info_prompt", config.language) + "\n" + msg
                 
                 # Buy
                 case "buy":
                     try :
                         item_id = command.split()[3]
                     except:
-                        return f"Lệnh không hợp lệ! Hãy dùng `{prefix}gacha buy <item muốn mua>`."
+                        return get_string_by_id(main_loca_sheet, "shop_buy_invalid_command", config.language).format(prefix)
                     
                     if not userid in cardgame_data.keys():
                         cardgame_new_user(userid, username)
                     
-                    if cardgame_data[userid]['level'] < 3:
-                        return f"Tính năng shop yêu cầu tối thiểu **level 3** để sử dụng! Hiện tại bạn đang **level {cardgame_data[userid]['level']}**."
+                    if cardgame_data[userid]['level'] < minimum_level:
+                        return get_string_by_id(main_loca_sheet, "shop_requirement", config.language).format(minimum_level, cardgame_data[userid]['level'])
                     
                     if not item_id in cardshop_data.keys():
-                        return "Id vật phẩm không hợp lệ!"
+                        return get_string_by_id(main_loca_sheet, "shop_buy_invalid_id", config.language)
                     item_to_buy = cardshop_data[item_id]
                     card_to_buy = item_to_buy["card"]
                     if item_to_buy["seller_id"] == userid:
-                        return "Bạn không thể tự mua đồ mình bán được <:raiseismok:1094913694531592213>"
+                        return get_string_by_id(main_loca_sheet, "shop_buy_your_own_item", config.language)
                     if cardgame_data[userid]['pts'] >= item_to_buy['price']:
                         card_rank = item_to_buy["rank"]
                         if card_to_buy in cardgame_data[userid][card_rank]:
-                            return "Bạn đã có card đó rồi nên không thể mua nữa!"
+                            return get_string_by_id(main_loca_sheet, "shop_buy_item_owned", config.language)
                         cardgame_data[userid][card_rank].append(card_to_buy)
                         cardgame_data[userid]["pts"] -= item_to_buy["price"]
                         if item_to_buy["seller_id"] != "botdangcap":
                             cardgame_data[item_to_buy["seller_id"]]["pts"] += int(0.9*item_to_buy["price"])
-                            msg = f"**{item_to_buy['seller_name']}** nhận được **{int(0.9*item_to_buy['price'])} BachNob Credit**!"
+                            msg = get_string_by_id(main_loca_sheet, "shop_buy_seller_receive", config.language).format(
+                                item_to_buy['seller_name'],
+                                int(0.9*item_to_buy['price'])
+                            )
                         else: msg = ""    
                         cardshop_data.pop(item_id)
                         newshop = {}
@@ -343,13 +356,18 @@ def command_response(command,prefix,userid,username):
                             else:
                                 newshop[key] = cardshop_data[key]
                         cardshop_data = newshop    
-                        return f"Bạn đã mua card **{card_to_buy}** từ **{item_to_buy['seller_name']}** với giá **{item_to_buy['price']} BachNob Credit** thành công! "+msg
+                        return get_string_by_id(main_loca_sheet, "shop_buy_successful_message", config.language).format(
+                            card_to_buy,
+                            item_to_buy['seller_name'],
+                            item_to_buy['price']
+
+                        ) +"\n"+msg
                     else:
-                        return "Bạn còn không có đủ tiền <:raiseismok:1094913694531592213>"
+                        return get_string_by_id(main_loca_sheet, "shop_buy_cant_afford", config.language)
                 
                 # Invalid subsubcommand
                 case _:
-                    return f"Lệnh không hợp lệ!\nCác lệnh `{prefix}gacha shop`:\n- `{prefix}gacha shop sell <giá bán> <card muốn bán>`: Đăng bán card lên shop.\n- `{prefix}gacha shop buy <item id>`: Mua vật phẩm trên shop.\n- `{prefix}gacha shop list`: Hiện các vật phẩm đang được bán trên shop."
+                    return get_string_by_id(main_loca_sheet, "shop_command_help", config.language).format(prefix)
         
         # Show card
         case 'show':
@@ -385,11 +403,11 @@ def command_response(command,prefix,userid,username):
                     for card in cardgame_data[userid_to_show]["D"]:
                         msg += f" - `{card}`\n"    
                 if msg != "":
-                    return f"Các thẻ **{cardgame_data[userid_to_show]['username']}** có:\n"+msg
+                    return get_string_by_id(main_loca_sheet, "show_card_prompt", config.language).format(cardgame_data[userid_to_show]['username']) + "\n" + msg
                 else:
-                    return f"**{cardgame_data[userid_to_show]['username']}** không có thẻ nào cả :("
+                    return get_string_by_id(main_loca_sheet, "show_card_no_card", config.language).format(cardgame_data[userid_to_show]['username'])
             else:
-                return f"<@{userid_to_show}> chưa từng chơi con game tuyệt tác này :("
+                return get_string_by_id(main_loca_sheet, "user_not_played_message").format(userid_to_show)
         
         # Leaderboard
         case 'lb':
@@ -408,11 +426,11 @@ def command_response(command,prefix,userid,username):
                     else: break
                 
                 if msg == "":
-                    return "Hiện tại chưa có ai trên bảng xếp hạng!"
+                    return get_string_by_id(main_loca_sheet, "leaderboard_empty", config.language)
                 
-                return "Bảng xếp hạng:\n" + msg
+                return get_string_by_id(main_loca_sheet, "leaderboard_prompt", config.language) + "\n" + msg
             else:
-                return "Hiện tại chưa có ai trên bảng xếp hạng!"
+                return get_string_by_id(main_loca_sheet, "leaderboard_empty", config.language)
         
         # Rock paper scissors
         case 'rps':
@@ -422,23 +440,25 @@ def command_response(command,prefix,userid,username):
                 except:
                     bet_point = -1
                 card_to_play = command.replace(f"{prefix}gacha rps {bet_point} ","")
-                if bet_point < 30 or bet_point > cardgame_data[userid]["level"]*200:
-                    return f"Số BachNob Credit cược không hợp lệ! Bạn chỉ có thể cược số BachNob Credit là số tự nhiên **n** với **30 ≤ n ≤ {cardgame_data[userid]['level']*200}**."
+                minimum_bet = 30
+                maximum_bet = cardgame_data[userid]["level"]*200
+                if bet_point < minimum_bet or bet_point > maximum_bet:
+                    return get_string_by_id(main_loca_sheet, "invalid_bet_point", config.language).format(minimum_bet, maximum_bet)
                 if card_to_play == "":
-                    return "Thiếu tên card kìa :)"
+                    return get_string_by_id(main_loca_sheet, "missing_card_name", config.language)
                 else:
                     user = cardgame_data[userid]
                     if user["pts"] >= bet_point:
                         user_own_cards = user["S"]+user["A"]+user["B"]+user["C"]+user["D"]
                         if not card_to_play in user_own_cards:
-                            return "Bạn còn không có thẻ đó 😳"
+                            return get_string_by_id(main_loca_sheet, "invalid_card", config.language)
                         else:
-                            if card_to_play in cardgame.rock: card_class = "búa"
-                            elif card_to_play in cardgame.paper: card_class = "bao"
-                            elif card_to_play in cardgame.scissors: card_class = "kéo"
+                            if card_to_play in cardgame.rock: card_class = RpsClass.Rock
+                            elif card_to_play in cardgame.paper: card_class = RpsClass.Paper
+                            elif card_to_play in cardgame.scissors: card_class = RpsClass.Scissors
                             else: 
                                 print("ERROR: card_to_play in card class. card_to_play: "+card_to_play)
-                                return "Đã có lỗi xảy ra!"
+                                return get_string_by_id(main_loca_sheet, "sth_happened", config.language)
                             if card_to_play in cardgame.card_common: card_rank = 1
                             elif card_to_play in cardgame.card_uncommon: card_rank = 2
                             elif card_to_play in cardgame.card_rare: card_rank = 3
@@ -446,7 +466,7 @@ def command_response(command,prefix,userid,username):
                             elif card_to_play in cardgame.card_legendary: card_rank = 5
                             else:
                                 print("ERROR: card_to_play in card rank. card_to_play: "+card_to_play)
-                                return "Đã có lỗi xảy ra!"
+                                return get_string_by_id(main_loca_sheet, "sth_happened", config.language)
                             random_num = random.randint(1,100)
                             if random_num <= 20: 
                                 opponent_card_rank = 1
@@ -474,36 +494,36 @@ def command_response(command,prefix,userid,username):
                                     opponent_card = random.choice(cardgame.card_epic)
                                 case 5:
                                     opponent_card = random.choice(cardgame.card_legendary)
-                            if opponent_card in cardgame.scissors: opponent_card_class = "kéo"
-                            elif opponent_card in cardgame.rock: opponent_card_class = "búa"
-                            elif opponent_card in cardgame.paper: opponent_card_class = "bao"
+                            if opponent_card in cardgame.rock: opponent_card_class = RpsClass.Rock
+                            elif opponent_card in cardgame.paper: opponent_card_class = RpsClass.Paper
+                            elif opponent_card in cardgame.scissors: opponent_card_class = RpsClass.Scissors
                             else:
                                 print("ERROR: opponent_card in card class. card_to_play: "+card_to_play)
-                                return "Đã có lỗi xảy ra!"
+                                return get_string_by_id(main_loca_sheet, "sth_happened", config.language)
                             match card_class:
-                                case "búa":
+                                case RpsClass.Rock:
                                     match opponent_card_class:
-                                        case "búa":
+                                        case RpsClass.Rock:
                                             rs = "tie"
-                                        case "bao":
+                                        case RpsClass.Paper:
                                             rs = "lose"
-                                        case "kéo":
+                                        case RpsClass.Scissors:
                                             rs = "win"
-                                case "bao":
+                                case RpsClass.Paper:
                                     match opponent_card_class:
-                                        case "búa":
+                                        case RpsClass.Rock:
                                             rs = "win"
-                                        case "bao":
+                                        case RpsClass.Paper:
                                             rs = "tie"
-                                        case "kéo":
+                                        case RpsClass.Scissors:
                                             rs = "lose"
-                                case "kéo":
+                                case RpsClass.Scissors:
                                     match opponent_card_class:
-                                        case "búa":
+                                        case RpsClass.Rock:
                                             rs = "lose"
-                                        case "bao":
+                                        case RpsClass.Paper:
                                             rs = "win"
-                                        case "kéo":
+                                        case RpsClass.Scissors:
                                             rs = "tie"
                             match rs:
                                 case "win":
@@ -515,9 +535,21 @@ def command_response(command,prefix,userid,username):
                                         already_hav = False
                                         user[opponent_card_list_name].append(opponent_card)
                                     if already_hav:
-                                        return f'Đối thủ ra bài **{opponent_card}**!\nBài của bạn là **{card_class}** thắng bài **{opponent_card_class}** của đối thủ!\nBạn nhận được **{bet_point} BachNob Credit** và **{bonus_exp} exp**!\nBạn đã có bài **{opponent_card}** rồi nên không thể nhận bài của đối thủ được nữa <:njnk:1094916486029639710>'
+                                        return get_string_by_id(main_loca_sheet, "rps_win_already_have", config.language).format(
+                                            opponent_card,
+                                            card_class.value,
+                                            opponent_card_class.value,
+                                            bet_point,
+                                            bonus_exp
+                                        )
                                     else:
-                                        return f'Đối thủ ra bài **{opponent_card}**!\nBài của bạn là **{card_class}** thắng bài **{opponent_card_class}** của đối thủ!\nBạn nhận được **{bet_point} BachNob Credit** và **{bonus_exp} exp**!\nBạn cũng nhận được bài **{opponent_card}** của đối thủ <:kita:1094978062023667825>'
+                                        return get_string_by_id(main_loca_sheet, "rps_win", config.language).format(
+                                            opponent_card,
+                                            card_class.value,
+                                            opponent_card_class.value,
+                                            bet_point,
+                                            bonus_exp
+                                        )
                                 case "lose":
                                     user["pts"] -= bet_point
                                     match card_rank:
@@ -526,7 +558,13 @@ def command_response(command,prefix,userid,username):
                                         case 3: user["B"].remove(card_to_play)
                                         case 4: user["A"].remove(card_to_play)
                                         case 5: user["S"].remove(card_to_play)
-                                    return f'Đối thủ ra bài **{opponent_card}**!\nBài của bạn là **{card_class}** thua bài **{opponent_card_class}** của đối thủ!\nBạn mất **{bet_point} BachNob Credit** và bài đã đánh (**{card_to_play}**) <a:bocchi:1094916604061565000>'
+                                    return get_string_by_id(main_loca_sheet, "rps_lose", config.language).format(
+                                        opponent_card,
+                                        card_class.value,
+                                        opponent_card_class.value,
+                                        bet_point,
+                                        card_to_play
+                                    )
                                 case "tie":
                                     if card_rank > opponent_card_rank:
                                         user["pts"] += bet_point
@@ -537,9 +575,19 @@ def command_response(command,prefix,userid,username):
                                             already_hav = False
                                             user[opponent_card_list_name].append(opponent_card)
                                         if already_hav:
-                                            return f'Đối thủ ra bài **{opponent_card}**!\nCả bài của bạn và đối thủ đều là **{card_class}** nhưng do **bài của bạn hiếm hơn** nên bạn thắng!\nBạn nhận được **{bet_point} BachNob Credit** và **{bonus_exp} exp**!\nBạn đã có bài **{opponent_card}** rồi nên không thể nhận bài của đối thủ được nữa <:njnk:1094916486029639710>'
+                                            return get_string_by_id(main_loca_sheet, "rps_tie_win_already_have", config.language).format(
+                                                opponent_card,
+                                                card_class.value,
+                                                bet_point,
+                                                bonus_exp
+                                            )
                                         else:
-                                            return f'Đối thủ ra bài **{opponent_card}**!\nCả bài của bạn và đối thủ đều là **{card_class}** nhưng do **bài của bạn hiếm hơn** nên bạn thắng!\nBạn nhận được **{bet_point} BachNob Credit** và **{bonus_exp} exp**!\nBạn cũng nhận được bài **{opponent_card}** của đối thủ <:kita:1094978062023667825>'
+                                            return get_string_by_id(main_loca_sheet, "rps_tie_win", config.language).format(
+                                                opponent_card,
+                                                card_class.value,
+                                                bet_point,
+                                                bonus_exp
+                                            )
                                     elif card_rank < opponent_card_rank:
                                         user["pts"] -= bet_point
                                         match card_rank:
@@ -548,13 +596,21 @@ def command_response(command,prefix,userid,username):
                                             case 3: user["B"].remove(card_to_play)
                                             case 4: user["A"].remove(card_to_play)
                                             case 5: user["S"].remove(card_to_play)
-                                        return f'Đối thủ ra bài **{opponent_card}**!\nCả bài của bạn và đối thủ đều là **{card_class}** nhưng do **bài của đối thủ hiếm hơn** nên bạn thua!\nBạn mất **{bet_point} BachNob Credit** và bài đã đánh (**{card_to_play}**) <a:bocchi:1094916604061565000>'
+                                        return get_string_by_id(main_loca_sheet, "rps_tie_lose", config.language).format(
+                                            opponent_card,
+                                            card_class.value,
+                                            bet_point,
+                                            card_to_play
+                                        )
                                     else:
-                                        return f'Đối thủ ra bài **{opponent_card}**!\nCả bài của bạn và đối thủ đều là **{card_class}** và **có độ hiếm bằng nhau** nên trận này **hòa**!'
+                                        return get_string_by_id(main_loca_sheet, "rps_tie_tie", config.language).format(
+                                            opponent_card,
+                                            card_class.value,
+                                        )
                     else:
-                        return "Bạn còn có không có đủ BachNob Credit cược <:raiseismok:1094913694531592213>"
+                        return get_string_by_id(main_loca_sheet, "rps_cant_afford", config.language)
             else:
-                return "Bạn còn không có thẻ ☠"
+                return get_string_by_id(main_loca_sheet, "prompt_no_card", config.language)
         
         # Roll card
         case 'roll':
@@ -562,10 +618,13 @@ def command_response(command,prefix,userid,username):
                 roll_time = int(command.split()[2])
             except:
                 roll_time = 1
-            if roll_time <= 0 or roll_time > 10:
-                return "Số lần roll không hợp lệ! Số lần roll phải là số tự nhiên n với 0 < n ≤ 10."
+            minimum_roll_time = 1
+            maximum_roll_time = 10
+            roll_price = 100
+            if roll_time < minimum_roll_time or maximum_roll_time > maximum_roll_time:
+                return get_string_by_id(main_loca_sheet, "roll_invalid_time", config.language).format(minimum_roll_time, maximum_roll_time)
             if userid in cardgame_data.keys():
-                if cardgame_data[userid]['pts'] >= 100*roll_time:
+                if cardgame_data[userid]['pts'] >= roll_price*roll_time:
                     msg = ""
                     for i in range(roll_time):
                         rolled_card = card_roll(2,5,8,20,65) #2%,5%,8%,20%,65%
@@ -576,7 +635,7 @@ def command_response(command,prefix,userid,username):
                         if not card in cardgame_data[userid][card_list_name]: 
                             cardgame_data[userid][card_list_name].append(card)
                             already_hav = False   
-                        cardgame_data[userid]['pts'] -= 100
+                        cardgame_data[userid]['pts'] -= roll_price
                         cardgame_data[userid]["roll"]+=1
                         if already_hav == False:
                             match card_list_name:
@@ -591,30 +650,43 @@ def command_response(command,prefix,userid,username):
                                 case "D":
                                     bonus_exp = 1
                             cardgame_data[userid]["exp"] += bonus_exp
-                            msg += f'- Roll #{i+1}: Bạn nhận được thẻ {card_rank_name}: **{card}** và **{bonus_exp} exp**!\n'
+                            msg += get_string_by_id(main_loca_sheet, "roll_result", config.language).format(
+                                i+1,
+                                card_rank_name,
+                                card,
+                                bonus_exp
+                            ) + "\n"
                         else:
-                            bonus_pts = 25
+                            bonus_pts = roll_price/4
                             cardgame_data[userid]['pts'] += bonus_pts
-                            msg += f'- Roll #{i+1}: Bạn roll ra thẻ {card_rank_name}: **{card}** nhưng bạn đã có nó rồi! Thay vào đó bạn nhận được **{bonus_pts} BachNob Credit**.\n'
+                            msg += get_string_by_id(main_loca_sheet, "roll_result_already_have", config.language).format(
+                                i+1,
+                                card_rank_name,
+                                card,
+                                bonus_exp
+                            ) + "\n"
                     return msg        
                 else:
-                    return f"Bạn không có đủ BachNob Credit để roll! Bạn cần thêm ít nhất **{100*roll_time - cardgame_data[userid]['pts']} BachNob Credit** nữa để có thể roll **{roll_time} lần**!"
+                    return get_string_by_id(main_loca_sheet, "roll_cant_afford", config.language).format(roll_price*roll_time - cardgame_data[userid]['pts'])
             else:
                 cardgame_new_user(userid,username)
-                return 'Bạn không có đủ BachNob Credit để roll. Bạn cần ít nhất **100 BachNob Credit** để có thể roll!'
+                return get_string_by_id(main_loca_sheet, "roll_cant_afford", config.language).format(roll_price)
         
         # Guaranteed roll
         case 'supraroll':
             if not userid in cardgame_data.keys():
-                return "Bạn còn không có BachNob Guarantee :skull:"
+                return get_string_by_id(main_loca_sheet, "roll_supra_no_guarantee", config.language)
             
             try:
                 roll_time = int(command.split()[2])
             except:
                 roll_time = 1
             
-            if roll_time <= 0 or roll_time > 10:
-                return "Số lần roll không hợp lệ! Số lần roll phải là số tự nhiên n với 0 < n ≤ 10."
+            minimum_roll_time = 1
+            maximum_roll_time = 10
+
+            if roll_time < minimum_roll_time or roll_time > maximum_roll_time:
+                return get_string_by_id(main_loca_sheet, "roll_invalid_time", config.language).format(minimum_roll_time, maximum_roll_time)
             
             if cardgame_data[userid]['bng'] >= roll_time:
                 msg = ""
@@ -642,14 +714,24 @@ def command_response(command,prefix,userid,username):
                             case "D":
                                 bonus_exp = 1
                         cardgame_data[userid]["exp"] += bonus_exp
-                        msg += f'- Roll #{i+1}: Bạn nhận được thẻ {card_rank_name}: **{card}** và **{bonus_exp} exp**!\n'
+                        msg += get_string_by_id(main_loca_sheet, "roll_result", config.language).format(
+                            i+1,
+                            card_rank_name,
+                            card,
+                            bonus_exp
+                        ) + "\n"
                     else:
                         bonus_pts = 25
                         cardgame_data[userid]['pts'] += bonus_pts
-                        msg += f'- Roll #{i+1}: Bạn roll ra thẻ {card_rank_name}: **{card}** nhưng bạn đã có nó rồi! Thay vào đó bạn nhận được **{bonus_pts} BachNob Credit**.\n'
+                        msg += get_string_by_id(main_loca_sheet, "roll_result_already_have", config.language).format(
+                            i+1,
+                            card_rank_name,
+                            card,
+                            bonus_exp
+                        ) + "\n"
                 return msg    
             else:
-                return f"Bạn không có đủ BachNob Guarantee! Bạn cần thêm ít nhất **{roll_time - cardgame_data[userid]['bng']} BachNob Guarantee** nữa để có thể roll **{roll_time} lần**!"
+                return get_string_by_id(main_loca_sheet, "roll_supra_cant_afford").format(roll_time - cardgame_data[userid]['bng'])
         
         # Invalid subcommand
         case _:

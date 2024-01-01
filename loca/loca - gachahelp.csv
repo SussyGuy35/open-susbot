@@ -1,0 +1,13 @@
+vi,en
+Các lệnh `gacha`:,`gacha` commands:
+- `{0}gacha help`: Hiện cái đoạn hướng dẫn này.,
+- `{0}gacha docs`: Tài liệu game.,
+- `{0}gacha newplayer`: Nhận quà tân thủ (chỉ một lần).,
+- `{0}gacha daily`: Điểm danh hàng ngày nhận 100 BachNob Credit.,
+- `{0}gacha roll [số lần roll]`: Quay thẻ ngẫu nhiên. 100 BachNob Credit/ 1 lần quay.,
+"- `{0}gacha supraroll [số lần roll]`: Quay thẻ ngẫu nhiên, nhưng vjp hơn. 1 BachNob Guarantee/ 1 lần quay.",
+- `{0}gacha rps <số BachNob Credit cược> <bài>`: Chơi oẳn tù tì.,
+- `{0}gacha show [người dùng]`: Hiện các thẻ bài hiện có.,
+- `{0}gacha userinfo [người dùng]`: Hiện thông tin người dùng.,
+- `{0}gacha lb`: Hiện bảng xếp hạng.,
+- `{0}gacha shop <lệnh>`: Shop mua bán card.,

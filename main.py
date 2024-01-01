@@ -1,8 +1,9 @@
-import discord, datetime
+import discord, datetime, os
+from lib.locareader import get_string_by_id
 
-try:
+if os.path.exists("config_override.py"):
     import config_override as config
-except:
+else:
     import config
 
 # Config
@@ -29,66 +30,70 @@ tree = discord.app_commands.CommandTree(client)
 # autoreact emojis
 autoreact_emojis = config.autoreact_emojis
 
+#loca thing
+def get_string(id: str, loca: str = "main"):
+    return get_string_by_id(f"loca/loca - {loca}.csv",id,config.language)
+
 # Send feedback
 class FeedbackButtons(discord.ui.View):
     def __init__(self, *, timeout=180):
         super().__init__(timeout=timeout)
     
-    @discord.ui.button(label="Đưa tiền đây",style=discord.ButtonStyle.red,emoji = "💲")
+    @discord.ui.button(label=get_string("feedback_button_1"),style=discord.ButtonStyle.red,emoji = "💲")
     async def dua_tien_day(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print(f"{interaction.user} kêu ĐƯA TIỀN ĐÂY!!!")
+        print(get_string("feedback_button_1_prompt").format(interaction.user))
         button.disabled = True
         await interaction.response.edit_message(view=self)
     
-    @discord.ui.button(label="Bot đào lửa",style=discord.ButtonStyle.gray,emoji = "🔫")
+    @discord.ui.button(label=get_string("feedback_button_2"),style=discord.ButtonStyle.gray,emoji = "🔫")
     async def bot_dao_lua(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print(f"{interaction.user} kêu BOT ĐÀO LỬA RR!!!")
+        print(get_string("feedback_button_2_prompt").format(interaction.user))
         button.disabled = True
         await interaction.response.edit_message(view=self)
         
-    @discord.ui.button(label="Dev tư bản",style=discord.ButtonStyle.blurple,emoji = "🐧")
+    @discord.ui.button(label=get_string("feedback_button_3"),style=discord.ButtonStyle.blurple,emoji = "🐧")
     async def dev_tu_ban(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print(f"{interaction.user} kêu DEV TƯ BẢN QUÁ!!!")
+        print(get_string("feedback_button_3_prompt").format(interaction.user))
         button.disabled = True
         await interaction.response.edit_message(view=self)
 
 # Slash command
 
 # Feedback
-@tree.command(name = "feedback", description = "Gửi feedback cho dev")
+@tree.command(name = "feedback", description = get_string("command_feedback_desc"))
 async def button(ctx: discord.Interaction):
     view = FeedbackButtons()
-    view.add_item(discord.ui.Button(label="Forms đòi tiền",style=discord.ButtonStyle.link,url="https://SussyGuy35.github.io/duatienday.html",emoji="😏"))
+    view.add_item(discord.ui.Button(label=get_string("feedback_button_4"),style=discord.ButtonStyle.link,url="https://SussyGuy35.github.io/duatienday.html",emoji="😏"))
     print(f"{ctx.user} used feedback commands!")
-    await ctx.response.send_message("Nhấn vào nút để gửi feedback cho dev. Nó sẽ làm ngập cái log của thằng dev luôn 😳",view=view)
+    await ctx.response.send_message(get_string("command_feedback_prompt"),view=view)
 
 # Help
-@tree.command(name = "help", description = "Hiện hướng dẫn 🐧") 
+@tree.command(name = "help", description = get_string("command_help_desc")) 
 async def help(ctx: discord.Interaction):
     print(f"{ctx.user} used help commands!")
     await ctx.response.send_message(commands.help.command_response(prefix))
 
 # Ping
-@tree.command(name = "ping", description = "Ping pong ping pong") 
+@tree.command(name = "ping", description = get_string("command_ping_desc")) 
 async def ping(ctx: discord.Interaction):
     print(f"{ctx.user} used ping commands!")
     await ctx.response.send_message(commands.ping.command_response())
 
 # Avatar
-@tree.command(name = "avatar", description = "Lấy avatar của ai đó 👀") 
+@tree.command(name = "avatar", description = get_string("command_avatar_desc")) 
 async def get_avatar(ctx: discord.Interaction,user:discord.User,server_avatar:bool = True):
     print(f"{ctx.user} used avatar commands!")
     await ctx.response.defer()
     avatar = user.display_avatar if server_avatar else user.avatar
     if avatar != None:
-        embed = discord.Embed(title="User avatar", description=f"Avatar của **{user}**", color=0x03e3fc, type = "image")
+        embed = discord.Embed(title=get_string("command_avatar_embed_title"), description=get_string("command_avatar_embed_desc").format(user), color=0x03e3fc, type = "image")
         embed.set_image(url = avatar.url)
         await ctx.followup.send(embed = embed)
     else:
-        await ctx.followup.send(f'{user} còn không có avatar 🐧')
+        await ctx.followup.send(get_string("command_avatar_noavatar"))
 
 # Emoji
-@tree.command(name = "emoji", description = "Lấy emoji nào đó 👀") 
+@tree.command(name = "emoji", description = get_string("command_emoji_desc")) 
 async def get_emoji(ctx: discord.Interaction,emoji: str):
     print(f"{ctx.user} used emoji commands!")
     await ctx.response.defer()
@@ -99,42 +104,42 @@ async def get_emoji(ctx: discord.Interaction,emoji: str):
         await ctx.followup.send(embed = rs)
 
 # Nijika command
-@tree.command(name = "nijika", description = "Nijika")
+@tree.command(name = "nijika", description = get_string("command_nijika_desc"))
 async def nijika(ctx: discord.Interaction):
     print(f"{ctx.user} used nijika commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = commands.nijika.command_response())
 
 #Amogus command
-@tree.command(name = "amogus", description = "Amogus")
+@tree.command(name = "amogus", description = get_string("command_amogus_desc"))
 async def amogus(ctx: discord.Interaction):
     print(f"{ctx.user} used amogus commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = commands.amogus.command_response())
 
 # osu user
-@tree.command(name = "osu_user", description = "Lấy thông tin người chơi osu!") 
+@tree.command(name = "osu_user", description = get_string("command_osu_user_desc")) 
 async def osu_user(ctx: discord.Interaction, username: str):
     print(f"{ctx.user} used osu user commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"user " + username))
 
 # osu beatmap
-@tree.command(name = "osu_beatmap", description = "Tìm beatmap trong osu!") 
+@tree.command(name = "osu_beatmap", description = get_string("command_osu_beatmap_desc")) 
 async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
     print(f"{ctx.user} used osu beatmap commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
 
 # gvs count
-@tree.command(name = "gvs_count", description = "Đếm số lần đã *gvs*")
+@tree.command(name = "gvs_count", description = get_string("command_gvs_count_desc"))
 async def gvs_count(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs count commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
 
 # gvs lb
-@tree.command(name = "gvs_leaderboard", description = "Bảng xếp hạng *gvs*")
+@tree.command(name = "gvs_leaderboard", description = get_string("command_gvs_leaderboard_desc"))
 async def gvs_lb(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs lb commands!")
     await ctx.response.defer()
@@ -145,21 +150,21 @@ async def gvs_lb(ctx: discord.Interaction):
         await ctx.followup.send(response)
 
 # random cat girl
-@tree.command(name = "randcat", description = "Ảnh mèo ngẫu nhiên")
+@tree.command(name = "randcat", description = get_string("command_randcat_desc"))
 async def randcat(ctx: discord.Interaction, is_cat_girl:bool = False):
     print(f"{ctx.user} used randcat commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.randcat.command_response(is_cat_girl))
 
 # random waifu
-@tree.command(name = "randwaifu", description = "Ảnh waifu ngẫu nhiên (lấy từ waifu.pics)")
+@tree.command(name = "randwaifu", description = get_string("command_randwaifu_desc"))
 async def randwaifu(ctx: discord.Interaction):
     print(f"{ctx.user} used randwaifu commands!")
     await ctx.response.defer()
     await ctx.followup.send(commands.randwaifu.command_response())
 
 # convert image to gif (kinda)
-@tree.command(name="create_gif", description="Tạo gif")
+@tree.command(name="create_gif", description = get_string("command_create_gif_desc"))
 async def create_gif(ctx: discord.Interaction, file: discord.Attachment):
     print(f"{ctx.user} used createg_gif commands!")
     await ctx.response.defer()
@@ -288,11 +293,11 @@ async def on_message(message):
         # bot user can not use this bot's commands
         if message.author.bot:
             if message.author != client.user:
-                await message.channel.send("Bot mà đòi dùng lệnh của bot à 🐧")
+                await message.channel.send(get_string("bot_use_command_prompt"))
                 return
         
         if userid in config.banned_users:
-            await message.channel.send("Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết :penguin:")
+            await message.channel.send(get_string("banned_user_prompt"))
             return
         
         # Get requested command
@@ -308,6 +313,10 @@ async def on_message(message):
             case 'debug':
                 await message.channel.send(f"user_id: {message.author.id}, channel_id: {message.channel.id}, guild: {message.guild}")
             
+            # Get loca string
+            case 'getloca':    
+                await message.channel.send(get_string_by_id(f"loca/loca - {args[0]}.csv", args[1], args[2]))
+
             # Help
             case 'help':
                 await message.channel.send(commands.help.command_response(prefix))
@@ -378,7 +387,7 @@ async def on_message(message):
             
             # Invalid command
             case _:
-                await message.channel.send("Lệnh đó không tồn tại!")
+                await message.channel.send(get_string("command_not_found_prompt"))
            
     else:
         if not message.author.bot:

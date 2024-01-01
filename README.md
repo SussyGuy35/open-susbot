@@ -1,6 +1,7 @@
 # Open Susbot
 
 Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
+Note that this project is intended to use as a starting point to develop your own Discord bot, not to use it as-is!
 
 ## Features
 - Some commands to make bot say sth or maybe other
@@ -31,12 +32,15 @@ Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
 - Linux: `python3 -m pip install -r requirements.txt`
 - Mac: idk im not a mac guy (maybe same as Linux i think)
 
-### Step 4: Token config
-Go to `config.py` file and place your discord's bot token (can be receive from discord dev portal, just google it) and your osu!api's client id and client secret (you can get it from your osu! account setting page) here.
+### Step 4: Bot config
+Go to Discord dev portal, get your bot's token and remember to enable `Presence Intent`, `Server members Intent` and `Message content intent`
+
+Go to `config.py` file and place your discord's bot token and your osu!api's client id and client secret (you can get it from your osu! account setting page) here.
 
 You can also change bot's version number and prefix here.
 
-### Step 5: Move 2 files from `commands/card_game_data/json_file_template` to `commands/card_game_data`
+### Step 5: Move 2 files from `commands/card_game_data/json_file_template` to `commands/card_game_data` 
+yea pretty dumb but its just old me, now im 2 lazy to fix it lol
 
 ### Step 6: Run `main.py`
 **_Now your bot is up and running. Have fun!_**
@@ -54,3 +58,9 @@ You can also change bot's version number and prefix here.
 - thecatapi.com
 - nekos.life
 - waifu.pics
+
+## External links
+- [Loca sheets](https://docs.google.com/spreadsheets/d/1LdVClaONs9r1HDMiOU4GfBdQOD2FoPDNFSC_y6UwMF8/edit?usp=sharing)
+- [discord.py API docs](https://discordpy.readthedocs.io/en/stable/api.html)
+- [Discord Developer Portal](https://discord.com/developers/applications)
+- [osu!'s home page](https://osu.ppy.sh)

@@ -1,5 +1,5 @@
 import requests, random
-type = [
+types = [
 "waifu",
 "neko",
 "shinobu",
@@ -33,4 +33,4 @@ type = [
 ]
 
 def command_response():
-    return requests.get("https://waifu.pics/api/sfw/"+random.choice(type)).json()["url"]
+    return requests.get("https://waifu.pics/api/sfw/"+random.choice(types)).json()["url"]

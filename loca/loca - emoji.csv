@@ -1,0 +1,3 @@
+string_id,vi,en
+embed_desc,được thêm vào <t:{0}>,
+prompt_exception,Đã có lỗi xảy ra 🐧. Có thể là do bạn không cung cấp 1 custom emoji đúng 👀.,

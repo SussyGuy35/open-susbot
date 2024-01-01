@@ -1,3 +1,8 @@
+try:
+    import config_override as config
+except:
+    import config
+from lib.locareader import get_string_by_id
 import discord, json, os
 
 base_path = os.path.dirname(os.path.abspath(__file__))
@@ -11,6 +16,8 @@ try:
     data = json.load(open(file_path,"r"))
 except:
     data = {}
+
+loca_sheet = "loca/loca - gvs.csv"
 
 def save():
     file = open(file_path, "w+")
@@ -39,15 +46,19 @@ def command_response(prefix: str, userid: str, guild:discord.Guild, args: list[s
     match args[0]:
         case "count":
             if guildid in data.keys() and userid in data[guildid]:
-                return f"Số lần **{data[guildid][userid]['username']}** đã **gvs** trong **{guild.name}**: {data[guildid][userid]['gvs']}"
+                return get_string_by_id(loca_sheet, "count_result", config.language).format(
+                    data[guildid][userid]['username'],
+                    guild.name,
+                    data[guildid][userid]["gvs"]
+                )
             else:
-                return "Bạn chưa **gvs** lần nào 😳"
+                return get_string_by_id(loca_sheet, "zero_gvs", config.language)
         case "lb":
             msg = ""    
             lb = {}
             
             if not guildid in data.keys():
-                return "Hiện tại chưa có ai trên bảng xếp hạng"
+                return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
             
             for key in data[guildid].keys():
                 lb[key] = data[guildid][key]['gvs']
@@ -62,11 +73,18 @@ def command_response(prefix: str, userid: str, guild:discord.Guild, args: list[s
                     else: break
                 
                 if msg == "":
-                    return "Hiện tại chưa có ai trên bảng xếp hạng!"
-                leaderboard = discord.Embed(title=f'Bảng xếp hạng **gvs** cho **{guild.name}**', color=0x00FFFF, description = "gke vay sao")
+                    return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
+
+                leaderboard = discord.Embed(
+                    title=get_string_by_id(loca_sheet, "leaderboard_embed_title", config.language).format(guild.name), 
+                    color=0x00FFFF, 
+                    description = "gke vay sao"
+                )
                 leaderboard.add_field(name='', value=msg)
                 return leaderboard
             else:
-                return "Hiện tại chưa có ai trên bảng xếp hạng!"
+                return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
+
         case _:
-            return f"Các lệnh `gvs`:\n- `{prefix}gvs count` hoặc `/gvs_count`: Hiện số lần đã **gvs**.\n- `{prefix}gvs lb` hoặc `/gvs_leaderboard`: Bảng xếp hạng **gvs**."
+            return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+

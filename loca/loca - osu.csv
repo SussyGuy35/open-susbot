@@ -1,0 +1,4 @@
+string_id,vi,en
+command_help,Các lệnh {0}osu:#- `{0}osu user <tên người chơi>` hoặc `/osu_user <tên người chơi>`: Lấy thông tin người dùng nào đó#- `{0}osu beatmap <tên beatmap>` hoặc `/osu_beatmap <tên beatmap>`: Tìm beatmap theo tên,
+user_info_template,https://osu.ppy.sh/users/{0}#Tên người chơi: **{1}**#Quốc gia: **{2}**#Avatar: {3}#Global rank (osu!standard): **\#{4}**#Rank cao nhất đã đạt được: **\#{5}** vào <t:{6}>#Đang {7}#Đã chơi **{8} [{9}] ** {10} lần!,
+prompt_error,Đã có lỗi xảy ra!,

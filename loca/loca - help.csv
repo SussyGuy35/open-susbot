@@ -1,0 +1,17 @@
+vi,en
+Các lệnh:,Commands:
+- `{0}help` hoặc `/help`: hiện cái đoạn hướng dẫn này.,
+- `{0}ping` hoặc `/ping`: Ping pong ping pong!,
+- `{0}echo <tin nhắn>`: Làm con bot nói gì đó.,
+"- `{0}pick [lựa chọn 1], [lựa chọn 2],...`: Chọn 1 trong các lựa chọn được đưa ra.",
+- `{0}randcaps <tin nhắn>`: lÀM chO cOn bOT NÓi GÌ đÓ kiểU nhƯ Này.,
+- `{0}gacha`: Game gacha siêu cân bằng.,
+- `{0}osu` hoặc `/osu_<sth>`: Một số lệnh dùng osu!api. (thằng đần Bách làm có 2 lệnh),
+- `{0}emoji <emoji>` hoặc `/emoji <emoji>`: Lấy một emoji nào đó.,
+"- `{0}ask <câu hỏi>`: Bạn hỏi, bot trả lời (siêu juan).",
+- `/avatar <người dùng>`: Lấy avatar của ai đó.,
+- `{0}gvs`: Các lệnh gvs.,
+- `{0}nijka` hoặc `/nijika`: Nijika <:njnk:1094916486029639710>.,
+- `{0}amogus` hoặc `/amogus`: Amogus <:amogus:1135048323242397697>.,
+- `/randcat`: Ảnh mèo ngẫu nhiên.,
+- `/randwaifu`: Ảnh waifu ngẫu nhiên.,
