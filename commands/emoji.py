@@ -14,8 +14,7 @@ def command_response(client, emoji: str):
         print(f"ERROR: Failed to get emoji. Message: {emoji}")
         emoji_to_get = None
     
-    if emoji_to_get != None:
-        print(get_string_by_id(loca_sheet,"embed_desc",config.language))
+    if emoji_to_get is not None:
         embed = discord.Embed(
             title=emoji_to_get.name,
             description = get_string_by_id(loca_sheet,"embed_desc",config.language).format(int(emoji_to_get.created_at.timestamp())), 
