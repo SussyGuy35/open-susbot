@@ -175,6 +175,12 @@ async def create_gif(ctx: discord.Interaction, file: discord.Attachment):
         await ctx.followup.send(response)
     commands.creategif.post_response_cleanup(response)
 
+# Bean user
+@tree.command(name="bean", description=get_string("embed_desc", "bean"))
+async def bean(ctx: discord.Interaction, user: discord.User, reason: str):
+    print(f"{ctx.user} used bean commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(get_string("bean", "bean").format(user, reason))
 
 # Ghost ping detector
 async def ghostping_detector_on_delete(message):
@@ -385,6 +391,10 @@ async def on_message(message):
                 elif type(response) == str:
                     await message.channel.send(response)
             
+            # Bean
+            case 'bean':
+                await message.channel.send(commands.bean.command_response(args, plain_args))
+
             # Invalid command
             case _:
                 await message.channel.send(get_string("command_not_found_prompt"))
