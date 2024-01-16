@@ -99,10 +99,10 @@ async def get_avatar(ctx: discord.Interaction,user:discord.User,server_avatar:bo
 
 # Emoji
 @tree.command(name = "emoji", description = get_string("command_emoji_desc")) 
-async def get_emoji(ctx: discord.Interaction,emoji: str):
+async def get_emoji(ctx: discord.Interaction,emoj: str):
     print(f"{ctx.user} used emoji commands!")
     await ctx.response.defer()
-    rs = emoji.command_response(client,emoji)
+    rs = emoji.command_response(client,emoj)
     if type(rs) == str:
         await ctx.followup.send(rs)
     else:
