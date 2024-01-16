@@ -38,7 +38,7 @@ def command_response(osu_api,prefix,command):
                     user_rank,
                     user.rank_highest.rank,
                     int(user.rank_highest.updated_at.timestamp()),
-                    "**trực tuyến** 🟢" if user.is_online else "**ngoại tuyến** 🔴",
+                    get_string_by_id(loca_sheet,"status_online", config.language) if user.is_online else get_string_by_id(loca_sheet, "status_offline", config.language),
                     user_most_play_beatmap.beatmapset.title,
                     user_most_play_beatmap._beatmap.version,
                     user_most_play_beatmap.count

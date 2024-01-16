@@ -1,3 +1,3 @@
 string_id,vi,en
-prompt_dont_support,File đã là gif hoặc không được hỗ trợ (đi mà hỏi thằng chủ bot),
-prompt_exception,Đã có lỗi trong quá trình xử lý,
+prompt_dont_support,File đã là gif hoặc không được hỗ trợ (đi mà hỏi thằng chủ bot),This file is already a gif or not supported
+prompt_exception,Đã có lỗi trong quá trình xử lý,There was an error during the processing

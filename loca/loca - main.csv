@@ -1,32 +1,32 @@
 string_id,vi,en
 language_name,Tiếng Việt,English
 test_string,Đây là một cái string để thử,This is a test string
-feedback_button_1,Đưa tiền đây,
-feedback_button_1_prompt,{0} kêu ĐƯA TIỀN ĐÂY!!!,
-feedback_button_2,Bot đào lửa,
-feedback_button_2_prompt,{0} kêu BOT ĐÀO LỬA RR!!!,
-feedback_button_3,Dev tư bản,
-feedback_button_3_prompt,{0} kêu DEV TƯ BẢN QUÁ!!!,
-feedback_button_4,Form đòi tiền,
-command_feedback_desc,Gửi feedback cho dev,
-command_feedback_prompt,Nhấn vào nút để gửi feedback cho dev. Nó sẽ làm ngập cái log của thằng dev luôn 😳,
-command_help_desc,Hiện hướng dẫn 🐧,
-command_ping_desc,Ping pong ping pong,
-command_avatar_desc,Lấy avatar của ai đó 👀,
-command_avatar_embed_title,Avatar người dùng,
-command_avatar_embed_desc,Avatar của {},
-command_avatar_noavatar,{0} còn không có avatar 🐧,
-command_emoji_desc,Lấy emoji nào đó 👀,
-command_nijika_desc,Nijika,
-command_amogus_desc,Amogus,
-command_osu_user_desc,Lấy thông tin người chơi osu!,
-command_osu_beatmap_desc,Tìm beatmap trong osu! theo tên,
-command_gvs_count_desc,Đếm số lần đã *gvs*,
-command_gvs_leaderboard_desc,Bảng xếp hạng *gvs*,
-command_randcat_desc,Ảnh mèo ngẫu nhiên,
-command_randwaifu_desc,Ảnh waifu ngẫu nhiên (lấy từ waifu.pics),
-command_create_gif_desc,Tạo gif,
-bot_use_command_prompt,Bot mà đòi dùng lệnh của bot à 🐧,
-banned_user_prompt,"Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết 🐧",
-command_not_found_prompt,Lệnh đó không tồn tại!,
-command_ask_no_question,Hỏi gì đi chứ ba,
+feedback_button_1,Đưa tiền đây,Give me money
+feedback_button_1_prompt,{0} kêu ĐƯA TIỀN ĐÂY!!!,{0} said GIVE ME MONEY!!!
+feedback_button_2,Bot đào lửa,Scammer
+feedback_button_2_prompt,{0} kêu BOT ĐÀO LỬA RR!!!,{0} said SCAMMER BOT FCKIN SHEET!!!
+feedback_button_3,Dev tư bản,Capitalist Dev
+feedback_button_3_prompt,{0} kêu DEV TƯ BẢN QUÁ!!!,{0} said CAPITALIST DEV !!!
+feedback_button_4,Form đòi tiền,Refund form
+command_feedback_desc,Gửi feedback cho dev,Send dev feedback
+command_feedback_prompt,Nhấn vào nút để gửi feedback cho dev. Nó sẽ làm ngập cái log của thằng dev luôn 😳,Press the button to send dev feedback. It will flood the dev's log 😳
+command_help_desc,Hiện hướng dẫn 🐧,Show help 🐧
+command_ping_desc,Ping pong ping pong,Ping pong ping pong
+command_avatar_desc,Lấy avatar của ai đó 👀,Get someone's avatar
+command_avatar_embed_title,Avatar người dùng,User avatar
+command_avatar_embed_desc,Avatar của {0},{0}'s avatar
+command_avatar_noavatar,{0} còn không có avatar 🐧,{0} doesn't even have an avatar 🐧
+command_emoji_desc,Lấy emoji nào đó 👀,Get a emoji 👀
+command_nijika_desc,Nijika,Nijika
+command_amogus_desc,Amogus,Amogus
+command_osu_user_desc,Lấy thông tin người chơi osu!,Get info of an osu! player
+command_osu_beatmap_desc,Tìm beatmap trong osu! theo tên,Find a osu! beatmap by name
+command_gvs_count_desc,Đếm số lần đã *gvs*,*gvs* count
+command_gvs_leaderboard_desc,Bảng xếp hạng *gvs*,*gvs* leaderboard
+command_randcat_desc,Ảnh mèo ngẫu nhiên,Random cat image
+command_randwaifu_desc,Ảnh waifu ngẫu nhiên (lấy từ waifu.pics),Random waifu image (from waifu.pics)
+command_create_gif_desc,Tạo gif,Create gif
+bot_use_command_prompt,Bot mà đòi dùng lệnh của bot à 🐧,How dare a bot wants to use another bot's commands 🐧
+banned_user_prompt,"Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết 🐧","You have been banned, please contact the bot owner for more details 🐧"
+command_not_found_prompt,Lệnh đó không tồn tại!,That command does not exist!
+command_ask_no_question,Hỏi gì đi chứ ba.,Ask something please.

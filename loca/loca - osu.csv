@@ -1,4 +1,6 @@
 string_id,vi,en
-command_help,Các lệnh {0}osu:#- `{0}osu user <tên người chơi>` hoặc `/osu_user <tên người chơi>`: Lấy thông tin người dùng nào đó#- `{0}osu beatmap <tên beatmap>` hoặc `/osu_beatmap <tên beatmap>`: Tìm beatmap theo tên,
-user_info_template,https://osu.ppy.sh/users/{0}#Tên người chơi: **{1}**#Quốc gia: **{2}**#Avatar: {3}#Global rank (osu!standard): **\#{4}**#Rank cao nhất đã đạt được: **\#{5}** vào <t:{6}>#Đang {7}#Đã chơi **{8} [{9}] ** {10} lần!,
-prompt_error,Đã có lỗi xảy ra!,
+command_help,Các lệnh {0}osu:#- `{0}osu user <tên người chơi>` hoặc `/osu_user <tên người chơi>`: Lấy thông tin người dùng nào đó#- `{0}osu beatmap <tên beatmap>` hoặc `/osu_beatmap <tên beatmap>`: Tìm beatmap theo tên,{0}osu commands:#- `{0}osu user <user name>` or `/osu_user <user name>`: Get a osu! player's info#- `{0}osu beatmap <beatmap name>` or `/osu_beatmap <beatmap name>`: Find a beatmap by name
+user_info_template,https://osu.ppy.sh/users/{0}#Tên người chơi: **{1}**#Quốc gia: **{2}**#Avatar: {3}#Global rank (osu!standard): **\#{4}**#Rank cao nhất đã đạt được: **\#{5}** vào <t:{6}>#Đang {7}#Đã chơi **{8} [{9}] ** {10} lần!,https://osu.ppy.sh/users/{0}#Username: **{1}**#Country: **2**#Avatar: {3}#Global rank (osu!standard): **\#{4}**#Highest rank: **\#{5}** on <t:{6}>#Currently {7}#Played **{8} [{9}]** {10} times!
+status_online,**trực tuyến** 🟢,**online** 🟢
+status_offline,**ngoại tuyến** 🔴,**offline** 🔴
+prompt_error,Đã có lỗi xảy ra!,An error has occurred
