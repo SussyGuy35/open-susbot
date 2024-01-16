@@ -14,7 +14,12 @@ TOKEN = config.TOKEN
 
 print(f'{config.bot_name} v{bot_version}')
 
-import commands
+# import commands
+from commands import (
+    amogus, ask, creategif, echo, emoji,
+    gacha, gvs, help as bot_help, nijika, osu, pick,
+    ping, randcaps, randcat, randwaifu
+)
 
 OSUAPI_CLIENT_ID = config.OSUAPI_CLIENT_ID
 OSUAPI_CLIENT_SECRET = config.OSUAPI_CLIENT_SECRET
@@ -23,7 +28,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
-ossapi_client = commands.osu.client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET)
+ossapi_client = osu.client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET)
 
 tree = discord.app_commands.CommandTree(client)
 
@@ -71,13 +76,13 @@ async def button(ctx: discord.Interaction):
 @tree.command(name = "help", description = get_string("command_help_desc")) 
 async def help(ctx: discord.Interaction):
     print(f"{ctx.user} used help commands!")
-    await ctx.response.send_message(commands.help.command_response(prefix))
+    await ctx.response.send_message(bot_help.command_response(prefix))
 
 # Ping
 @tree.command(name = "ping", description = get_string("command_ping_desc")) 
 async def ping(ctx: discord.Interaction):
     print(f"{ctx.user} used ping commands!")
-    await ctx.response.send_message(commands.ping.command_response())
+    await ctx.response.send_message(ping.command_response())
 
 # Avatar
 @tree.command(name = "avatar", description = get_string("command_avatar_desc")) 
@@ -97,7 +102,7 @@ async def get_avatar(ctx: discord.Interaction,user:discord.User,server_avatar:bo
 async def get_emoji(ctx: discord.Interaction,emoji: str):
     print(f"{ctx.user} used emoji commands!")
     await ctx.response.defer()
-    rs = commands.emoji.command_response(client,emoji)
+    rs = emoji.command_response(client,emoji)
     if type(rs) == str:
         await ctx.followup.send(rs)
     else:
@@ -108,42 +113,42 @@ async def get_emoji(ctx: discord.Interaction,emoji: str):
 async def nijika(ctx: discord.Interaction):
     print(f"{ctx.user} used nijika commands!")
     await ctx.response.defer()
-    await ctx.followup.send(file = commands.nijika.command_response())
+    await ctx.followup.send(file = nijika.command_response())
 
 #Amogus command
 @tree.command(name = "amogus", description = get_string("command_amogus_desc"))
 async def amogus(ctx: discord.Interaction):
     print(f"{ctx.user} used amogus commands!")
     await ctx.response.defer()
-    await ctx.followup.send(file = commands.amogus.command_response())
+    await ctx.followup.send(file = amogus.command_response())
 
 # osu user
 @tree.command(name = "osu_user", description = get_string("command_osu_user_desc")) 
 async def osu_user(ctx: discord.Interaction, username: str):
     print(f"{ctx.user} used osu user commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"user " + username))
+    await ctx.followup.send(osu.command_response(ossapi_client,prefix,"user " + username))
 
 # osu beatmap
 @tree.command(name = "osu_beatmap", description = get_string("command_osu_beatmap_desc")) 
 async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
     print(f"{ctx.user} used osu beatmap commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
+    await ctx.followup.send(osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
 
 # gvs count
 @tree.command(name = "gvs_count", description = get_string("command_gvs_count_desc"))
 async def gvs_count(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs count commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.gvs.command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
+    await ctx.followup.send(gvs.command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
 
 # gvs lb
 @tree.command(name = "gvs_leaderboard", description = get_string("command_gvs_leaderboard_desc"))
 async def gvs_lb(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs lb commands!")
     await ctx.response.defer()
-    response = commands.gvs.command_response(prefix,str(ctx.user.id), ctx.guild,["lb"])
+    response = gvs.command_response(prefix,str(ctx.user.id), ctx.guild,["lb"])
     if type(response) == discord.Embed:
         await ctx.followup.send(embed = response)
     elif type(response) == str:
@@ -154,26 +159,26 @@ async def gvs_lb(ctx: discord.Interaction):
 async def randcat(ctx: discord.Interaction, is_cat_girl:bool = False):
     print(f"{ctx.user} used randcat commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.randcat.command_response(is_cat_girl))
+    await ctx.followup.send(randcat.command_response(is_cat_girl))
 
 # random waifu
 @tree.command(name = "randwaifu", description = get_string("command_randwaifu_desc"))
 async def randwaifu(ctx: discord.Interaction):
     print(f"{ctx.user} used randwaifu commands!")
     await ctx.response.defer()
-    await ctx.followup.send(commands.randwaifu.command_response())
+    await ctx.followup.send(randwaifu.command_response())
 
 # convert image to gif (kinda)
 @tree.command(name="create_gif", description = get_string("command_create_gif_desc"))
 async def create_gif(ctx: discord.Interaction, file: discord.Attachment):
     print(f"{ctx.user} used createg_gif commands!")
     await ctx.response.defer()
-    response = commands.creategif.command_response(file)
+    response = creategif.command_response(file)
     if type(response) == discord.File:
         await ctx.followup.send(file=response)
     elif type(response) == str:
         await ctx.followup.send(response)
-    commands.creategif.post_response_cleanup(response)
+    creategif.post_response_cleanup(response)
 
 # Bean user
 @tree.command(name="bean", description=get_string("embed_desc", "bean"))
@@ -279,7 +284,7 @@ async def on_message_edit(before, after):
 
 # On message event
 @client.event
-async def on_message(message):
+async def on_message(message: discord.Message):
     global date, cardgame_data, cardshop_data
     
     # log console
@@ -325,29 +330,29 @@ async def on_message(message):
 
             # Help
             case 'help':
-                await message.channel.send(commands.help.command_response(prefix))
+                await message.channel.send(bot_help.command_response(prefix))
             
             # Ping pong ping pong
             case 'ping':
-                await message.channel.send(commands.ping.command_response())
+                await message.channel.send(ping.command_response())
 
             # Echo
             case 'echo':
-                await message.channel.send(commands.echo.command_response(plain_args))
+                await message.channel.send(echo.command_response(plain_args))
             
             # Pick
             case 'pick':
-                await message.channel.send(commands.pick.command_response(plain_args))
+                await message.channel.send(pick.command_response(plain_args))
             
             # Random caps
             case 'randcaps':
-                await message.channel.send(commands.randcaps.command_response(plain_args))
+                await message.channel.send(randcaps.command_response(plain_args))
             
             # Gacha
             case 'gacha':
-                command_response = commands.gacha.command_response(message.content,prefix,userid,username)
-                user_level_up_response = commands.gacha.check_if_user_level_up(userid)
-                super_user = commands.gacha.cardgame_user_check_beaten(userid)
+                command_response = gacha.command_response(message.content,prefix,userid,username)
+                user_level_up_response = gacha.check_if_user_level_up(userid)
+                super_user = gacha.cardgame_user_check_beaten(userid)
                 if command_response != None:
                     if type(command_response) == str:
                         await message.channel.send(command_response)
@@ -357,15 +362,15 @@ async def on_message(message):
                     await message.channel.send(user_level_up_response)
                 if super_user != None:
                     await message.channel.send(super_user)
-                commands.gacha.save()    
+                gacha.save()    
             
             # osu!
             case 'osu':
-                await message.channel.send(commands.osu.command_response(ossapi_client,prefix,plain_args))
+                await message.channel.send(osu.command_response(ossapi_client,prefix,plain_args))
             
             # emoji
             case 'emoji':
-                rs = commands.emoji.command_response(client,args[0])
+                rs = emoji.command_response(client,args[0])
                 if type(rs) == str:
                     await message.channel.send(rs)
                 else:
@@ -373,27 +378,23 @@ async def on_message(message):
             
             # Ask
             case 'ask':
-                await message.channel.send(commands.ask.command_response(plain_args))
+                await message.channel.send(ask.command_response(plain_args))
             
             # Nijika
             case 'nijika':
-                await message.channel.send(file = commands.nijika.command_response())
+                await message.channel.send(file = nijika.command_response())
 
             # Amogus
             case 'amogus':
-                await message.channel.send(file = commands.amogus.command_response())
+                await message.channel.send(file = amogus.command_response())
             
             # Gvs
             case 'gvs':
-                response = commands.gvs.command_response(prefix,userid, message.guild,args)
+                response = gvs.command_response(prefix,userid, message.guild,args)
                 if type(response) == discord.Embed:
                     await message.channel.send(embed = response)
                 elif type(response) == str:
                     await message.channel.send(response)
-            
-            # Bean
-            case 'bean':
-                await message.channel.send(commands.bean.command_response(args, plain_args))
 
             # Invalid command
             case _:
@@ -403,7 +404,7 @@ async def on_message(message):
         if not message.author.bot:
             # gvs
             if "gvs" in message.content.lower():
-                commands.gvs.gvs(userid, username, str(message.guild.id))
+                gvs.gvs(userid, username, str(message.guild.id))
         
             # Auto react emojis
             for word, emojis in autoreact_emojis.items():
