@@ -4,3 +4,4 @@ zero_gvs,Bạn chưa **gvs** lần nào 😳,
 empty_leaderboard,Hiện tại chưa có ai trên bảng xếp hạng,
 leaderboard_embed_title,Bảng xếp hạng **gvs** cho **{0}**,
 command_help,Các lệnh `gvs`:#- `{0}gvs count` hoặc `/gvs_count`: Hiện số lần đã **gvs**.#- `{0}gvs lb` hoặc `/gvs_leaderboard`: Bảng xếp hạng **gvs**.,
+not_supported,**gvs** không được hỗ trợ ở đây!,**gvs** is not supported here!

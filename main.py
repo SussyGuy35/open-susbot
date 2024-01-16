@@ -390,12 +390,14 @@ async def on_message(message: discord.Message):
             
             # Gvs
             case 'gvs':
-                response = gvs.command_response(prefix,userid, message.guild,args)
-                if type(response) == discord.Embed:
-                    await message.channel.send(embed = response)
-                elif type(response) == str:
-                    await message.channel.send(response)
-
+                if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
+                    response = gvs.command_response(prefix,userid, message.guild,args)
+                    if type(response) == discord.Embed:
+                        await message.channel.send(embed = response)
+                    elif type(response) == str:
+                        await message.channel.send(response)
+                else:
+                    await message.channel.send(get_string("not_supported", "gvs"))
             # Invalid command
             case _:
                 await message.channel.send(get_string("command_not_found_prompt"))
