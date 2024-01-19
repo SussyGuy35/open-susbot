@@ -80,7 +80,7 @@ async def help(ctx: discord.Interaction):
 
 # Ping
 @tree.command(name = "ping", description = get_string("command_ping_desc")) 
-async def ping(ctx: discord.Interaction):
+async def pingpong(ctx: discord.Interaction):
     print(f"{ctx.user} used ping commands!")
     await ctx.response.send_message(ping.command_response())
 
@@ -110,14 +110,14 @@ async def get_emoji(ctx: discord.Interaction,emoj: str):
 
 # Nijika command
 @tree.command(name = "nijika", description = get_string("command_nijika_desc"))
-async def nijika(ctx: discord.Interaction):
+async def get_nijika_image(ctx: discord.Interaction):
     print(f"{ctx.user} used nijika commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = nijika.command_response())
 
 #Amogus command
 @tree.command(name = "amogus", description = get_string("command_amogus_desc"))
-async def amogus(ctx: discord.Interaction):
+async def get_amogus_image(ctx: discord.Interaction):
     print(f"{ctx.user} used amogus commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = amogus.command_response())
