@@ -1,6 +1,7 @@
 string_id,vi,en
-count_result,Số lần **{0}** đã **gvs** trong **{1}**: {2},
-zero_gvs,Bạn chưa **gvs** lần nào 😳,
-empty_leaderboard,Hiện tại chưa có ai trên bảng xếp hạng,
-leaderboard_embed_title,Bảng xếp hạng **gvs** cho **{0}**,
-command_help,Các lệnh `gvs`:#- `{0}gvs count` hoặc `/gvs_count`: Hiện số lần đã **gvs**.#- `{0}gvs lb` hoặc `/gvs_leaderboard`: Bảng xếp hạng **gvs**.,
+count_result,Số lần **{0}** đã **gvs** trong **{1}**: {2},**{0}** has **gvs** in **{1}** **{2}** times
+zero_gvs,Bạn chưa **gvs** lần nào 😳,You have never **gvs** 😳
+empty_leaderboard,Hiện tại chưa có ai trên bảng xếp hạng,There is currently no one on the leaderboard
+leaderboard_embed_title,Bảng xếp hạng **gvs** cho **{0}**,**gvs** leaderboard for **{0}**
+command_help,Các lệnh `{0}gvs`:#- `{0}gvs count` hoặc `/gvs_count`: Hiện số lần đã **gvs**.#- `{0}gvs lb` hoặc `/gvs_leaderboard`: Bảng xếp hạng **gvs**.,`{0}gvs` commands:#- `{0}gvs count` or `/gvs_count`: Shows the number of times you have **gvs**.#- `{0}gvs lb` or `/gvs_leaderboard`: Show **gvs** leaderboard.
+not_supported,**gvs** không được hỗ trợ ở đây!,**gvs** is not supported here!
