@@ -8,4 +8,4 @@ commands/data/gvs.json
 config_override.py
 test.py
 lib/__pycache__/*
-.directory/*
+.directory

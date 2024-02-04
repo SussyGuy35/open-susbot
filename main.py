@@ -1,5 +1,6 @@
 import discord, datetime, os
 from lib.locareader import get_string_by_id
+import lib.himom as himom
 
 if os.path.exists("config_override.py"):
     import config_override as config
@@ -13,6 +14,7 @@ bot_version = config.bot_version
 TOKEN = config.TOKEN
 
 print(f'{config.bot_name} v{bot_version}')
+himom.himom() # say hi to ur mom!
 
 # import commands
 from commands import (
