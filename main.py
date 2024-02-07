@@ -18,7 +18,7 @@ himom.himom() # say hi to ur mom!
 
 # import commands
 from commands import (
-    amogus, ask, creategif, echo, emoji,
+    amogus, ask, creategif, echo, emoji as getemoji,
     gacha, gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu
 )
@@ -104,7 +104,7 @@ async def get_avatar(ctx: discord.Interaction,user:discord.User,server_avatar:bo
 async def get_emoji(ctx: discord.Interaction,emoj: str):
     print(f"{ctx.user} used emoji commands!")
     await ctx.response.defer()
-    rs = emoji.command_response(client,emoj)
+    rs = getemoji.command_response(client,emoj)
     if type(rs) == str:
         await ctx.followup.send(rs)
     else:
@@ -372,7 +372,7 @@ async def on_message(message: discord.Message):
             
             # emoji
             case 'emoji':
-                rs = emoji.command_response(client,args[0])
+                rs = getemoji.command_response(client,args[0])
                 if type(rs) == str:
                     await message.channel.send(rs)
                 else:
