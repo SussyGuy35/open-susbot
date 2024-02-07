@@ -1,5 +1,6 @@
 import discord, datetime, os
 from lib.locareader import get_string_by_id
+import lib.himom as himom
 
 if os.path.exists("config_override.py"):
     import config_override as config
@@ -13,10 +14,11 @@ bot_version = config.bot_version
 TOKEN = config.TOKEN
 
 print(f'{config.bot_name} v{bot_version}')
+himom.himom() # say hi to ur mom!
 
 # import commands
 from commands import (
-    amogus, ask, creategif, echo, emoji,
+    amogus, ask, creategif, echo, emoji as getemoji,
     gacha, gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu
 )
@@ -80,7 +82,7 @@ async def help(ctx: discord.Interaction):
 
 # Ping
 @tree.command(name = "ping", description = get_string("command_ping_desc")) 
-async def ping(ctx: discord.Interaction):
+async def pingpong(ctx: discord.Interaction):
     print(f"{ctx.user} used ping commands!")
     await ctx.response.send_message(ping.command_response())
 
@@ -102,7 +104,7 @@ async def get_avatar(ctx: discord.Interaction,user:discord.User,server_avatar:bo
 async def get_emoji(ctx: discord.Interaction,emoj: str):
     print(f"{ctx.user} used emoji commands!")
     await ctx.response.defer()
-    rs = emoji.command_response(client,emoj)
+    rs = getemoji.command_response(client,emoj)
     if type(rs) == str:
         await ctx.followup.send(rs)
     else:
@@ -110,14 +112,14 @@ async def get_emoji(ctx: discord.Interaction,emoj: str):
 
 # Nijika command
 @tree.command(name = "nijika", description = get_string("command_nijika_desc"))
-async def nijika(ctx: discord.Interaction):
+async def get_nijika_image(ctx: discord.Interaction):
     print(f"{ctx.user} used nijika commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = nijika.command_response())
 
 #Amogus command
 @tree.command(name = "amogus", description = get_string("command_amogus_desc"))
-async def amogus(ctx: discord.Interaction):
+async def get_amogus_image(ctx: discord.Interaction):
     print(f"{ctx.user} used amogus commands!")
     await ctx.response.defer()
     await ctx.followup.send(file = amogus.command_response())
@@ -370,7 +372,7 @@ async def on_message(message: discord.Message):
             
             # emoji
             case 'emoji':
-                rs = emoji.command_response(client,args[0])
+                rs = getemoji.command_response(client,args[0])
                 if type(rs) == str:
                     await message.channel.send(rs)
                 else:
@@ -390,30 +392,33 @@ async def on_message(message: discord.Message):
             
             # Gvs
             case 'gvs':
-                response = gvs.command_response(prefix,userid, message.guild,args)
-                if type(response) == discord.Embed:
-                    await message.channel.send(embed = response)
-                elif type(response) == str:
-                    await message.channel.send(response)
-
+                if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
+                    response = gvs.command_response(prefix,userid, message.guild,args)
+                    if type(response) == discord.Embed:
+                        await message.channel.send(embed = response)
+                    elif type(response) == str:
+                        await message.channel.send(response)
+                else:
+                    await message.channel.send(get_string("not_supported", "gvs"))
             # Invalid command
             case _:
                 await message.channel.send(get_string("command_not_found_prompt"))
            
     else:
         if not message.author.bot:
-            # gvs
-            if "gvs" in message.content.lower():
-                gvs.gvs(userid, username, str(message.guild.id))
-        
-            # Auto react emojis
-            for word, emojis in autoreact_emojis.items():
-                if word in message.content.lower():
-                    for emoji in emojis:
-                        try:
-                            await message.add_reaction(emoji)
-                        except:
-                            pass
-                    break
+            if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
+                # gvs
+                if "gvs" in message.content.lower():
+                    gvs.gvs(userid, username, str(message.guild.id))
+            
+                # Auto react emojis
+                for word, emojis in autoreact_emojis.items():
+                    if word in message.content.lower():
+                        for emoji in emojis:
+                            try:
+                                await message.add_reaction(emoji)
+                            except:
+                                pass
+                        break
 
 client.run(TOKEN)
