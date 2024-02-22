@@ -4,7 +4,7 @@ test_string,Đây là một cái string để thử,This is a test string
 feedback_button_1,Đưa tiền đây,Give me money
 feedback_button_1_prompt,{0} kêu ĐƯA TIỀN ĐÂY!!!,{0} said GIVE ME MONEY!!!
 feedback_button_2,Bot đào lửa,Scammer
-feedback_button_2_prompt,{0} kêu BOT ĐÀO LỬA RR!!!,{0} said SCAMMER BOT FCKIN SHEET!!!
+feedback_button_2_prompt,{0} kêu BOT ĐÀO LỬA RR!!!,{0} said SCAM BOT FCKIN SHEET!!!
 feedback_button_3,Dev tư bản,Capitalist Dev
 feedback_button_3_prompt,{0} kêu DEV TƯ BẢN QUÁ!!!,{0} said CAPITALIST DEV !!!
 feedback_button_4,Form đòi tiền,Refund form
