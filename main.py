@@ -83,8 +83,7 @@ async def help(ctx: discord.Interaction):
 # Ping
 @tree.command(name = "ping", description = get_string("command_ping_desc")) 
 async def pingpong(ctx: discord.Interaction):
-    print(f"{ctx.user} used ping commands!")
-    await ctx.response.send_message(ping.command_response())
+    await ping.slash_command_listenner(ctx)
 
 # Avatar
 @tree.command(name = "avatar", description = get_string("command_avatar_desc")) 
