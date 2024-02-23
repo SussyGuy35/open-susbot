@@ -7,7 +7,7 @@ TOKEN = 'ur bot token here'
 OSUAPI_CLIENT_ID = 'ur osu!api client id here'
 OSUAPI_CLIENT_SECRET = 'ur osu!api client secret here'
 
-language = "vi" # bot's language
+language = "en" # bot's language
 
 banned_users = [] # place banned users's id here!
 
