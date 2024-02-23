@@ -46,9 +46,9 @@ yea pretty dumb but its just old me, now im 2 lazy to fix it lol
 **_Now your bot is up and running. Have fun!_**
 
 ## To-do
-- [ ] Finish english translation
+- [x] Finish english translation
 - [x] Make the gacha game even more balance
-- [x] Refactor code
+- [ ] Fix dumb mistakes
 - [ ] Fix ghostping detector conflict with NQN bot
 - [ ] Add more osu!api things (we have 2 (maybe) now)
 - [ ] Add more EPIC FEATURES! (for real!)
