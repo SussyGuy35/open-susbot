@@ -201,7 +201,7 @@ async def bean(ctx: discord.Interaction, user: discord.User, reason: str):
 async def get_bot_prefix(ctx: discord.Interaction):
     print(f"{ctx.user} used get prefix commands")
     await ctx.response.defer()
-    await ctx.followup.send(get_prefix(ctx.guild))
+    await ctx.followup.send(getprefix.slash_command_listener(ctx))
 
 # Ghost ping detector
 async def ghostping_detector_on_delete(message):

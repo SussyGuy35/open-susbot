@@ -1,2 +1,2 @@
 string_id,vi,en
-prompt,Prefix của con bot trong server hiện tại: {0},Bot's prefix in current server: {0}
+prompt,Prefix của con bot trong server hiện tại: `{0}`. Hãy thử `{0}help`.,Bot's prefix in current server: `{0}`. Try `n!help`.
