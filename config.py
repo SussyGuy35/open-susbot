@@ -11,6 +11,13 @@ language = "en" # bot's language
 
 banned_users = [] # place banned users's id here!
 
+specific_prefix = {
+} # Place custom prefix for specific server here in form "serverid: prefix"
+# Example:
+# specific_prefix = {
+# 69420105727: "n!"
+# }
+
 autoreact_emojis = {
 } # place autoreact emojis here in form "word: emoji"
 # Example:

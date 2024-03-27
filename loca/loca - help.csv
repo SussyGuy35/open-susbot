@@ -16,3 +16,4 @@ Các lệnh:,Commands:
 - `/randcat`: Ảnh mèo ngẫu nhiên.,- `/randcat`: Random cat picture.
 - `/randwaifu`: Ảnh waifu ngẫu nhiên.,- `/randwaifu`: Random waifu picture.
 - `/bean <người dùng>`: Bean người dùng nào đó.,- `/bean <user>`: Bean someone.
+- `/get_prefix`: Xem prefix của bot trong server hiện tại,- `/get_prefix`: Get bot's prefix in current server

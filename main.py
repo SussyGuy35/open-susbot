@@ -8,7 +8,6 @@ else:
     import config
 
 # Config
-prefix = config.prefix
 bot_version = config.bot_version
 
 TOKEN = config.TOKEN
@@ -20,7 +19,7 @@ himom.himom() # say hi to ur mom!
 from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gacha, gvs, help as bot_help, nijika, osu, pick,
-    ping, randcaps, randcat, randwaifu
+    ping, randcaps, randcat, randwaifu, getprefix
 )
 
 OSUAPI_CLIENT_ID = config.OSUAPI_CLIENT_ID
@@ -33,6 +32,10 @@ client = discord.Client(intents=intents)
 ossapi_client = osu.client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET)
 
 tree = discord.app_commands.CommandTree(client)
+
+# bot prefix
+def get_prefix(guild: discord.Guild):
+    return getprefix.get_prefix(guild)
 
 # autoreact emojis
 autoreact_emojis = config.autoreact_emojis
@@ -78,12 +81,13 @@ async def button(ctx: discord.Interaction):
 @tree.command(name = "help", description = get_string("command_help_desc")) 
 async def help(ctx: discord.Interaction):
     print(f"{ctx.user} used help commands!")
+    prefix = get_prefix(ctx.guild)
     await ctx.response.send_message(bot_help.command_response(prefix))
 
 # Ping
 @tree.command(name = "ping", description = get_string("command_ping_desc")) 
 async def pingpong(ctx: discord.Interaction):
-    await ping.slash_command_listenner(ctx)
+    await ping.slash_command_listener(ctx)
 
 # Avatar
 @tree.command(name = "avatar", description = get_string("command_avatar_desc")) 
@@ -127,6 +131,7 @@ async def get_amogus_image(ctx: discord.Interaction):
 @tree.command(name = "osu_user", description = get_string("command_osu_user_desc")) 
 async def osu_user(ctx: discord.Interaction, username: str):
     print(f"{ctx.user} used osu user commands!")
+    prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     await ctx.followup.send(osu.command_response(ossapi_client,prefix,"user " + username))
 
@@ -134,6 +139,7 @@ async def osu_user(ctx: discord.Interaction, username: str):
 @tree.command(name = "osu_beatmap", description = get_string("command_osu_beatmap_desc")) 
 async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
     print(f"{ctx.user} used osu beatmap commands!")
+    prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     await ctx.followup.send(osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
 
@@ -141,6 +147,7 @@ async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
 @tree.command(name = "gvs_count", description = get_string("command_gvs_count_desc"))
 async def gvs_count(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs count commands!")
+    prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     await ctx.followup.send(gvs.command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
 
@@ -148,6 +155,7 @@ async def gvs_count(ctx: discord.Interaction):
 @tree.command(name = "gvs_leaderboard", description = get_string("command_gvs_leaderboard_desc"))
 async def gvs_lb(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs lb commands!")
+    prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     response = gvs.command_response(prefix,str(ctx.user.id), ctx.guild,["lb"])
     if type(response) == discord.Embed:
@@ -157,14 +165,14 @@ async def gvs_lb(ctx: discord.Interaction):
 
 # random cat girl
 @tree.command(name = "randcat", description = get_string("command_randcat_desc"))
-async def randcat(ctx: discord.Interaction, is_cat_girl:bool = False):
+async def getrandcat(ctx: discord.Interaction, is_cat_girl:bool = False):
     print(f"{ctx.user} used randcat commands!")
     await ctx.response.defer()
     await ctx.followup.send(randcat.command_response(is_cat_girl))
 
 # random waifu
 @tree.command(name = "randwaifu", description = get_string("command_randwaifu_desc"))
-async def randwaifu(ctx: discord.Interaction):
+async def getrandwaifu(ctx: discord.Interaction):
     print(f"{ctx.user} used randwaifu commands!")
     await ctx.response.defer()
     await ctx.followup.send(randwaifu.command_response())
@@ -187,6 +195,13 @@ async def bean(ctx: discord.Interaction, user: discord.User, reason: str):
     print(f"{ctx.user} used bean commands!")
     await ctx.response.defer()
     await ctx.followup.send(get_string("bean", "bean").format(user, reason))
+
+# Get bot prefix
+@tree.command(name="get_prefix", description="Lấy prefix của con bot tại server hiện tại")
+async def get_bot_prefix(ctx: discord.Interaction):
+    print(f"{ctx.user} used get prefix commands")
+    await ctx.response.defer()
+    await ctx.followup.send(get_prefix(ctx.guild))
 
 # Ghost ping detector
 async def ghostping_detector_on_delete(message):
@@ -295,7 +310,8 @@ async def on_message(message: discord.Message):
     
     userid = str(message.author.id)
     username = message.author.global_name
-    
+    prefix = get_prefix(message.channel.guild)
+
     # If someone use command
     if message.content.startswith(prefix):
         

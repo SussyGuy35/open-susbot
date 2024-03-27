@@ -30,3 +30,4 @@ bot_use_command_prompt,Bot mà đòi dùng lệnh của bot à 🐧,How dare a b
 banned_user_prompt,"Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết 🐧","You have been banned, please contact the bot owner for more details 🐧"
 command_not_found_prompt,Lệnh đó không tồn tại!,That command does not exist!
 command_ask_no_question,Hỏi gì đi chứ ba.,Ask something please.
+command_getprefix_desc,Lấy prefix của con bot tại server hiện tại,Get bot's prefix in current server

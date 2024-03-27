@@ -153,7 +153,8 @@ def check_if_user_level_up(userid):
         return get_string_by_id(main_loca_sheet, "level_up_message", config.language).format(
             cardgame_data[userid]['username'],
             user_check_level[1],
-            user_check_level[2]
+            user_check_level[2],
+            1
         )
     return None
 
@@ -657,20 +658,20 @@ def command_response(command,prefix,userid,username):
                                 bonus_exp
                             ) + "\n"
                         else:
-                            bonus_pts = roll_price/4
+                            bonus_pts = int(roll_price/4)
                             cardgame_data[userid]['pts'] += bonus_pts
                             msg += get_string_by_id(main_loca_sheet, "roll_result_already_have", config.language).format(
                                 i+1,
                                 card_rank_name,
                                 card,
-                                bonus_exp
+                                bonus_pts
                             ) + "\n"
                     return msg        
                 else:
-                    return get_string_by_id(main_loca_sheet, "roll_cant_afford", config.language).format(roll_price*roll_time - cardgame_data[userid]['pts'])
+                    return get_string_by_id(main_loca_sheet, "roll_cant_afford", config.language).format(roll_price*roll_time - cardgame_data[userid]['pts'], roll_time)
             else:
                 cardgame_new_user(userid,username)
-                return get_string_by_id(main_loca_sheet, "roll_cant_afford", config.language).format(roll_price)
+                return get_string_by_id(main_loca_sheet, "roll_cant_afford", config.language).format(roll_price, roll_time)
         
         # Guaranteed roll
         case 'supraroll':
