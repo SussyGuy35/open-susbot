@@ -356,6 +356,7 @@ async def on_message(message: discord.Message):
             # Echo
             case 'echo':
                 await message.channel.send(echo.command_response(plain_args))
+                await echo.delete_message(message)
             
             # Pick
             case 'pick':
