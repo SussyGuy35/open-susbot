@@ -204,7 +204,7 @@ async def get_bot_prefix(ctx: discord.Interaction):
     await ctx.followup.send(getprefix.slash_command_listener(ctx))
 
 # Ghost ping detector
-async def ghostping_detector_on_delete(message):
+async def ghostping_detector_on_delete(message: discord.Message):
     if (datetime.datetime.now(datetime.timezone.utc) - message.created_at).total_seconds() > config.ghostping_check_time_range:
         return
     if message.author.id in config.ghostping_detector_blacklist_user:
@@ -235,7 +235,7 @@ async def ghostping_detector_on_delete(message):
             except discord.Forbidden:
                 return
 
-async def ghostping_detector_on_edit(before, after):
+async def ghostping_detector_on_edit(before: discord.Message, after: discord.Message):
     if (datetime.datetime.now(datetime.timezone.utc) - before.created_at).total_seconds() > config.ghostping_check_time_range:
         return
     if before.author.id in config.ghostping_detector_blacklist_user:

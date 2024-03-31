@@ -7,5 +7,7 @@ async def delete_message(message: discord.Message):
         print("cannot delete message or sth")
         return
 
-def command_response(command):
-    return command
+def command_response(msg: str):
+    new_msg = msg
+    new_msg = new_msg.replace("@everyone", "`@everyone`").replace("@here", "`@here`")
+    return msg
