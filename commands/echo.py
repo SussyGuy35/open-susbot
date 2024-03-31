@@ -10,4 +10,4 @@ async def delete_message(message: discord.Message):
 def command_response(msg: str):
     new_msg = msg
     new_msg = new_msg.replace("@everyone", "`@everyone`").replace("@here", "`@here`")
-    return msg
+    return new_msg
