@@ -3,8 +3,11 @@ try:
 except:
     import config
 from lib.locareader import get_string_by_id
-import discord, json, os
-
+import discord
+import json
+import os
+from commands.getprefix import get_prefix
+    
 base_path = os.path.dirname(os.path.abspath(__file__))
 
 def absolute_path(relative_path):
@@ -92,3 +95,18 @@ def command_response(prefix: str, userid: str, guild:discord.Guild, args: list[s
         case _:
             return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
 
+async def slash_command_listener_count(ctx: discord.Interaction):
+    print(f"{ctx.user} used gvs count commands!")
+    prefix = get_prefix(ctx.guild)
+    await ctx.response.defer()
+    await ctx.followup.send(command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
+
+async def slash_command_listener_lb(ctx: discord.Interaction):
+    print(f"{ctx.user} used gvs lb commands!")
+    prefix = get_prefix(ctx.guild)
+    await ctx.response.defer()
+    response = command_response(prefix,str(ctx.user.id), ctx.guild,["lb"])
+    if type(response) == discord.Embed:
+        await ctx.followup.send(embed = response)
+    elif type(response) == str:
+        await ctx.followup.send(response)

@@ -1,4 +1,5 @@
 import discord, datetime, os
+import features.auto_react_emoji
 from lib.locareader import get_string_by_id
 import lib.himom as himom
 
@@ -20,8 +21,11 @@ from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gacha, gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
-    avatar
+    avatar, bean
 )
+
+# import features
+import features.ghostping_detector
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -118,129 +122,37 @@ async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
 # gvs count
 @tree.command(name = "gvs_count", description = get_string("command_gvs_count_desc"))
 async def gvs_count(ctx: discord.Interaction):
-    print(f"{ctx.user} used gvs count commands!")
-    prefix = get_prefix(ctx.guild)
-    await ctx.response.defer()
-    await ctx.followup.send(gvs.command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
+    await gvs.slash_command_listener_count(ctx)
 
 # gvs lb
 @tree.command(name = "gvs_leaderboard", description = get_string("command_gvs_leaderboard_desc"))
 async def gvs_lb(ctx: discord.Interaction):
-    print(f"{ctx.user} used gvs lb commands!")
-    prefix = get_prefix(ctx.guild)
-    await ctx.response.defer()
-    response = gvs.command_response(prefix,str(ctx.user.id), ctx.guild,["lb"])
-    if type(response) == discord.Embed:
-        await ctx.followup.send(embed = response)
-    elif type(response) == str:
-        await ctx.followup.send(response)
+    await gvs.slash_command_listener_lb(ctx)
 
 # random cat girl
 @tree.command(name = "randcat", description = get_string("command_randcat_desc"))
 async def getrandcat(ctx: discord.Interaction, is_cat_girl:bool = False):
-    print(f"{ctx.user} used randcat commands!")
-    await ctx.response.defer()
-    await ctx.followup.send(randcat.command_response(is_cat_girl))
+    await randcat.slash_command_listener(ctx, is_cat_girl)
 
 # random waifu
 @tree.command(name = "randwaifu", description = get_string("command_randwaifu_desc"))
 async def getrandwaifu(ctx: discord.Interaction):
-    print(f"{ctx.user} used randwaifu commands!")
-    await ctx.response.defer()
-    await ctx.followup.send(randwaifu.command_response())
+    await randwaifu.slash_command_listener(ctx)
 
 # convert image to gif (kinda)
 @tree.command(name="create_gif", description = get_string("command_create_gif_desc"))
 async def create_gif(ctx: discord.Interaction, file: discord.Attachment):
-    print(f"{ctx.user} used createg_gif commands!")
-    await ctx.response.defer()
-    response = creategif.command_response(file)
-    if type(response) == discord.File:
-        await ctx.followup.send(file=response)
-    elif type(response) == str:
-        await ctx.followup.send(response)
-    creategif.post_response_cleanup(response)
+    await creategif.slash_command_listener(ctx, file)
 
 # Bean user
 @tree.command(name="bean", description=get_string("embed_desc", "bean"))
-async def bean(ctx: discord.Interaction, user: discord.User, reason: str):
-    print(f"{ctx.user} used bean commands!")
-    await ctx.response.defer()
-    await ctx.followup.send(get_string("bean", "bean").format(user, reason))
+async def bean_user(ctx: discord.Interaction, user: discord.User, reason: str):
+    await bean.slash_command_listener(ctx, user, reason)
 
 # Get bot prefix
 @tree.command(name="get_prefix", description="Lấy prefix của con bot tại server hiện tại")
 async def get_bot_prefix(ctx: discord.Interaction):
-    print(f"{ctx.user} used get prefix commands")
-    await ctx.response.defer()
-    await ctx.followup.send(getprefix.slash_command_listener(ctx))
-
-# Ghost ping detector
-async def ghostping_detector_on_delete(message: discord.Message):
-    if (datetime.datetime.now(datetime.timezone.utc) - message.created_at).total_seconds() > config.ghostping_check_time_range:
-        return
-    if message.author.id in config.ghostping_detector_blacklist_user:
-        return
-    if (len(message.mentions) == 0 or (len(message.mentions) == 1 and (message.mentions[0] == message.author or message.mentions[0].bot))):
-        if not message.mention_everyone:
-            return
-    if message.author.bot:
-        return
-    else:
-        if message.mention_everyone: victims = "@everyone"
-        else:
-            victims = ""
-            for victim in message.mentions:
-                if not victim.bot:
-                    victims += f"<@{victim.id}> "
-        if victims == "": return
-        print(f"{message.author.name} ghostping in {message.guild}!")
-        ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
-        ghostping.add_field(name='**Tên:**', value=f'{message.author} (<@{message.author.id}>)')
-        ghostping.add_field(name='**Tin nhắn:**', value=f'{message.content}')
-        ghostping.add_field(name='**Nạn nhân:**', value=victims)
-        try:
-            await message.channel.send(embed=ghostping)
-        except discord.Forbidden:
-            try:
-                await message.author.send(embed=ghostping)
-            except discord.Forbidden:
-                return
-
-async def ghostping_detector_on_edit(before: discord.Message, after: discord.Message):
-    if (datetime.datetime.now(datetime.timezone.utc) - before.created_at).total_seconds() > config.ghostping_check_time_range:
-        return
-    if before.author.id in config.ghostping_detector_blacklist_user:
-        return
-    if len(before.mentions) == 0 or (len(before.mentions) == 1 and (before.mentions[0] == before.author or before.mentions[0].bot)):
-        if not before.mention_everyone:
-            return
-    if before.author.bot: return
-    elif (before.mentions != after.mentions) or (before.mention_everyone and after.mention_everyone == False):
-        if before.mention_everyone: victims = "@everyone"
-        else:
-            victims_list = before.mentions.copy()
-            for mention in after.mentions:
-                if mention in victims_list:
-                    victims_list.remove(mention)
-            victims = ""
-            for victim in victims_list:
-                if not victim.bot:
-                    victims += f"<@{victim.id}> "
-        if victims == "": return
-        print(f"{before.author.name} ghostping in {before.guild}!")
-        ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=after.created_at, description = "Bắn chết mẹ giờ")
-        ghostping.add_field(name='**Tên:**', value=f'{before.author} (<@{before.author.id}>)')
-        ghostping.add_field(name='**Tin nhắn gốc:**', value=f'{before.content}')
-        ghostping.add_field(name='**Tin nhắn đã chỉnh sửa:**', value=f'{after.content}')
-        ghostping.add_field(name='**Nạn nhân:**', value=victims)
-        try:
-            await before.channel.send(embed=ghostping)
-        except discord.Forbidden:
-            try:
-                await before.author.send(embed=ghostping)
-            except discord.Forbidden:
-                return
+    await getprefix.slash_command_listener(ctx)
 
 # On ready event
 @client.event
@@ -258,17 +170,13 @@ List of current joined server(s):
 @client.event
 async def on_message_delete(message):
     # Ghost ping detector 6900
-    if message.guild:
-        if config.enable_ghostping_detector and not message.guild.id in config.ghostping_detector_blacklist_guild:
-            await ghostping_detector_on_delete(message)
+    await features.ghostping_detector.ghostping_detector_on_delete(message)
 
 # On message edit event
 @client.event
 async def on_message_edit(before, after):
     # Ghost ping detector 6900
-    if before.guild:
-        if config.enable_ghostping_detector and not before.guild.id in config.ghostping_detector_blacklist_guild:
-            await ghostping_detector_on_edit(before,after)
+    await features.ghostping_detector.ghostping_detector_on_edit(before,after)
 
 # On message event
 @client.event
@@ -400,13 +308,6 @@ async def on_message(message: discord.Message):
                     gvs.gvs(userid, username, str(message.guild.id))
             
                 # Auto react emojis
-                for word, emojis in autoreact_emojis.items():
-                    if word in message.content.lower():
-                        for emoji in emojis:
-                            try:
-                                await message.add_reaction(emoji)
-                            except:
-                                pass
-                        break
+                await features.auto_react_emoji.react(autoreact_emojis, message)
 
 client.run(TOKEN)

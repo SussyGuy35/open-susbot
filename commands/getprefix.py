@@ -13,5 +13,9 @@ def get_prefix(guild: discord.Guild | None):
         return config.specific_prefix[guild.id]
     return config.prefix
 
-def slash_command_listener(ctx: discord.Interaction):
-    return get_string_by_id(loca_sheet, "prompt", config.language).format(get_prefix(ctx.guild))
+async def slash_command_listener(ctx: discord.Interaction):
+    print(f"{ctx.user} used get prefix commands")
+    response = get_string_by_id(loca_sheet, "prompt", config.language).format(get_prefix(ctx.guild))
+    await ctx.response.defer()
+    await ctx.followup.send(response)
+    

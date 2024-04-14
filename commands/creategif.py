@@ -40,3 +40,13 @@ def command_response(attachment) -> discord.File | str:
         return get_string_by_id(loca_sheet, "prompt_exception",config.language)
     else:
         return discord.File(file_name)
+
+async def slash_command_listener(ctx: discord.Interaction, file: discord.Attachment):
+    print(f"{ctx.user} used createg_gif commands!")
+    await ctx.response.defer()
+    response = command_response(file)
+    if type(response) == discord.File:
+        await ctx.followup.send(file=response)
+    elif type(response) == str:
+        await ctx.followup.send(response)
+    post_response_cleanup(response)
