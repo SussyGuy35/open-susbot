@@ -4,8 +4,11 @@ except:
     import config
 import discord
 import datetime
+from commands.getprefix import get_prefix
 
 async def ghostping_detector_on_delete(message: discord.Message):
+    if message.content.startswith(get_prefix(message.guild) + "echo"):
+        return
     if not message.guild:
         return
     if not config.enable_ghostping_detector:
@@ -43,6 +46,8 @@ async def ghostping_detector_on_delete(message: discord.Message):
                 return
 
 async def ghostping_detector_on_edit(before: discord.Message, after: discord.Message):
+    if before.content.startswith(get_prefix(message.guild) + "echo"):
+        return
     if not before.guild:
         return
     if not config.enable_ghostping_detector:
