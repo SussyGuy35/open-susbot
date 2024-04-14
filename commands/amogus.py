@@ -1,4 +1,5 @@
 import discord
+import os
 from lib.sussyutils import pick_random_file_from_dir
 
 base_path = os.path.dirname(os.path.abspath(__file__))
