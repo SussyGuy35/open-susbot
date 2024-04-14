@@ -1,7 +1,13 @@
 import discord
+import os
 from lib.sussyutils import pick_random_file_from_dir
 
-imgpath = "data/nijika/"
+base_path = os.path.dirname(os.path.abspath(__file__))
+
+def absolute_path(relative_path: str) -> str:
+    return os.path.join(base_path,relative_path)
+
+imgpath = absolute_path("data/nijika/")
 
 def command_response():
     return discord.File(imgpath + pick_random_file_from_dir(imgpath))
