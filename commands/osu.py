@@ -2,7 +2,9 @@ try:
     import config_override as config
 except:
     import config
+import discord
 from lib.locareader import get_string_by_id
+from commands.getprefix import get_prefix
 from ossapi import *
 
 loca_sheet = "loca/loca - osu.csv"
@@ -12,7 +14,7 @@ def client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET):
     return osu_api
 
 # Main function
-def command_response(osu_api,prefix,command):
+def command_response(osu_api: Ossapi,prefix: str,command: str):
     # Invalid command handler 6900
     try:
         osu_command = command.split()[0]
@@ -58,3 +60,15 @@ def command_response(osu_api,prefix,command):
         
         case _:
             return get_string_by_id(loca_sheet,"command_help",config.language).format(prefix)
+
+async def slash_command_listener_user(client: Ossapi, ctx: discord.Interaction, username: str):
+    print(f"{ctx.user} used osu user commands!")
+    prefix = get_prefix(ctx.guild)
+    await ctx.response.defer()
+    await ctx.followup.send(command_response(client, prefix, "user " + username))
+
+async def slash_command_listener_beatmap(client: Ossapi, ctx: discord.Interaction, beatmap: str):
+    print(f"{ctx.user} used osu beatmap commands!")
+    prefix = get_prefix(ctx.guild)
+    await ctx.response.defer()
+    await ctx.followup.send(command_response(client,prefix,"beatmap " + beatmap))

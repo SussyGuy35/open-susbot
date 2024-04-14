@@ -19,17 +19,15 @@ himom.himom() # say hi to ur mom!
 from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gacha, gvs, help as bot_help, nijika, osu, pick,
-    ping, randcaps, randcat, randwaifu, getprefix
+    ping, randcaps, randcat, randwaifu, getprefix,
+    avatar
 )
-
-OSUAPI_CLIENT_ID = config.OSUAPI_CLIENT_ID
-OSUAPI_CLIENT_SECRET = config.OSUAPI_CLIENT_SECRET
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
-ossapi_client = osu.client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET)
+ossapi_client = osu.client(config.OSUAPI_CLIENT_ID, config.OSUAPI_CLIENT_SECRET)
 
 tree = discord.app_commands.CommandTree(client)
 
@@ -80,9 +78,7 @@ async def button(ctx: discord.Interaction):
 # Help
 @tree.command(name = "help", description = get_string("command_help_desc")) 
 async def help(ctx: discord.Interaction):
-    print(f"{ctx.user} used help commands!")
-    prefix = get_prefix(ctx.guild)
-    await ctx.response.send_message(bot_help.command_response(prefix))
+    await bot_help.slash_command_listener(ctx)
 
 # Ping
 @tree.command(name = "ping", description = get_string("command_ping_desc")) 
@@ -92,56 +88,32 @@ async def pingpong(ctx: discord.Interaction):
 # Avatar
 @tree.command(name = "avatar", description = get_string("command_avatar_desc")) 
 async def get_avatar(ctx: discord.Interaction,user:discord.User,server_avatar:bool = True):
-    print(f"{ctx.user} used avatar commands!")
-    await ctx.response.defer()
-    avatar = user.display_avatar if server_avatar else user.avatar
-    if avatar != None:
-        embed = discord.Embed(title=get_string("command_avatar_embed_title"), description=get_string("command_avatar_embed_desc").format(user), color=0x03e3fc, type = "image")
-        embed.set_image(url = avatar.url)
-        await ctx.followup.send(embed = embed)
-    else:
-        await ctx.followup.send(get_string("command_avatar_noavatar"))
+    await avatar.slash_command_listener(ctx, user, server_avatar)
 
 # Emoji
 @tree.command(name = "emoji", description = get_string("command_emoji_desc")) 
-async def get_emoji(ctx: discord.Interaction,emoj: str):
-    print(f"{ctx.user} used emoji commands!")
-    await ctx.response.defer()
-    rs = getemoji.command_response(client,emoj)
-    if type(rs) == str:
-        await ctx.followup.send(rs)
-    else:
-        await ctx.followup.send(embed = rs)
+async def get_emoji(ctx: discord.Interaction, emoj: str):
+    await getemoji.slash_command_listener(client, ctx, emoj)
 
 # Nijika command
 @tree.command(name = "nijika", description = get_string("command_nijika_desc"))
 async def get_nijika_image(ctx: discord.Interaction):
-    print(f"{ctx.user} used nijika commands!")
-    await ctx.response.defer()
-    await ctx.followup.send(file = nijika.command_response())
+    await nijika.slash_command_listener(ctx)
 
 #Amogus command
 @tree.command(name = "amogus", description = get_string("command_amogus_desc"))
 async def get_amogus_image(ctx: discord.Interaction):
-    print(f"{ctx.user} used amogus commands!")
-    await ctx.response.defer()
-    await ctx.followup.send(file = amogus.command_response())
+    await amogus.slash_command_listener(ctx)
 
 # osu user
 @tree.command(name = "osu_user", description = get_string("command_osu_user_desc")) 
 async def osu_user(ctx: discord.Interaction, username: str):
-    print(f"{ctx.user} used osu user commands!")
-    prefix = get_prefix(ctx.guild)
-    await ctx.response.defer()
-    await ctx.followup.send(osu.command_response(ossapi_client,prefix,"user " + username))
+    await osu.slash_command_listener_user(ossapi_client, ctx, username)
 
 # osu beatmap
 @tree.command(name = "osu_beatmap", description = get_string("command_osu_beatmap_desc")) 
 async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
-    print(f"{ctx.user} used osu beatmap commands!")
-    prefix = get_prefix(ctx.guild)
-    await ctx.response.defer()
-    await ctx.followup.send(osu.command_response(ossapi_client,prefix,"beatmap " + beatmap))
+    await osu.slash_command_listener_beatmap(ossapi_client, ctx, beatmap)
 
 # gvs count
 @tree.command(name = "gvs_count", description = get_string("command_gvs_count_desc"))
@@ -324,7 +296,7 @@ async def on_message(message: discord.Message):
                 await message.channel.send(get_string("bot_use_command_prompt"))
                 return
         
-        if userid in config.banned_users:
+        if int(userid) in config.banned_users:
             await message.channel.send(get_string("banned_user_prompt"))
             return
         
@@ -355,8 +327,8 @@ async def on_message(message: discord.Message):
 
             # Echo
             case 'echo':
-                await message.channel.send(echo.command_response(plain_args))
                 await echo.delete_message(message)
+                await message.channel.send(echo.command_response(plain_args))
             
             # Pick
             case 'pick':

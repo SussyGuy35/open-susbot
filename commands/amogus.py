@@ -1,11 +1,12 @@
-import discord, random, os
-
-base_path = os.path.dirname(os.path.abspath(__file__))
+import discord
+from lib.sussyutils import pick_random_file_from_dir
 
 imgpath = "data/susimg/"
 
-def absolute_path(relative_path):
-    return os.path.join(base_path,relative_path)
-
 def command_response():
-    return discord.File(absolute_path(imgpath + random.choice(os.listdir(absolute_path(imgpath)))))
+    return discord.File(imgpath + pick_random_file_from_dir(imgpath))
+
+async def slash_command_listener(ctx: discord.Interaction):
+    print(f"{ctx.user} used amogus commands!")
+    await ctx.response.defer()
+    await ctx.followup.send(file = command_response())

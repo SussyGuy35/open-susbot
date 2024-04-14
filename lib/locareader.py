@@ -1,3 +1,4 @@
+"""Read bot's loca file"""
 import csv
 
 def string_hash_to_newline(_str):

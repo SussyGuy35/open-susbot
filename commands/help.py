@@ -2,6 +2,8 @@ try:
     import config_override as config
 except:
     import config
+import discord
+from commands.getprefix import get_prefix
 from lib.locareader import get_string_list
 
 loca_sheet = "loca/loca - help.csv"
@@ -14,3 +16,8 @@ def get_help_text(prefix):
 
 def command_response(prefix):
     return get_help_text(prefix)
+
+async def slash_command_listener(ctx: discord.Interaction):
+    print(f"{ctx.user} used help commands!")
+    prefix = get_prefix(ctx.guild)
+    await ctx.response.send_message(command_response(prefix))
