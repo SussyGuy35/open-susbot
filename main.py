@@ -1,5 +1,5 @@
-import discord, datetime, os
-import features.auto_react_emoji
+import discord
+import os
 from lib.locareader import get_string_by_id
 import lib.himom as himom
 
@@ -21,11 +21,14 @@ from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gacha, gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
-    avatar, bean
+    avatar, bean, feedback
 )
 
 # import features
+import features.onready_things
 import features.ghostping_detector
+import features.auto_react_emoji
+import features.gvscount
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -42,42 +45,15 @@ def get_prefix(guild: discord.Guild):
 # autoreact emojis
 autoreact_emojis = config.autoreact_emojis
 
-#loca thing
+# loca thing
 def get_string(id: str, loca: str = "main"):
     return get_string_by_id(f"loca/loca - {loca}.csv",id,config.language)
 
-# Send feedback
-class FeedbackButtons(discord.ui.View):
-    def __init__(self, *, timeout=180):
-        super().__init__(timeout=timeout)
-    
-    @discord.ui.button(label=get_string("feedback_button_1"),style=discord.ButtonStyle.red,emoji = "💲")
-    async def dua_tien_day(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print(get_string("feedback_button_1_prompt").format(interaction.user))
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
-    
-    @discord.ui.button(label=get_string("feedback_button_2"),style=discord.ButtonStyle.gray,emoji = "🔫")
-    async def bot_dao_lua(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print(get_string("feedback_button_2_prompt").format(interaction.user))
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
-        
-    @discord.ui.button(label=get_string("feedback_button_3"),style=discord.ButtonStyle.blurple,emoji = "🐧")
-    async def dev_tu_ban(self,interaction:discord.Interaction,button:discord.ui.Button):
-        print(get_string("feedback_button_3_prompt").format(interaction.user))
-        button.disabled = True
-        await interaction.response.edit_message(view=self)
-
-# Slash command
-
+### Slash command
 # Feedback
 @tree.command(name = "feedback", description = get_string("command_feedback_desc"))
-async def button(ctx: discord.Interaction):
-    view = FeedbackButtons()
-    view.add_item(discord.ui.Button(label=get_string("feedback_button_4"),style=discord.ButtonStyle.link,url="https://SussyGuy35.github.io/duatienday.html",emoji="😏"))
-    print(f"{ctx.user} used feedback commands!")
-    await ctx.response.send_message(get_string("command_feedback_prompt"),view=view)
+async def send_feedback(ctx: discord.Interaction):
+    await feedback.slash_command_listener(ctx)
 
 # Help
 @tree.command(name = "help", description = get_string("command_help_desc")) 
@@ -159,29 +135,22 @@ async def get_bot_prefix(ctx: discord.Interaction):
 async def on_ready():
     #tree.clear_commands(guild = None) # Uncomment this to clear all commands
     await tree.sync()
-    await client.change_presence(activity = discord.Streaming(name = 'My creator hates me',url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'))
-    prompt = f"""Logged in as {client.user}. Currently in {str(len(client.guilds))} server(s)!
-List of current joined server(s):
-"""
-    for guild in client.guilds:
-        prompt += f"{guild}\n"
-    print(prompt)
+    await features.onready_things.on_ready(client)
 # On message delete event
 @client.event
 async def on_message_delete(message):
     # Ghost ping detector 6900
-    await features.ghostping_detector.ghostping_detector_on_delete(message)
+    await features.ghostping_detector.on_delete(message)
 
 # On message edit event
 @client.event
 async def on_message_edit(before, after):
     # Ghost ping detector 6900
-    await features.ghostping_detector.ghostping_detector_on_edit(before,after)
+    await features.ghostping_detector.on_edit(before,after)
 
 # On message event
 @client.event
 async def on_message(message: discord.Message):
-    global date, cardgame_data, cardshop_data
     
     # log console
     if message.author == client.user:
@@ -301,13 +270,9 @@ async def on_message(message: discord.Message):
                 await message.channel.send(get_string("command_not_found_prompt"))
            
     else:
-        if not message.author.bot:
-            if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
-                # gvs
-                if "gvs" in message.content.lower():
-                    gvs.gvs(userid, username, str(message.guild.id))
-            
-                # Auto react emojis
-                await features.auto_react_emoji.react(autoreact_emojis, message)
+        # gvs
+        await features.gvscount.gvs(message, userid, username)
+        # Auto react emojis
+        await features.auto_react_emoji.react(autoreact_emojis, message)
 
 client.run(TOKEN)
