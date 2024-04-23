@@ -43,7 +43,7 @@ You can also change bot's version number and prefix here.
 
 ## To-do
 - [x] Finish english translation
-- [ ] Fix dumb mistakes
+- [x] Fix dumb mistakes
 - [ ] Fix ghostping detector conflict with NQN bot
 - [ ] Add more osu!api things (we have 2 (maybe) now)
 - [ ] Add more EPIC FEATURES! (for real!)
