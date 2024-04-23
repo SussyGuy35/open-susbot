@@ -5,7 +5,6 @@ Các lệnh:,Commands:
 - `{0}echo <tin nhắn>`: Làm con bot nói gì đó.,- `{0}echo <message>`: Make bot say sth.
 "- `{0}pick [lựa chọn 1], [lựa chọn 2], ...`: Chọn 1 trong các lựa chọn được đưa ra.","- `{0}pick [choice 1] [choice 2], ...`: Chooses a random element from the supplied choices."
 - `{0}randcaps <tin nhắn>`: lÀM chO cOn bOT NÓi GÌ đÓ kiểU nhƯ Này.,- `{0}randcaps <message>`: MAKe ThiNGS look likE THis!
-- `{0}gacha`: Game gacha siêu cân bằng.,- `{0}gacha`: Super balanced gacha game.
 - `{0}osu` hoặc `/osu_<sth>`: Một số lệnh dùng osu!api. (thằng đần Bách làm có 2 lệnh),- `{0}osu` or `/osu_<sth>`: Some commands that used osu!api.
 - `{0}emoji <emoji>` hoặc `/emoji <emoji>`: Lấy một emoji nào đó.,- `{0}emoji <emoji>` or `/emoji <emoji>`: Get a emoji.
 "- `{0}ask <câu hỏi>`: Bạn hỏi, bot trả lời (siêu juan).",- `{0}ask <question>`: Ask bot anything (super accurate).

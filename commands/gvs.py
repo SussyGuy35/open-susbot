@@ -6,7 +6,7 @@ from lib.locareader import get_string_by_id
 import discord
 import json
 import os
-from commands.getprefix import get_prefix
+from lib.sussyutils import get_prefix
     
 base_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -94,6 +94,19 @@ def command_response(prefix: str, userid: str, guild:discord.Guild, args: list[s
 
         case _:
             return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+
+async def command_listener(message: discord.Message, args: list):
+    prefix = get_prefix(message.guild)
+    userid = str(message.author.id)
+
+    if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
+        response = command_response(prefix,userid, message.guild,args)
+        if type(response) == discord.Embed:
+            await message.channel.send(embed = response)
+        elif type(response) == str:
+            await message.channel.send(response)
+    else:
+        await message.channel.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
 async def slash_command_listener_count(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs count commands!")

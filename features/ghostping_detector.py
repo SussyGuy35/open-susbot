@@ -4,7 +4,10 @@ except:
     import config
 import discord
 import datetime
-from commands.getprefix import get_prefix
+from lib.sussyutils import get_prefix
+from lib.locareader import get_string_by_id
+
+loca_sheet = "loca/loca - ghostping_detector.csv"
 
 async def on_delete(message: discord.Message):
     if message.content.startswith(get_prefix(message.guild) + "echo"):
@@ -33,10 +36,24 @@ async def on_delete(message: discord.Message):
                     victims += f"<@{victim.id}> "
         if victims == "": return
         print(f"{message.author.name} ghostping in {message.guild}!")
-        ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=message.created_at, description = "Bắn chết mẹ giờ")
-        ghostping.add_field(name='**Tên:**', value=f'{message.author} (<@{message.author.id}>)')
-        ghostping.add_field(name='**Tin nhắn:**', value=f'{message.content}')
-        ghostping.add_field(name='**Nạn nhân:**', value=victims)
+        ghostping = discord.Embed(
+            title = get_string_by_id(loca_sheet,"embed_title", config.language), 
+            color = 0xFF0000, 
+            timestamp = message.created_at, 
+            description = get_string_by_id(loca_sheet, "embed_desc", config.language)
+        )
+        ghostping.add_field(
+            name = get_string_by_id(loca_sheet, "name", config.language), 
+            value = f'{message.author} (<@{message.author.id}>)'
+        )
+        ghostping.add_field(
+            name = get_string_by_id(loca_sheet, "message", config.language), 
+            value = message.content
+        )
+        ghostping.add_field(
+            name = get_string_by_id(loca_sheet, "victim", config.language), 
+            value = victims
+        )
         try:
             await message.channel.send(embed=ghostping)
         except discord.Forbidden:
@@ -75,11 +92,29 @@ async def on_edit(before: discord.Message, after: discord.Message):
                     victims += f"<@{victim.id}> "
         if victims == "": return
         print(f"{before.author.name} ghostping in {before.guild}!")
-        ghostping = discord.Embed(title=f'GHOSTPING', color=0xFF0000, timestamp=after.created_at, description = "Bắn chết mẹ giờ")
-        ghostping.add_field(name='**Tên:**', value=f'{before.author} (<@{before.author.id}>)')
-        ghostping.add_field(name='**Tin nhắn gốc:**', value=f'{before.content}')
-        ghostping.add_field(name='**Tin nhắn đã chỉnh sửa:**', value=f'{after.content}')
-        ghostping.add_field(name='**Nạn nhân:**', value=victims)
+        ghostping = discord.Embed(
+            title = get_string_by_id(loca_sheet, "embed_title", config.language), 
+            color = 0xFF0000, 
+            timestamp = after.created_at, 
+            description = get_string_by_id(loca_sheet, "embed_desc", config.language)
+        )
+        ghostping.add_field(
+            name = get_string_by_id(loca_sheet, "name", config.language), 
+            value = f'{before.author} (<@{before.author.id}>)'
+        )
+        ghostping.add_field(
+            name = get_string_by_id(loca_sheet, "original_message", config.language), 
+            value = before.content
+        )
+        ghostping.add_field(
+            name = get_string_by_id(loca_sheet, "edited_message", config.language), 
+            value = after.content
+        )
+        ghostping.add_field(
+            name = get_string_by_id(loca_sheet, "victim", config.language), 
+            value = victims
+        )
+        
         try:
             await before.channel.send(embed=ghostping)
         except discord.Forbidden:

@@ -1,7 +1,6 @@
 import discord
 import os
 from lib.locareader import get_string_by_id
-import lib.himom as himom
 
 if os.path.exists("config_override.py"):
     import config_override as config
@@ -14,12 +13,11 @@ bot_version = config.bot_version
 TOKEN = config.TOKEN
 
 print(f'{config.bot_name} v{bot_version}')
-himom.himom() # say hi to ur mom!
 
 # import commands
 from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
-    gacha, gvs, help as bot_help, nijika, osu, pick,
+    gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback
 )
@@ -34,7 +32,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
-ossapi_client = osu.client(config.OSUAPI_CLIENT_ID, config.OSUAPI_CLIENT_SECRET)
 
 tree = discord.app_commands.CommandTree(client)
 
@@ -88,12 +85,12 @@ async def get_amogus_image(ctx: discord.Interaction):
 # osu user
 @tree.command(name = "osu_user", description = get_string("command_osu_user_desc")) 
 async def osu_user(ctx: discord.Interaction, username: str):
-    await osu.slash_command_listener_user(ossapi_client, ctx, username)
+    await osu.slash_command_listener_user(ctx, username)
 
 # osu beatmap
 @tree.command(name = "osu_beatmap", description = get_string("command_osu_beatmap_desc")) 
 async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
-    await osu.slash_command_listener_beatmap(ossapi_client, ctx, beatmap)
+    await osu.slash_command_listener_beatmap(ctx, beatmap)
 
 # gvs count
 @tree.command(name = "gvs_count", description = get_string("command_gvs_count_desc"))
@@ -196,75 +193,47 @@ async def on_message(message: discord.Message):
 
             # Help
             case 'help':
-                await message.channel.send(bot_help.command_response(prefix))
+                await bot_help.command_listener(message)
             
             # Ping pong ping pong
             case 'ping':
-                await message.channel.send(ping.command_response())
+                await ping.command_listener(message, client)
 
             # Echo
             case 'echo':
-                await echo.delete_message(message)
-                await message.channel.send(echo.command_response(plain_args))
+                await echo.command_listener(message, client, plain_args)
             
             # Pick
             case 'pick':
-                await message.channel.send(pick.command_response(plain_args))
+                await pick.command_listener(message, plain_args)
             
             # Random caps
             case 'randcaps':
-                await message.channel.send(randcaps.command_response(plain_args))
-            
-            # Gacha
-            case 'gacha':
-                command_response = gacha.command_response(message.content,prefix,userid,username)
-                user_level_up_response = gacha.check_if_user_level_up(userid)
-                super_user = gacha.cardgame_user_check_beaten(userid)
-                if command_response != None:
-                    if type(command_response) == str:
-                        await message.channel.send(command_response)
-                    else:
-                        await message.channel.send(file = command_response)
-                if user_level_up_response != None:
-                    await message.channel.send(user_level_up_response)
-                if super_user != None:
-                    await message.channel.send(super_user)
-                gacha.save()    
+                await randcaps.command_listener(message, plain_args)  
             
             # osu!
             case 'osu':
-                await message.channel.send(osu.command_response(ossapi_client,prefix,plain_args))
+                await osu.command_listener(message, plain_args)
             
             # emoji
             case 'emoji':
-                rs = getemoji.command_response(client,args[0])
-                if type(rs) == str:
-                    await message.channel.send(rs)
-                else:
-                    await message.channel.send(embed = rs)
+                await getemoji.command_listener(message, client, args)
             
             # Ask
             case 'ask':
-                await message.channel.send(ask.command_response(plain_args))
+                await ask.command_listener(message, plain_args)
             
             # Nijika
             case 'nijika':
-                await message.channel.send(file = nijika.command_response())
+                await nijika.command_listener(message)
 
             # Amogus
             case 'amogus':
-                await message.channel.send(file = amogus.command_response())
+                await amogus.command_listener(message)
             
             # Gvs
             case 'gvs':
-                if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
-                    response = gvs.command_response(prefix,userid, message.guild,args)
-                    if type(response) == discord.Embed:
-                        await message.channel.send(embed = response)
-                    elif type(response) == str:
-                        await message.channel.send(response)
-                else:
-                    await message.channel.send(get_string("not_supported", "gvs"))
+                await gvs.command_listener(message, args)
             # Invalid command
             case _:
                 await message.channel.send(get_string("command_not_found_prompt"))

@@ -1,6 +1,6 @@
 bot_name = "open-susbot"
 prefix = 'b!'
-bot_version = '1.7'
+bot_version = '2.0'
 
 TOKEN = 'ur bot token here'
 

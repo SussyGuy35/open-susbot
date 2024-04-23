@@ -7,8 +7,11 @@ from lib.locareader import get_string_by_id
 
 loca_sheet = "loca/loca - ping.csv"
 
-def command_response():
-    return get_string_by_id(loca_sheet,"ping",config.language)
+def command_response(bot: discord.Client):
+    return get_string_by_id(loca_sheet,"ping",config.language).format(round(bot.latency*1000))
+
+async def command_listener(message: discord.Message, bot: discord.Client):
+    await message.channel.send(command_response(bot))
 
 async def slash_command_listener(ctx: discord.Interaction):
     print(f"{ctx.user} used ping commands!")

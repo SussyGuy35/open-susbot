@@ -5,7 +5,6 @@ Note that this project is intended to use as a starting point to develop your ow
 
 ## Features
 - Some commands to make bot say sth or maybe other
-- Super balance gacha game
 - Ghostping detector (beta)
 - Some osu!api things
 - EPIC ping pong moment
@@ -39,15 +38,11 @@ Go to `config.py` file and place your discord's bot token and your osu!api's cli
 
 You can also change bot's version number and prefix here.
 
-### Step 5: Move 2 files from `commands/card_game_data/json_file_template` to `commands/card_game_data` 
-yea pretty dumb but its just old me, now im 2 lazy to fix it lol
-
-### Step 6: Run `main.py`
+### Step 5: Run `main.py`
 **_Now your bot is up and running. Have fun!_**
 
 ## To-do
 - [x] Finish english translation
-- [x] Make the gacha game even more balance
 - [ ] Fix dumb mistakes
 - [ ] Fix ghostping detector conflict with NQN bot
 - [ ] Add more osu!api things (we have 2 (maybe) now)

@@ -4,14 +4,12 @@ except:
     import config
 import discord
 from lib.locareader import get_string_by_id
-from commands.getprefix import get_prefix
+from lib.sussyutils import get_prefix
 from ossapi import *
 
 loca_sheet = "loca/loca - osu.csv"
 
-def client(OSUAPI_CLIENT_ID,OSUAPI_CLIENT_SECRET):
-    osu_api = Ossapi(OSUAPI_CLIENT_ID, OSUAPI_CLIENT_SECRET)
-    return osu_api
+ossapi_client = Ossapi(config.OSUAPI_CLIENT_ID, config.OSUAPI_CLIENT_SECRET)
 
 # Main function
 def command_response(osu_api: Ossapi,prefix: str,command: str):
@@ -61,14 +59,19 @@ def command_response(osu_api: Ossapi,prefix: str,command: str):
         case _:
             return get_string_by_id(loca_sheet,"command_help",config.language).format(prefix)
 
-async def slash_command_listener_user(client: Ossapi, ctx: discord.Interaction, username: str):
+
+async def command_listener(message: discord.Message, usr_input: str):
+    prefix = get_prefix(message.guild)
+    await message.channel.send(command_response(ossapi_client, prefix, usr_input))
+
+async def slash_command_listener_user(ctx: discord.Interaction, username: str):
     print(f"{ctx.user} used osu user commands!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
-    await ctx.followup.send(command_response(client, prefix, "user " + username))
+    await ctx.followup.send(command_response(ossapi_client, prefix, "user " + username))
 
-async def slash_command_listener_beatmap(client: Ossapi, ctx: discord.Interaction, beatmap: str):
+async def slash_command_listener_beatmap(ctx: discord.Interaction, beatmap: str):
     print(f"{ctx.user} used osu beatmap commands!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
-    await ctx.followup.send(command_response(client,prefix,"beatmap " + beatmap))
+    await ctx.followup.send(command_response(ossapi_client,prefix,"beatmap " + beatmap))

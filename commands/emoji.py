@@ -24,8 +24,15 @@ def command_response(client: discord.Client, emoji: str):
         embed.set_image(url = emoji_to_get.url)
         return embed
     else:
-        return get_string_by_id(loca_sheet, "prompt_exception", config.language)
-    
+        return get_string_by_id(loca_sheet, "prompt_exception", config.language)    
+
+async def command_listener(message: discord.Message, bot: discord.Client,  args: list):
+    rs = command_response(bot, args[0])
+    if type(rs) == str:
+        await message.channel.send(rs)
+    else:
+        await message.channel.send(embed = rs)
+
 async def slash_command_listener(client: discord.Client, ctx: discord.Interaction, emoji: str):
     print(f"{ctx.user} used emoji commands!")
     await ctx.response.defer()

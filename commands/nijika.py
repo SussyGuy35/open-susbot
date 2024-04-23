@@ -12,6 +12,9 @@ imgpath = absolute_path("data/nijika/")
 def command_response():
     return discord.File(imgpath + pick_random_file_from_dir(imgpath))
 
+async def command_listener(message: discord.Message):
+    await message.channel.send(file =command_response())
+
 async def slash_command_listener(ctx: discord.Interaction):
     print(f"{ctx.user} used nijika commands!")
     await ctx.response.defer()
