@@ -134,6 +134,7 @@ async def on_ready():
     #tree.clear_commands(guild = None) # Uncomment this to clear all commands
     await tree.sync()
     await features.onready_things.on_ready(client)
+
 # On message delete event
 @client.event
 async def on_message_delete(message):
