@@ -31,3 +31,4 @@ banned_user_prompt,"Bạn đã bị ban, vui lòng liên hệ thằng chủ bot 
 command_not_found_prompt,Lệnh đó không tồn tại!,That command does not exist!
 command_ask_no_question,Hỏi gì đi chứ ba.,Ask something please.
 command_getprefix_desc,Lấy prefix của con bot tại server hiện tại,Get bot's prefix in current server
+on_mentioned_response,"U wahhh, prefix của con bot trong máy chủ này là `{0}`. Thử nhắn `{0}help` điii (^///^)","U wahhh, my prefix in this server is `{0}`. Let's try `{0}help` (^///^)"

@@ -27,6 +27,7 @@ import features.onready_things
 import features.ghostping_detector
 import features.auto_react_emoji
 import features.gvscount
+import features.on_bot_mentioned
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -239,8 +240,13 @@ async def on_message(message: discord.Message):
                 await message.channel.send(get_string("command_not_found_prompt"))
            
     else:
+        # On bot mentioned
+        if client.user.mentioned_in(message):
+            await features.on_bot_mentioned.reply(message)
+
         # gvs
         await features.gvscount.gvs(message, userid, username)
+        
         # Auto react emojis
         await features.auto_react_emoji.react(autoreact_emojis, message)
 
