@@ -1,6 +1,7 @@
 import discord
 import os
 from lib.locareader import get_string_by_id
+from lib.sussyutils import get_prefix
 
 if os.path.exists("config_override.py"):
     import config_override as config
@@ -35,10 +36,6 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 tree = discord.app_commands.CommandTree(client)
-
-# bot prefix
-def get_prefix(guild: discord.Guild):
-    return getprefix.get_prefix(guild)
 
 # autoreact emojis
 autoreact_emojis = config.autoreact_emojis
