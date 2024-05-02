@@ -1,24 +1,6 @@
 """Read bot's loca file"""
 import csv
-
-def string_hash_to_newline(_str):
-    _result = ""
-    _start = 0
-    i = 0
-    lc = None
-
-    while i < len(_str):
-        c = _str[i]
-        if c == "#":
-            if lc != "\\":
-                _result += _str[_start:i] + "\n"
-            else:
-                _result += _str[_start:i - 1] + "#"
-            _start = i + 1
-        lc = c
-        i += 1
-
-    return _result + _str[_start:i]
+from lib.sussyutils import string_hash_to_newline
 
 def get_string_list(filepath: str, lang: str) -> list:
     rs = []

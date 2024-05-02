@@ -239,8 +239,7 @@ async def on_message(message: discord.Message):
            
     else:
         # On bot mentioned
-        if client.user.mentioned_in(message):
-            await features.on_bot_mentioned.reply(message)
+        await features.on_bot_mentioned.reply(client, message)
 
         # gvs
         await features.gvscount.gvs(message, userid, username)

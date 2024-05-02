@@ -7,6 +7,26 @@ import discord
 import random
 import os
 
+def string_hash_to_newline(_str: str) -> str:
+    """convert hash in given string to newline"""
+    _result = ""
+    _start = 0
+    i = 0
+    lc = None
+
+    while i < len(_str):
+        c = _str[i]
+        if c == "#":
+            if lc != "\\":
+                _result += _str[_start:i] + "\n"
+            else:
+                _result += _str[_start:i - 1] + "#"
+            _start = i + 1
+        lc = c
+        i += 1
+
+    return _result + _str[_start:i]
+
 def pick_random_file_from_dir(dir_path: str) -> str:
     """Return the name of a random file from given directory"""
     filename = random.choice(os.listdir(dir_path))
