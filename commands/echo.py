@@ -12,15 +12,14 @@ def command_response(msg: str):
     new_msg = new_msg.replace("@everyone", "`@everyone`").replace("@here", "`@here`")
     return new_msg
 
-async def command_listener(message: discord.Message, bot: discord.Client, msg: str):
+async def command_listener(message: discord.Message, msg: str):
     await delete_message(message)
 
     if message.reference is None:
         await message.channel.send(command_response(msg))
     else:
         if message.reference.cached_message is None:
-            channel = bot.get_channel(message.reference.channel_id)
-            original_message = await channel.fetch_message(message.reference.message_id)
+            original_message = await message.channel.fetch_message(message.reference.message_id)
         else:
             original_message = message.reference.cached_message
         await original_message.reply(command_response(msg))

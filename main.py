@@ -205,7 +205,7 @@ async def on_message(message: discord.Message):
 
             # Echo
             case 'echo':
-                await echo.command_listener(message, client, plain_args)
+                await echo.command_listener(message, plain_args)
             
             # Pick
             case 'pick':

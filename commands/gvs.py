@@ -124,7 +124,7 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
     elif type(response) == str:
         await ctx.followup.send(response)
 
-async def slash_command_listener_react_message(ctx: discord.Interaction, client: discord.Client, message_id: str | None = None):
+async def slash_command_listener_react_message(ctx: discord.Interaction, message_id: str | None = None):
     print(f"{ctx.user} used react to message command!")
     await ctx.response.defer(ephemeral=True)
     message: discord.Message = await ctx.channel.fetch_message(message_id) if message_id is not None else await ctx.channel.fetch_message(ctx.channel.last_message_id)
