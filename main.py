@@ -100,6 +100,11 @@ async def gvs_count(ctx: discord.Interaction):
 async def gvs_lb(ctx: discord.Interaction):
     await gvs.slash_command_listener_lb(ctx)
 
+# gvs react
+@tree.command(name = "gvs_react", description = get_string("command_gvs_react_desc"))
+async def gvs_react(ctx: discord.Interaction, message_id: str | None = None):
+    await gvs.slash_command_listener_react_message(ctx, client, message_id)
+
 # random cat girl
 @tree.command(name = "randcat", description = get_string("command_randcat_desc"))
 async def getrandcat(ctx: discord.Interaction, is_cat_girl:bool = False):

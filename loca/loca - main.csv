@@ -23,6 +23,7 @@ command_osu_user_desc,Lấy thông tin người chơi osu!,Get info of an osu! p
 command_osu_beatmap_desc,Tìm beatmap trong osu! theo tên,Find a osu! beatmap by name
 command_gvs_count_desc,Đếm số lần đã *gvs*,*gvs* count
 command_gvs_leaderboard_desc,Bảng xếp hạng *gvs*,*gvs* leaderboard
+command_gvs_react_desc,*gvs* một tin nhắn nào đó,*gvs* a message
 command_randcat_desc,Ảnh mèo ngẫu nhiên,Random cat image
 command_randwaifu_desc,Ảnh waifu ngẫu nhiên (lấy từ waifu.pics),Random waifu image (from waifu.pics)
 command_create_gif_desc,Tạo gif,Create gif

@@ -109,13 +109,13 @@ async def command_listener(message: discord.Message, args: list):
         await message.channel.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
 async def slash_command_listener_count(ctx: discord.Interaction):
-    print(f"{ctx.user} used gvs count commands!")
+    print(f"{ctx.user} used gvs count command!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     await ctx.followup.send(command_response(prefix,str(ctx.user.id),ctx.guild,["count"]))
 
 async def slash_command_listener_lb(ctx: discord.Interaction):
-    print(f"{ctx.user} used gvs lb commands!")
+    print(f"{ctx.user} used gvs lb command!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     response = command_response(prefix,str(ctx.user.id), ctx.guild,["lb"])
@@ -123,3 +123,16 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
         await ctx.followup.send(embed = response)
     elif type(response) == str:
         await ctx.followup.send(response)
+
+async def slash_command_listener_react_message(ctx: discord.Interaction, client: discord.Client, message_id: str | None = None):
+    print(f"{ctx.user} used react to message command!")
+    await ctx.response.defer(ephemeral=True)
+    message: discord.Message = await ctx.channel.fetch_message(message_id) if message_id is not None else await ctx.channel.fetch_message(ctx.channel.last_message_id)
+    for emoji in ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]:
+        try:
+            await message.add_reaction(emoji)
+        except:
+            pass
+    await ctx.followup.send(
+        get_string_by_id(loca_sheet, "react_commad_response_success", config.language)
+    )
