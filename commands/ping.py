@@ -13,6 +13,6 @@ def command_response(bot: discord.Client):
 async def command_listener(message: discord.Message, bot: discord.Client):
     await message.channel.send(command_response(bot))
 
-async def slash_command_listener(ctx: discord.Interaction):
+async def slash_command_listener(ctx: discord.Interaction, client: discord.Client):
     print(f"{ctx.user} used ping commands!")
-    await ctx.response.send_message(command_response())
+    await ctx.response.send_message(command_response(client))

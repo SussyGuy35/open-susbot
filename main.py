@@ -58,7 +58,7 @@ async def help(ctx: discord.Interaction):
 # Ping
 @tree.command(name = "ping", description = get_string("command_ping_desc")) 
 async def pingpong(ctx: discord.Interaction):
-    await ping.slash_command_listener(ctx)
+    await ping.slash_command_listener(ctx, client)
 
 # Avatar
 @tree.command(name = "avatar", description = get_string("command_avatar_desc")) 
@@ -103,7 +103,7 @@ async def gvs_lb(ctx: discord.Interaction):
 # gvs react
 @tree.command(name = "gvs_react", description = get_string("command_gvs_react_desc"))
 async def gvs_react(ctx: discord.Interaction, message_id: str | None = None):
-    await gvs.slash_command_listener_react_message(ctx, client, message_id)
+    await gvs.slash_command_listener_react_message(ctx, message_id)
 
 # random cat girl
 @tree.command(name = "randcat", description = get_string("command_randcat_desc"))
