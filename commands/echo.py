@@ -1,5 +1,6 @@
 import discord
 
+
 async def delete_message(message: discord.Message):
     try:
         await message.delete()
@@ -7,10 +8,12 @@ async def delete_message(message: discord.Message):
         print("cannot delete message or sth")
         return
 
+
 def command_response(msg: str):
     new_msg = msg
     new_msg = new_msg.replace("@everyone", "`@everyone`").replace("@here", "`@here`")
     return new_msg
+
 
 async def command_listener(message: discord.Message, msg: str):
     await delete_message(message)

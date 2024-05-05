@@ -1,6 +1,7 @@
 import discord
 
-async def react(autoreact_emojis: list, message: discord.Message):
+
+async def react(autoreact_emojis: dict, message: discord.Message):
     if message.author.bot:
         return
     if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
