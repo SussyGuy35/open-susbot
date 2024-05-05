@@ -10,3 +10,4 @@ test.py
 lib/__pycache__/*
 features/__pycache__/*
 .directory
+.idea
