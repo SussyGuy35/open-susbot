@@ -127,12 +127,18 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
 async def slash_command_listener_react_message(ctx: discord.Interaction, message_id: str | None = None):
     print(f"{ctx.user} used react to message command!")
     await ctx.response.defer(ephemeral=True)
-    message: discord.Message = await ctx.channel.fetch_message(message_id) if message_id is not None else await ctx.channel.fetch_message(ctx.channel.last_message_id)
-    for emoji in ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]:
-        try:
-            await message.add_reaction(emoji)
-        except:
-            pass
-    await ctx.followup.send(
-        get_string_by_id(loca_sheet, "react_commad_response_success", config.language)
-    )
+    try:
+        message: discord.Message = await ctx.channel.fetch_message(message_id) if message_id is not None else await ctx.channel.fetch_message(ctx.channel.last_message_id)
+    except:
+        await ctx.followup.send(
+            get_string_by_id(loca_sheet, "react_command_response_invalid_id", config.language)
+        )
+    else:
+        for emoji in ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]:
+            try:
+                await message.add_reaction(emoji)
+            except:
+                pass
+        await ctx.followup.send(
+            get_string_by_id(loca_sheet, "react_command_response_success", config.language)
+        )

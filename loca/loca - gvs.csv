@@ -5,4 +5,5 @@ empty_leaderboard,Hiện tại chưa có ai trên bảng xếp hạng,There is c
 leaderboard_embed_title,Bảng xếp hạng **gvs** cho **{0}**,**gvs** leaderboard for **{0}**
 command_help,Các lệnh `{0}gvs`:#- `{0}gvs count` hoặc `/gvs_count`: Hiện số lần đã **gvs**.#- `{0}gvs lb` hoặc `/gvs_leaderboard`: Bảng xếp hạng **gvs**.,`{0}gvs` commands:#- `{0}gvs count` or `/gvs_count`: Shows the number of times you have **gvs**.#- `{0}gvs lb` or `/gvs_leaderboard`: Show **gvs** leaderboard.
 not_supported,**gvs** không được hỗ trợ ở đây!,**gvs** is not supported here!
-react_commad_response_success,Đã *gvs* tin nhắn đó thành công!,*gvs* succeed!
+react_command_response_success,Đã *gvs* tin nhắn đó thành công!,*gvs* succeed!
+react_command_response_invalid_id,Id tin nhắn không hợp lệ kìa ba.,Invalid message id!
