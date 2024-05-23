@@ -120,18 +120,24 @@ async def slash_command_listener_count(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs count command!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
-    await ctx.followup.send(command_response(prefix, str(ctx.user.id), ctx.guild, ["count"]))
+    if ctx.channel.type == discord.ChannelType.text or ctx.channel.type == discord.ChannelType.voice:
+        await ctx.followup.send(command_response(prefix, str(ctx.user.id), ctx.guild, ["count"]))
+    else:
+        await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
 
 async def slash_command_listener_lb(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs lb command!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
-    response = command_response(prefix, str(ctx.user.id), ctx.guild, ["lb"])
-    if isinstance(response, discord.Embed):
-        await ctx.followup.send(embed=response)
-    elif isinstance(response, str):
-        await ctx.followup.send(response)
+    if ctx.channel.type == discord.ChannelType.text or ctx.channel.type == discord.ChannelType.voice:
+        response = command_response(prefix, str(ctx.user.id), ctx.guild, ["lb"])
+        if isinstance(response, discord.Embed):
+            await ctx.followup.send(embed=response)
+        elif isinstance(response, str):
+            await ctx.followup.send(response)
+    else:
+        await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
 
 async def slash_command_listener_react_message(ctx: discord.Interaction, message_id: str | None = None):
