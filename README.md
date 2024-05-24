@@ -49,8 +49,9 @@ You can also change bot's version number and prefix here.
 - [ ] Add more EPIC FEATURES! (for real!)
 
 ## APIs used
-- discord (discord.py)
-- osu!api (ossapi)
+- discord ([discord.py](https://github.com/Rapptz/discord.py))
+- osu!api ([ossapi](https://github.com/tybug/ossapi))
+- [requests](https://github.com/psf/requests)
 - thecatapi.com
 - nekos.life
 - waifu.pics
