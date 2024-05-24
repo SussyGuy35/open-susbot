@@ -5,20 +5,13 @@ except:
 from lib.locareader import get_string_by_id
 import discord
 import json
-import os
 from lib.sussyutils import get_prefix
+import lib.cmddata as cmddata
 
-base_path = os.path.dirname(os.path.abspath(__file__))
-
-
-def absolute_path(relative_path):
-    return os.path.join(base_path, relative_path)
-
-
-file_path = absolute_path("data/gvs.json")
+file_path = "gvs.json"
 
 try:
-    data = json.load(open(file_path, "r"))
+    data = json.load(cmddata.open_file_read(file_path))
 except:
     data = {}
 
@@ -26,7 +19,7 @@ loca_sheet = "loca/loca - gvs.csv"
 
 
 def save():
-    file = open(file_path, "w+")
+    file = cmddata.open_file_write(file_path)
     json.dump(data, file)
 
 
