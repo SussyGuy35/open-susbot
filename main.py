@@ -93,8 +93,8 @@ async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
 
 
 @tree.command(name="gvs_count", description=get_string("command_gvs_count_desc"))
-async def gvs_count(ctx: discord.Interaction):
-    await gvs.slash_command_listener_count(ctx)
+async def gvs_count(ctx: discord.Interaction, user: discord.User | None = None):
+    await gvs.slash_command_listener_count(ctx, user)
 
 
 @tree.command(name="gvs_leaderboard", description=get_string("command_gvs_leaderboard_desc"))

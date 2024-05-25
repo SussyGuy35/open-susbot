@@ -5,7 +5,7 @@ except:
 from lib.locareader import get_string_by_id
 import discord
 import json
-from lib.sussyutils import get_prefix
+from lib.sussyutils import get_prefix, get_user_id_from_snowflake
 import lib.cmddata as cmddata
 
 file_path = "gvs.json"
@@ -42,7 +42,7 @@ def gvs(userid, username, guildid):
     save()
 
 
-def command_response(prefix: str, userid: str, guild: discord.Guild, args: list[str]):
+def command_response(prefix: str, guild: discord.Guild, args: list[str]):
     guildid = str(guild.id)
 
     if len(args) <= 0:
@@ -50,11 +50,12 @@ def command_response(prefix: str, userid: str, guild: discord.Guild, args: list[
 
     match args[0]:
         case "count":
-            if guildid in data.keys() and userid in data[guildid]:
+            userid_to_get = str(get_user_id_from_snowflake(args[1]))
+            if guildid in data.keys() and userid_to_get in data[guildid]:
                 return get_string_by_id(loca_sheet, "count_result", config.language).format(
-                    data[guildid][userid]['username'],
+                    data[guildid][userid_to_get]['username'],
                     guild.name,
-                    data[guildid][userid]["gvs"]
+                    data[guildid][userid_to_get]["gvs"]
                 )
             else:
                 return get_string_by_id(loca_sheet, "zero_gvs", config.language)
@@ -72,6 +73,8 @@ def command_response(prefix: str, userid: str, guild: discord.Guild, args: list[
             if len(lb) > 0:
                 rank = 1
                 for key in reversed(lb):
+                    if rank > 10:
+                        break
                     if lb[key] != 0:
                         msg += f"- **#{rank}**: <@{key}> - {lb[key]} gvs\n"
                         rank += 1
@@ -109,12 +112,13 @@ async def command_listener(message: discord.Message, args: list):
         await message.channel.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
 
-async def slash_command_listener_count(ctx: discord.Interaction):
+async def slash_command_listener_count(ctx: discord.Interaction, user: discord.User | None = None):
     print(f"{ctx.user} used gvs count command!")
     prefix = get_prefix(ctx.guild)
+    userid_to_get = user.id if user is not None else ctx.user.id
     await ctx.response.defer()
     if ctx.channel.type == discord.ChannelType.text or ctx.channel.type == discord.ChannelType.voice:
-        await ctx.followup.send(command_response(prefix, str(ctx.user.id), ctx.guild, ["count"]))
+        await ctx.followup.send(command_response(prefix, ctx.guild, ["count", f"<@{userid_to_get}>"]))
     else:
         await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
@@ -124,7 +128,7 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     if ctx.channel.type == discord.ChannelType.text or ctx.channel.type == discord.ChannelType.voice:
-        response = command_response(prefix, str(ctx.user.id), ctx.guild, ["lb"])
+        response = command_response(prefix, ctx.guild, ["lb"])
         if isinstance(response, discord.Embed):
             await ctx.followup.send(embed=response)
         elif isinstance(response, str):
