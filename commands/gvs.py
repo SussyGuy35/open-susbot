@@ -100,7 +100,6 @@ def command_response(prefix: str, guild: discord.Guild, args: list[str]):
 
 async def command_listener(message: discord.Message, args: list):
     prefix = get_prefix(message.guild)
-    userid = str(message.author.id)
 
     if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
         response = command_response(prefix, message.guild, args)
