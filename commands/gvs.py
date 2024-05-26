@@ -103,7 +103,7 @@ async def command_listener(message: discord.Message, args: list):
     userid = str(message.author.id)
 
     if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
-        response = command_response(prefix, userid, message.guild, args)
+        response = command_response(prefix, message.guild, args)
         if isinstance(response, discord.Embed):
             await message.channel.send(embed=response)
         elif isinstance(response, str):
