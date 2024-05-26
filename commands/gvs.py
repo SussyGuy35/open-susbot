@@ -53,7 +53,7 @@ def command_response(prefix: str, guild: discord.Guild, args: list[str]):
             userid_to_get = str(get_user_id_from_snowflake(args[1]))
             if guildid in data.keys() and userid_to_get in data[guildid]:
                 return get_string_by_id(loca_sheet, "count_result", config.language).format(
-                    data[guildid][userid_to_get]['username'],
+                    f"<@{userid_to_get}>",
                     guild.name,
                     data[guildid][userid_to_get]["gvs"]
                 )
@@ -104,9 +104,9 @@ async def command_listener(message: discord.Message, args: list):
     if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
         response = command_response(prefix, message.guild, args)
         if isinstance(response, discord.Embed):
-            await message.channel.send(embed=response)
+            await message.channel.send(embed=response) # lb command response
         elif isinstance(response, str):
-            await message.channel.send(response)
+            await message.channel.send(response, {"allowed_mentions": {"parse": []}}) # count command response
     else:
         await message.channel.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
