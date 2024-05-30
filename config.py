@@ -1,3 +1,5 @@
+import discord
+
 bot_name = "open-susbot"
 prefix = 'b!'
 bot_version = '2.0'
@@ -25,6 +27,11 @@ autoreact_emojis = {
 #   "gvs": ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"],
 #   "tin chuan chua anh": ["🇯", "🇺", "🇦", "🇳"]
 # }
+autoreact_emojis_supported_channel_types = [
+    discord.ChannelType.text,
+    discord.ChannelType.voice,
+    discord.ChannelType.public_thread
+] # Supported channel types
 
 enable_ghostping_detector = False  # enable ghostping detector or not
 ghostping_check_time_range = 15  # time to detect ghostping

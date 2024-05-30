@@ -101,7 +101,7 @@ def command_response(prefix: str, guild: discord.Guild, args: list[str]):
 async def command_listener(message: discord.Message, args: list):
     prefix = get_prefix(message.guild)
 
-    if message.channel.type == discord.ChannelType.text or message.channel.type == discord.ChannelType.voice:
+    if message.channel.type in config.autoreact_emojis_supported_channel_types:
         response = command_response(prefix, message.guild, args)
         if isinstance(response, discord.Embed):
             await message.channel.send(embed=response) # lb command response
@@ -116,7 +116,7 @@ async def slash_command_listener_count(ctx: discord.Interaction, user: discord.U
     prefix = get_prefix(ctx.guild)
     userid_to_get = user.id if user is not None else ctx.user.id
     await ctx.response.defer()
-    if ctx.channel.type == discord.ChannelType.text or ctx.channel.type == discord.ChannelType.voice:
+    if ctx.channel.type in config.autoreact_emojis_supported_channel_types:
         await ctx.followup.send(command_response(prefix, ctx.guild, ["count", f"<@{userid_to_get}>"]))
     else:
         await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported", config.language))
@@ -126,7 +126,7 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs lb command!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
-    if ctx.channel.type == discord.ChannelType.text or ctx.channel.type == discord.ChannelType.voice:
+    if ctx.channel.type in config.autoreact_emojis_supported_channel_types:
         response = command_response(prefix, ctx.guild, ["lb"])
         if isinstance(response, discord.Embed):
             await ctx.followup.send(embed=response)
