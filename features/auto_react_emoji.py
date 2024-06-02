@@ -1,8 +1,7 @@
 import discord
-try:
-    import config_override as config
-except:
-    import config
+from lib.sussyconfig import get_config
+
+config = get_config()
 
 
 async def react(autoreact_emojis: dict, message: discord.Message):

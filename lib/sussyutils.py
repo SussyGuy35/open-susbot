@@ -1,11 +1,10 @@
 """some things that maybe useful"""
-try:
-    import config_override as config
-except:
-    import config
 import discord
 import random
 import os
+from lib.sussyconfig import get_config
+
+config = get_config()
 
 
 def string_hash_to_newline(_str: str) -> str:

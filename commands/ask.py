@@ -1,10 +1,9 @@
-try:
-    import config_override as config
-except:
-    import config
 import discord
 from lib.locareader import get_string_list, get_string_by_id
+from lib.sussyconfig import get_config
 import random
+
+config = get_config()
 
 loca_sheet = "loca/loca - ask.csv"
 

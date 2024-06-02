@@ -1,11 +1,10 @@
-try:
-    import config_override as config
-except:
-    import config
-from lib.locareader import get_string_by_id
 import discord
 from os import remove
 from requests import get
+from lib.locareader import get_string_by_id
+from lib.sussyconfig import get_config
+
+config = get_config()
 
 loca_sheet = "loca/loca - creategif.csv"
 
@@ -34,7 +33,7 @@ def post_response_cleanup(response):
         remove(response.filename)
 
 
-def command_response(attachment) -> discord.File | str:
+def command_response(attachment: discord.Attachment) -> discord.File | str:
     try:
         file_name = get_file(attachment.url, attachment.filename)
     except ValueError:

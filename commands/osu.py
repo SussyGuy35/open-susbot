@@ -1,11 +1,10 @@
-try:
-    import config_override as config
-except:
-    import config
 import discord
 from lib.locareader import get_string_by_id
 from lib.sussyutils import get_prefix
+from lib.sussyconfig import get_config
 from ossapi import *
+
+config = get_config()
 
 loca_sheet = "loca/loca - osu.csv"
 

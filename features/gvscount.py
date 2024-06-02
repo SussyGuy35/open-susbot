@@ -1,10 +1,8 @@
 import discord
-try:
-    import config_override as config
-except:
-    import config
+from lib.sussyconfig import get_config
 import commands.gvs as gkevaysao
 
+config = get_config()
 
 
 async def gvs(message: discord.Message, userid: str, username: str):

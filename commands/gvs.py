@@ -1,12 +1,11 @@
-try:
-    import config_override as config
-except:
-    import config
-from lib.locareader import get_string_by_id
 import discord
 import json
 from lib.sussyutils import get_prefix, get_user_id_from_snowflake
+from lib.locareader import get_string_by_id
+from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
+
+config = get_config()
 
 file_path = "gvs.json"
 

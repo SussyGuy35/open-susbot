@@ -1,5 +1,5 @@
 import discord
-import os
+from lib.sussyconfig import get_config
 from lib.locareader import get_string_by_id
 from lib.sussyutils import get_prefix
 
@@ -18,10 +18,7 @@ import features.auto_react_emoji
 import features.gvscount
 import features.on_bot_mentioned
 
-if os.path.exists("config_override.py"):
-    import config_override as config
-else:
-    import config
+config = get_config()
 
 # Config
 bot_version = config.bot_version
