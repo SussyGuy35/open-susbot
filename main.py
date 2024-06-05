@@ -232,7 +232,7 @@ async def on_message(message: discord.Message):
 
     else:
         await features.on_bot_mentioned.reply(client, message)
-        await features.gvscount.gvs(message, userid, username)
+        await features.gvscount.gvs(message, userid)
         await features.auto_react_emoji.react(autoreact_emojis, message)
 
 

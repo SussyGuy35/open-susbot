@@ -11,6 +11,9 @@ OSUAPI_CLIENT_SECRET = 'ur osu!api client secret here'
 
 language = "en"  # bot's language
 
+dev_ids = [  # place developer's id here!
+]
+
 banned_users = []  # place banned users' id here!
 
 specific_prefix = {

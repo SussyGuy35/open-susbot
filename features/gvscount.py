@@ -5,9 +5,9 @@ import commands.gvs as gkevaysao
 config = get_config()
 
 
-async def gvs(message: discord.Message, userid: str, username: str):
+async def gvs(message: discord.Message, userid: str):
     if message.author.bot:
         return
     if message.channel.type in config.autoreact_emojis_supported_channel_types:
         if "gvs" in message.content.lower():
-            gkevaysao.gvs(userid, username, str(message.guild.id))
+            gkevaysao.gvs(userid, str(message.guild.id))

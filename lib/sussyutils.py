@@ -59,3 +59,8 @@ def get_prefix(guild: discord.Guild | None):
     if guild.id in config.specific_prefix.keys():
         return config.specific_prefix[guild.id]
     return config.prefix
+
+
+def is_dev(user_id: int) -> bool:
+    """Check if given user is a developer"""
+    return user_id in config.dev_ids

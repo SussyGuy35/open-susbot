@@ -1,6 +1,6 @@
 import discord
 import json
-from lib.sussyutils import get_prefix, get_user_id_from_snowflake
+from lib.sussyutils import get_prefix, get_user_id_from_snowflake, is_dev
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
@@ -22,26 +22,37 @@ def save():
     json.dump(data, file)
 
 
-def gvs(userid, username, guildid):
+def get_gvs(guildid: str, userid: str):
+    if guildid in data.keys() and userid in data[guildid].keys():
+        return data[guildid][userid]["gvs"]
+    return 0
+
+
+def set_gvs(guildid: str, userid: str, gvs_count: int):
     if guildid in data.keys():
         if userid in data[guildid].keys():
-            data[guildid][userid]["gvs"] += 1
+            data[guildid][userid]["gvs"] = gvs_count
         else:
             data[guildid][userid] = {
-                "username": username,
-                "gvs": 1
+                "gvs": gvs_count
             }
     else:
         data[guildid] = {}
         data[guildid][userid] = {
-            "username": username,
-            "gvs": 1
+            "gvs": gvs_count
         }
 
     save()
 
 
-def command_response(prefix: str, guild: discord.Guild, args: list[str]):
+def gvs(userid: str, guildid: str):
+    current_gvs = get_gvs(guildid, userid)
+    set_gvs(guildid, userid, current_gvs + 1)
+
+    save()
+
+
+def command_response(prefix: str, guild: discord.Guild, author: discord.User, args: list[str]):
     guildid = str(guild.id)
 
     if len(args) <= 0:
@@ -49,7 +60,10 @@ def command_response(prefix: str, guild: discord.Guild, args: list[str]):
 
     match args[0]:
         case "count":
-            userid_to_get = str(get_user_id_from_snowflake(args[1]))
+            if len(args) >= 2:
+                userid_to_get = str(get_user_id_from_snowflake(args[1]))
+            else:
+                userid_to_get = str(author.id)
             if guildid in data.keys() and userid_to_get in data[guildid]:
                 return get_string_by_id(loca_sheet, "count_result", config.language).format(
                     f"<@{userid_to_get}>",
@@ -93,6 +107,16 @@ def command_response(prefix: str, guild: discord.Guild, args: list[str]):
             else:
                 return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
 
+        case "set":
+            if is_dev(author.id):
+                if len(args) < 3:
+                    return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+
+                userid = str(get_user_id_from_snowflake(args[1]))
+                gvs_count = args[2]
+
+                set_gvs(guildid, userid, int(gvs_count))            
+        
         case _:
             return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
 
@@ -101,7 +125,7 @@ async def command_listener(message: discord.Message, args: list):
     prefix = get_prefix(message.guild)
 
     if message.channel.type in config.autoreact_emojis_supported_channel_types:
-        response = command_response(prefix, message.guild, args)
+        response = command_response(prefix, message.guild, message.author, args)
         if isinstance(response, discord.Embed):
             await message.channel.send(embed=response) # lb command response
         elif isinstance(response, str):
@@ -116,7 +140,7 @@ async def slash_command_listener_count(ctx: discord.Interaction, user: discord.U
     userid_to_get = user.id if user is not None else ctx.user.id
     await ctx.response.defer()
     if ctx.channel.type in config.autoreact_emojis_supported_channel_types:
-        await ctx.followup.send(command_response(prefix, ctx.guild, ["count", f"<@{userid_to_get}>"]))
+        await ctx.followup.send(command_response(prefix, ctx.guild, ctx.user, ["count", f"<@{userid_to_get}>"]))
     else:
         await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
@@ -126,7 +150,7 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     if ctx.channel.type in config.autoreact_emojis_supported_channel_types:
-        response = command_response(prefix, ctx.guild, ["lb"])
+        response = command_response(prefix, ctx.guild, ctx.user, ["lb"])
         if isinstance(response, discord.Embed):
             await ctx.followup.send(embed=response)
         elif isinstance(response, str):
