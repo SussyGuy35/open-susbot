@@ -49,8 +49,6 @@ def gvs(userid: str, guildid: str):
     current_gvs = get_gvs(guildid, userid)
     set_gvs(guildid, userid, current_gvs + 1)
 
-    save()
-
 
 def command_response(prefix: str, guild: discord.Guild, author: discord.User, args: list[str]):
     guildid = str(guild.id)
