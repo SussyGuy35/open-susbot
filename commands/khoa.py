@@ -14,7 +14,7 @@ def search_files(path, name):
 
 async def search_khoa(q, ctx: discord.Interaction):
     q = q.replace(" ","_")
-    directory_path = 'khoa_search//'
+    directory_path = img_search_path
     matching_files = search_files(directory_path, q)
     await ctx.response.defer()
     if matching_files != None:
