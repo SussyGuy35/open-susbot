@@ -8,7 +8,7 @@ from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
-    avatar, bean, feedback
+    avatar, bean, feedback, khoa
 )
 
 # import features
@@ -73,6 +73,12 @@ async def get_emoji(ctx: discord.Interaction, emoji: str):
 async def get_nijika_image(ctx: discord.Interaction):
     await nijika.slash_command_listener(ctx)
 
+@tree.command(name="khoabug", description="useless")
+async def get_khoabug(ctx: discord.Interaction, search: str = None):
+    if search != None:
+        await khoa.search_khoa(search, ctx)
+    else:
+        await khoa.slash_command_listener(ctx)
 
 @tree.command(name="amogus", description=get_string("command_amogus_desc"))
 async def get_amogus_image(ctx: discord.Interaction):
