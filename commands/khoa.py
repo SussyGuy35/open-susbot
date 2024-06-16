@@ -19,7 +19,7 @@ async def search_khoa(q, ctx: discord.Interaction):
     if matching_files != None:
         await ctx.followup.send(file=discord.File(img_search_path + matching_files))
     else:
-        await ctx.followup.send(file=discord.File('Ăng khoa chưa nói câu nào như thế!'))
+        await ctx.followup.send('Ăng khoa chưa nói câu nào như thế!')
 
 def command_response():
     return discord.File(img_rand_path + pick_random_file_from_dir(img_rand_path))
