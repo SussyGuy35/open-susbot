@@ -27,6 +27,8 @@ command_gvs_react_desc,*gvs* một tin nhắn nào đó,*gvs* a message
 command_randcat_desc,Ảnh mèo ngẫu nhiên,Random cat image
 command_randwaifu_desc,Ảnh waifu ngẫu nhiên (lấy từ waifu.pics),Random waifu image (from waifu.pics)
 command_create_gif_desc,Tạo gif,Create gif
+command_khoabug_desc,Anh Khoa và những câu nói bất hủ,Our god Khoa and his immortal sayings
+command_khoalist_desc,Tổng hợp một số câu nói bất hủ của anh Khoa,Summary of some immortal sayings of our god Khoa
 bot_use_command_prompt,Bot mà đòi dùng lệnh của bot à 🐧,How dare a bot wants to use another bot's commands 🐧
 banned_user_prompt,"Bạn đã bị ban, vui lòng liên hệ thằng chủ bot để biết thêm thông tin chi tiết 🐧","You have been banned, please contact the bot owner for more details 🐧"
 command_not_found_prompt,Lệnh đó không tồn tại!,That command does not exist!

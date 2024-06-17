@@ -73,11 +73,11 @@ async def get_emoji(ctx: discord.Interaction, emoji: str):
 async def get_nijika_image(ctx: discord.Interaction):
     await nijika.slash_command_listener(ctx)
 
-@tree.command(name="khoabug", description="useless")
+@tree.command(name="khoabug", description=get_string("command_khoabug_desc"))
 async def get_khoabug(ctx: discord.Interaction, search: str = None):
     await khoa.slash_command_listener(ctx, search)
 
-@tree.command(name="khoalist", description="useless")
+@tree.command(name="khoalist", description=get_string("command_khoalist_desc"))
 async def get_khoalist(ctx: discord.Interaction):
     await khoa.slash_command_listener_list(ctx)
 

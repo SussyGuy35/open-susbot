@@ -6,4 +6,4 @@ leaderboard_embed_title,Bảng xếp hạng **gvs** cho **{0}**,**gvs** leaderbo
 command_help,Các lệnh `{0}gvs`:#- `{0}gvs count [id người dùng]` hoặc `/gvs_count [id người dùng]`: Hiện số lần đã **gvs** của ai đó.#- `{0}gvs lb` hoặc `/gvs_leaderboard`: Bảng xếp hạng **gvs**.#- `/gvs_react [id tin nhắn]`: *gvs* một tin nhắn nào đó.,`{0}gvs` commands:#- `{0}gvs count [user id]` or `/gvs_count [user id]`: Shows the number of times you or someone have **gvs**.#- `{0}gvs lb` or `/gvs_leaderboard`: Show **gvs** leaderboard.#- `/gvs_react [message id]`: *gvs* a message.
 not_supported,**gvs** không được hỗ trợ ở đây!,**gvs** is not supported here!
 react_command_response_success,Đã *gvs* tin nhắn đó thành công!,*gvs* succeed!
-react_command_response_invalid_id,Id tin nhắn không hợp lệ kìa ba.,Invalid message id!
+react_command_response_invalid_id,"Id tin nhắn không hợp lệ, hoặc không thể gvs ở đây!","Invalid message id, or you cant gvs here!"
