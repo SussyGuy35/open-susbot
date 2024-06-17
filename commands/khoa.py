@@ -12,7 +12,6 @@ def search_files(path, name):
                 return f
             
 async def list_name(ctx):
-    img_path = 'khoa_search//'
     file_names = os.listdir(img_path)
     file_names = [f for f in file_names if os.path.isfile(os.path.join(img_path, f))]
     res = [f.replace('_', ' ').replace('.jpg', '') for f in file_names]
