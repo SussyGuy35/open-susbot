@@ -75,14 +75,11 @@ async def get_nijika_image(ctx: discord.Interaction):
 
 @tree.command(name="khoabug", description="useless")
 async def get_khoabug(ctx: discord.Interaction, search: str = None):
-    if search != None:
-        await khoa.search_khoa(search, ctx)
-    else:
-        await khoa.slash_command_listener(ctx)
+    await khoa.slash_command_listener(ctx, search)
 
 @tree.command(name="khoalist", description="useless")
 async def get_khoalist(ctx: discord.Interaction):
-    await khoa.list_name(ctx)
+    await khoa.slash_command_listener_list(ctx)
 
 @tree.command(name="amogus", description=get_string("command_amogus_desc"))
 async def get_amogus_image(ctx: discord.Interaction):
