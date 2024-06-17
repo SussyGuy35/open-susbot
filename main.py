@@ -80,6 +80,10 @@ async def get_khoabug(ctx: discord.Interaction, search: str = None):
     else:
         await khoa.slash_command_listener(ctx)
 
+@tree.command(name="khoalist", description="useless")
+async def get_khoalist(ctx: discord.Interaction):
+    await khoa.list_name(ctx)
+
 @tree.command(name="amogus", description=get_string("command_amogus_desc"))
 async def get_amogus_image(ctx: discord.Interaction):
     await amogus.slash_command_listener(ctx)
