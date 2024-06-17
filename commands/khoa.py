@@ -1,4 +1,4 @@
-import discord
+import discord, random
 import os
 from lib.sussyutils import pick_random_file_from_dir
 import lib.cmddata as cmddata
@@ -12,11 +12,13 @@ def search_files(path, name):
                 return f
             
 async def list_name(ctx):
+    img_path = 'khoa_search//'
     file_names = os.listdir(img_path)
     file_names = [f for f in file_names if os.path.isfile(os.path.join(img_path, f))]
     res = [f.replace('_', ' ').replace('.jpg', '') for f in file_names]
-    body = "\n".join([f"{index + 1}. `{item}`" for index, item in enumerate(res)])
-    msg = f"`{"Tổng hợp những câu nói bất hủ của a khoa"}`\n\n`{"Sử dụng lệnh search để hiển thị câu nói bạn cần"}`\n\n{body}"
+    random_res = random.sample(res, min(len(res), 10))
+    body = "\n".join([f"`{item}`" for item in random_res])
+    msg = (f"`Tổng hợp một số câu nói bất hủ của a khoa (chắc a khoa k biết đâu)`\n\n`Sử dụng lệnh search để hiển thị câu nói bạn cần`\n\n{body}")
     await ctx.response.defer()
     await ctx.followup.send(msg)
 
