@@ -10,10 +10,10 @@ config = get_config()
 img_path = cmddata.get_path("khoa/")
 loca_sheet = "loca/loca - khoa.csv"
 
-def search_files(path, name):
+def search_files(path: str, name: str):
     for (root, dirs, files) in os.walk(path):
         for f in files:
-            if name in f:
+            if name.lower() in f.lower():
                 return f
             
 
