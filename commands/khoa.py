@@ -49,6 +49,6 @@ async def slash_command_listener_list(ctx: discord.Interaction):
     file_names = [f for f in file_names if os.path.isfile(os.path.join(img_path, f))]
     res = [f.replace('_', ' ').replace('.jpg', '') for f in file_names]
     random_res = random.sample(res, min(len(res), 10))
-    body = "\n".join([f"> {item}\n" for item in random_res])
+    body = "\n".join([f"- > {item}" for item in random_res])
     msg = get_string_by_id(loca_sheet, "list_command_response_template", config.language).format(body)
     await ctx.followup.send(msg)
