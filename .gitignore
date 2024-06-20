@@ -2,9 +2,7 @@
 venv/*
 __pycache__/*
 commands/__pycache__/*
-commands/card_game_data/__pycache__/*
-commands/card_game_data/*.json
-commands/data/gvs.json
+commands/data/save + temp/*
 config_override.py
 test.py
 lib/__pycache__/*
