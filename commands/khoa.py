@@ -7,7 +7,7 @@ import lib.cmddata as cmddata
 
 config = get_config()
 
-img_path = cmddata.get_path("khoa/")
+img_path = cmddata.get_res_file_path("khoa/")
 loca_sheet = "loca/loca - khoa.csv"
 
 def search_files(path: str, name: str):

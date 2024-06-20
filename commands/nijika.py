@@ -2,7 +2,7 @@ import discord
 from lib.sussyutils import pick_random_file_from_dir
 import lib.cmddata as cmddata
 
-img_path = cmddata.get_path("nijika/")
+img_path = cmddata.get_res_file_path("nijika/")
 
 
 def command_response():

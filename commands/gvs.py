@@ -10,7 +10,7 @@ config = get_config()
 file_path = "gvs.json"
 
 try:
-    data = json.load(cmddata.open_file_read(file_path))
+    data = json.load(cmddata.file_save_open_read(file_path))
 except:
     data = {}
 
@@ -18,7 +18,7 @@ loca_sheet = "loca/loca - gvs.csv"
 
 
 def save():
-    file = cmddata.open_file_write(file_path)
+    file = cmddata.file_save_open_write(file_path)
     json.dump(data, file)
 
 
