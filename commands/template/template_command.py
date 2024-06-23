@@ -1,11 +1,10 @@
 """template to creating new command"""
-try:
-    import config_override as config
-except:
-    import config
 import discord
 import lib.sussyutils
 import lib.locareader
+from lib.sussyconfig import get_config
+
+config = get_config()
 
 CMD_NAME = "template"
 loca_sheet = f"loca/loca - {CMD_NAME}.csv"
