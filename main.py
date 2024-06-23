@@ -8,7 +8,7 @@ from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
-    avatar, bean, feedback, khoa
+    avatar, bean, feedback, khoa, doino
 )
 
 # import features
@@ -131,9 +131,20 @@ async def bean_user(ctx: discord.Interaction, user: discord.User, reason: str):
     await bean.slash_command_listener(ctx, user, reason)
 
 
-@tree.command(name="get_prefix", description="Lấy prefix của con bot tại server hiện tại")
+@tree.command(name="get_prefix", description=get_string("command_getprefix_desc"))
 async def get_bot_prefix(ctx: discord.Interaction):
     await getprefix.slash_command_listener(ctx)
+
+
+@tree.command(name="doino", description=get_string("command_doino_desc"))
+async def get_vietqr(
+        ctx: discord.Interaction,
+        bankname: str,
+        accountnumber: str,
+        accountname: str,
+        amount: int,
+        note: str):
+    await doino.slash_command_listener(ctx, bankname, accountnumber, accountname, amount, note)
 
 
 # On ready event
