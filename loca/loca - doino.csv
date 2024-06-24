@@ -1,2 +1,7 @@
 string_id,vi,en
 invalid_bank_name,Tên ngân hàng không hợp lệ!,Invalid bank name
+bankname,Tên ngân hàng,Bank name
+accountnumber,Số tài khoản người nhận,Account number
+accountname,Tên chủ tài khoản,Account name
+amount,Số tiền nhận,Amount
+note,Nội dung chuyển khoản,Note

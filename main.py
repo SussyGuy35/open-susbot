@@ -139,11 +139,27 @@ async def get_bot_prefix(ctx: discord.Interaction):
 @tree.command(name="doino", description=get_string("command_doino_desc"))
 async def get_vietqr(
         ctx: discord.Interaction,
-        bankname: str,
+        bankname: doino.bank_names,
         accountnumber: str,
-        accountname: str,
-        amount: int,
-        note: str):
+        accountname: str | None = None,
+        amount: int | None = None,
+        note: str | None = None):
+    f"""
+    {get_string("command_doino_desc")}
+
+    Parameters
+    ----------
+    bankname: doino.bank_names, 
+        {get_string("bankname", "doino")}
+    accountnumber: str,
+        {get_string("accountnumber", "doino")}
+    accountname: str | None = None,
+        {get_string("accountname", "doino")}
+    amount: str | None = None, 
+        {get_string("amount", "doino")}
+    note: str | None = None
+        {get_string("note", "doino")}
+    """
     await doino.slash_command_listener(ctx, bankname, accountnumber, accountname, amount, note)
 
 
