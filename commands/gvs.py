@@ -127,7 +127,7 @@ async def command_listener(message: discord.Message, args: list):
         if isinstance(response, discord.Embed):
             await message.channel.send(embed=response) # lb command response
         elif isinstance(response, str):
-            await message.channel.send(response, {"allowed_mentions": {"parse": []}}) # count command response
+            await message.channel.send(response) # count command response
     else:
         await message.channel.send(get_string_by_id(loca_sheet, "not_supported", config.language))
 
