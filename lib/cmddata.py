@@ -21,5 +21,5 @@ def get_save_file_path(file_or_dir_name: str):
 
 
 def get_res_file_path(file_or_dir_name: str):
-    """Get save file path"""
+    """Get resource file path"""
     return "commands/data/res/" + file_or_dir_name
