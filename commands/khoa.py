@@ -33,13 +33,14 @@ def command_response(search: str = None) -> discord.File | str:
 
 
 async def slash_command_listener(ctx: discord.Interaction, search: str = None):
-    print(f"{ctx.user} used khoabug command")
-    await ctx.response.defer()
+    print(f"{ctx.user} used khoabug command with search: {search}")
+    await ctx.response.defer(ephemeral=True)
     responce = command_response(search)
     if isinstance(responce, str):
         await ctx.followup.send(responce)
     else:
-        await ctx.followup.send(file=responce)
+        await ctx.channel.send(file=responce)
+        await ctx.followup.send(get_string_by_id(loca_sheet, "success", config.language))
 
 
 async def slash_command_listener_list(ctx: discord.Interaction):
