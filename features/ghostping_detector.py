@@ -28,42 +28,42 @@ async def on_delete(message: discord.Message):
             return
     if message.author.bot:
         return
+    
+    if message.mention_everyone:
+        victims = "@everyone"
     else:
-        if message.mention_everyone:
-            victims = "@everyone"
-        else:
-            victims = ""
-            for victim in message.mentions:
-                if not victim.bot:
-                    victims += f"<@{victim.id}> "
-        if victims == "":
-            return
-        print(f"{message.author.name} ghostping in {message.guild}!")
-        ghostping = discord.Embed(
-            title=get_string_by_id(loca_sheet, "embed_title", config.language),
-            color=0xFF0000,
-            timestamp=message.created_at,
-            description=get_string_by_id(loca_sheet, "embed_desc", config.language)
-        )
-        ghostping.add_field(
-            name=get_string_by_id(loca_sheet, "name", config.language),
-            value=f'{message.author} (<@{message.author.id}>)'
-        )
-        ghostping.add_field(
-            name=get_string_by_id(loca_sheet, "message", config.language),
-            value=message.content
-        )
-        ghostping.add_field(
-            name=get_string_by_id(loca_sheet, "victim", config.language),
-            value=victims
-        )
+        victims = ""
+        for victim in message.mentions:
+            if not victim.bot and not victim.status is discord.Status.offline:
+                victims += f"<@{victim.id}> "
+    if victims == "":
+        return
+    print(f"{message.author.name} ghostping in {message.guild}!")
+    ghostping = discord.Embed(
+        title=get_string_by_id(loca_sheet, "embed_title", config.language),
+        color=0xFF0000,
+        timestamp=message.created_at,
+        description=get_string_by_id(loca_sheet, "embed_desc", config.language)
+    )
+    ghostping.add_field(
+        name=get_string_by_id(loca_sheet, "name", config.language),
+        value=f'{message.author} (<@{message.author.id}>)'
+    )
+    ghostping.add_field(
+        name=get_string_by_id(loca_sheet, "message", config.language),
+        value=message.content
+    )
+    ghostping.add_field(
+        name=get_string_by_id(loca_sheet, "victim", config.language),
+        value=victims
+    )
+    try:
+        await message.channel.send(embed=ghostping)
+    except discord.Forbidden:
         try:
-            await message.channel.send(embed=ghostping)
+            await message.author.send(embed=ghostping)
         except discord.Forbidden:
-            try:
-                await message.author.send(embed=ghostping)
-            except discord.Forbidden:
-                return
+            return
 
 
 async def on_edit(before: discord.Message, after: discord.Message):
@@ -84,7 +84,7 @@ async def on_edit(before: discord.Message, after: discord.Message):
             return
     if before.author.bot:
         return
-    elif (before.mentions != after.mentions) or (before.mention_everyone and not after.mention_everyone):
+    if (before.mentions != after.mentions) or (before.mention_everyone and not after.mention_everyone):
         if before.mention_everyone:
             victims = "@everyone"
         else:
@@ -94,7 +94,7 @@ async def on_edit(before: discord.Message, after: discord.Message):
                     victims_list.remove(mention)
             victims = ""
             for victim in victims_list:
-                if not victim.bot:
+                if not victim.bot and not victim.status is discord.Status.offline:
                     victims += f"<@{victim.id}> "
         if victims == "":
             return

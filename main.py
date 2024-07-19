@@ -8,7 +8,7 @@ from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
-    avatar, bean, feedback, khoa, doino
+    avatar, bean, feedback, khoa, doino, clear
 )
 
 # import features
@@ -29,6 +29,8 @@ print(f'{config.bot_name} v{bot_version}')
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.presences = True
+intents.members = True
 
 client = discord.Client(intents=intents)
 
@@ -161,6 +163,19 @@ async def get_vietqr(
         {get_string("note", "doino")}
     """
     await doino.slash_command_listener(ctx, bankname, accountnumber, accountname, amount, note)
+
+
+@tree.command(name="clear", description=get_string("command_clear_desc"))
+async def clear_messages(ctx: discord.Interaction, number: int):
+    f"""
+    {get_string("command_clear_desc")}
+
+    Parameters
+    ----------
+    number: int
+        {get_string("messages_number", "clear")}
+    """
+    await clear.slash_command_listener(ctx, number)
 
 
 # On ready event

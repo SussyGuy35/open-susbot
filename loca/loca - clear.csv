@@ -1,0 +1,6 @@
+string_id,vi,en
+no_permission,Bạn không có quyền dùng lệnh này!,You can't use this command!
+bot_no_permission,Bot không có quyền để dùng lệnh này trong server hiện tại!,Can't use this command in current server!
+invalid_number,Số tin nhắn không hợp lệ! Số tin nhắn phải là số tự nhiên n với 0 < n <= 100.,Invalid number. Must be a natural number n with 0 < n < =100
+success,Đã xóa thành công {0} tin nhắn!,Deleted {0} messages successfully!
+messages_number,Số tin nhắn muốn xóa. 0 < n <= 100,Number of messages to delete. 0 < n <= 100
