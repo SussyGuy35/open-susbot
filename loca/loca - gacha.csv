@@ -4,16 +4,16 @@ level_up_message,Chúc mừng {0} đã tăng cấp lên **level {1}**! Bạn nh�
 newplayer_message,Chúc mừng bạn nhận được **{0} BachNob Credit**! Hiện tại bạn có **{1} BachNob Credit**.,"Congratulations, you have received **{0} BachNob Credit**! You currently have **{1} BachNob Credits**."
 newplayer_claimed_message,Bạn đã nhận nó rồi mà :),You already got it :)
 user_not_played_message,<@{0}> chưa từng chơi con game tuyệt tác này :(,<@{0}> has never played this masterpiece game :(
-badges,Huy hiệu:,Badges:
 userinfo_embed_title,Thông tin người chơi,User info
 userinfo_username,Tên người chơi,Username
 userinfo_level,Level,Level
 userinfo_exp,Exp,Exp
-userinfo_exp_left,Số exp cần đến lên cấp tiếp theo,Exp to advance to the next level
+userinfo_exp_left,Số exp cần để lên cấp tiếp theo,Exp to advance to the next level
 userinfo_roll,Số lần đã roll,Number of times rolled
 userinfo_credit,BachNob Credit,BachNob Credit
 userinfo_guarantee,BachNob Guarantee,BachNob Guarantee
 userinfo_rank,Xếp hạng,Rank
+userinfo_badges,Huy hiệu,Badges
 userinfo_template,Người chơi **{0}**:#- Level: {1}#- Exp: {2}. Cần thêm {3} exp để lên cấp tiếp theo.#- BachNob Credit: {4}#- BachNob Guarantee: {5}#- Số lần đã roll: {6},Player **{0}**:#- Level: {1}#- Exp: {2}. Need {3} more exp to advance to the next level.#- BachNob Credit: {4}#- BachNob Guarantee: {5}#- Number of times rolled: {6}
 daily_message,Bạn nhận được **{0} BachNob Credit** và **{1} exp** cho hôm nay. Hiện tại bạn có **{2} BachNob Credit**!,You have received **{0} BachNob Credit** and **{1} exp** for today. Currently you have **{2} BachNob Credit**!
 daily_claimed_message,Hôm nay bạn đã nhận rồi mà :),You already got it today :)
@@ -24,6 +24,7 @@ shop_bot_name,Bot bán hàng đỉnh cao của Bách,Bách's super ultimate sale
 shop_sell_invalid_command,Lệnh không hợp lệ! Hãy dùng `{0}gacha shop sell <giá bán> <card muốn bán>`.,Invalid command! Use `{0}gacha shop sell <sale price> <card to sell>`.
 shop_sell_successful_message,"Bạn đã đăng bán card ""{0}"" với giá {1} BachNob Credit thành công!","You have successfully posted the card ""{0}"" for sale at {1} BachNob Credit!"
 invalid_card,Bạn còn không có card đó 😳,You don't even have that card 😳
+non_existent_card,Card đó còn không tồn tại 😳,Card doesn't exist 😳
 shop_sell_invalid_price,Giá bán không hợp lệ. Giá bán phải là **số tự nhiên n** với **{0} < n < {1}**.,Invalid selling price. The selling price must be **natural number n** with **{0} < n < {1}**.
 shop_sell_full,Shop đã hết chỗ đăng bán!,The shop is full!
 shop_list_empty_shop,Hiện tại không có vật phẩm nào đang được bán trên shop!,There are currently no items for sale on the shop!
@@ -39,7 +40,7 @@ shop_buy_cant_afford,Bạn còn không có đủ tiền <:raiseismok:10949136945
 show_card_prompt,Các thẻ **{0}** có:,**{0}**'s owned cards:
 show_card_no_card,**{0}** không có thẻ nào cả :(,**{0}** doesn't have any cards :(
 leaderboard_empty,Hiện tại chưa có ai trên bảng xếp hạng!,There is currently no one on the leaderboard!
-leaderboard_prompt,Bảng xếp hạng:,Leaderboard:
+leaderboard_prompt,Bảng xếp hạng (Top 10),Leaderboard (Top 10)
 invalid_bet_point,Số BachNob Credit cược không hợp lệ! Bạn chỉ có thể cược số BachNob Credit là số tự nhiên **n** với **{0} ≤ n ≤ {1}**.,The bet amount must be a natural number **n** with **{0} ≤ n ≤ {1}**.
 missing_card_name,Thiếu tên card kìa :),Where is the card's name ?:)
 rps_rock,búa,rock
