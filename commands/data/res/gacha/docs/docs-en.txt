@@ -1,0 +1,267 @@
+********** Credit **********
+
+- Super balance gacha game for BachNobBot
+
+- Original idea: Diamond_Dr (Hoàng Anh)
+- Stupid dev: BachNob
+- Gameplay advisor: novaminn (Bắp)
+- Contributor: LeiZanTheng, izuki, Waka, stephen le croissant
+- Main obstacle: SussyGuy35
+
+
+
+********** Cards **********
+*** Common ***
++ Number of cards: 24
++ Cards list:
+- SusHuman
+- TrollerGuy
+- CementCat
+- HypeCat
+- BuffaloKid
+- DripGoci
+- BachKhoa96
+- CandyKid
+- RosemaryRickRoll
+- AdvancedBaller
+- sedcfyhjuc
+- DrugKid
+- FunkyDunkyYummy
+- Dat400MIL
+- ButtSlapper
+- UhmActually...
+- Avis
+- Aberto
+- Anapned
+- Sectumsempra
+- Incarcarous
+- AmumuMogus
+- IssacMabol
+- Sonorus
+
+*** Uncommon ***
++ Number of cards: 15
++ Cards list:
+- SusMonster
+- PrankKid
+- FreeFireKid
+- RacingBoy
+- Alonma
+- Susserman
+- LeCroissant
+- scizorr
+- ChingChing
+- Unicorn20cm
+- LazyFrox
+- Colloportus
+- BallerMaster
+- blossom
+- bubble
+- hitoribocchi
+- Babbling
+- Ferula
+- Penestrator
+- Confringo
+- ConMeoNguNgocDangYeuCutePhoMaiQue
+- buttercup
+- Lignocellulose
+- puccianne
+
+*** Rare ***
++ Number of cards: 18
++ Cards list:
+- SushiBoi69
+- TrollFace
+- RubberbandBeast
+- Mr.Thuong
+- TikTokKid
+- NinjaLead
+- NyanNyanMeow
+- HaxKing
+- DaRoku
+- FreeWater
+- Wingardium
+- Stupefy
+- Deletrius
+- Finite
+- Langlock
+- Levicorpus
+- SheenHa
+- Mazzon
+
+*** Epic ***
++ Number of cards: 15
++ Cards list:
+- SusLord
+- TrollerMaster
+- FuHoKing
+- LoveCastle
+- BeXuanMikeLonTon
+- TouchGrass
+- CoderThanSau
+- Minnn
+- NoEscapeBread
+- AnhHungHaoHan
+- Patrona
+- Episkey
+- Gubraithian
+- DongHT
+- MasterOfTroll
+
+*** Legendary ***
++ Number of cards: 9
++ Cards list:
+- SussyGod
+- DatGG
+- BachNob
+- ThengTheTriLord
+- Decor
+- 10DiemVan
+- Eden88
+- Illuminati
+- J79
+
+*** Limited ***
++ Number of cards: 3
++ Cards list:
+- VictorySweetTheForbiddenOne
+- LuuQuyHop
+- IjichiNijika
+
+
+
+********** Roll **********
+
+- Number of BachNob Credit needed for each roll: 100
+- Number of BachNob Credit received when rolled out to the card you already own: 25
+
+*** Common ***
++ Rate: 65%
++ Rate for each card: ~2,708%
++ Bonus exp: 1
+
+*** Uncommon ***
++ Rate: 20%
++ Rate for each card: ~0,833%
++ Bonus exp: 4
+
+*** Rare ***
++ Rate: 8%
++ Rate for each card: ~0,44%
++ Bonus exp: 32
+
+*** Epic ***
++ Rate: 5%
++ Rate for each card: ~0,33%
++ Bonus exp: 64
+
+*** Legendary ***
++ Rate: 2%
++ Rate for each card: ~0,22%
++ Bonus exp: 128
+
+
+
+********** Guaranteed roll **********
+
+- Number of BachNob Guarantee needed for each roll: 1
+- Number of BachNob Credit received when rolled out to the card you already own: 25
+
+*** Common ***
++ Rate: 10%
++ Rate for each card: ~0,42%
++ Bonus exp: 1
+
+*** Uncommon ***
++ Rate: 35%
++ Rate for each card: ~1,458%
++ Bonus exp: 4
+
+*** Rare ***
++ Rate: 25%
++ Rate for each card: ~1,389%
++ Bonus exp: 32
+
+*** Epic ***
++ Rate: 20%
++ Rate for each card: ~1,33%
++ Bonus exp: 64
+
+*** Legendary ***
++ Rate: 10%
++ Rate for each card: ~1,11%
++ Bonus exp: 128
+
+
+********** Level system  **********
+
++ Formula: 
+Exp to next lvl = 150 * (current lvl) + 10 * (((current lvl) - 1)^3)
++ Level up bonus: (current lvl) * 200 BachNob Credit and 1 BachNob Guarantee
+
+
+
+********** Rock paper scissors minigame **********
+- The bet amount must be a natural number n with 30 ≤ n ≤ lvl*200
+
+***** Rewards/punishments for winning/losing
++ Ưinning: receive opponent's card, bet point and round(0.07 * bet amount) exp
++ Losing: lose the bet amount and the cards played
+
+***** Opponent's card rate *****
+*** Common ***
++ Rate: 20%
++ Rate for each class: ~6,67%
+
+*** Uncommon ***
++ Rate: 30%
++ Rate for each class: 10%
+
+*** Rare ***
++ Rate: 25%
++ Rate for each class: ~8,33%
+
+*** Epic ***
++ Rate: 20%
++ Rate for each class: ~6,67%
+
+*** Legendary ***
++ Rate: 5%
++ Rate for each class: ~1,67%
+
+***** Win/loss ratio for each card rarity *****
+*** Common ***
++ Win: ~33,33%
++ Draw: ~6,67%
++ Lose: 60%
+
+*** Uncommon ***
++ Win: 40%
++ Draw: 10%
++ Lose: 50%
+
+*** Rare ***
++ Win: 50%
++ Draw: ~8,33%
++ Lose: ~41,67%
+
+*** Epic ***
++ Win: ~58,33%
++ Draw: ~6,67%
++ Lose: 35%
+
+*** Legendary ***
++ Win: 65%
++ Draw: ~1,67%
++ Lose: ~33,33%
+
+
+
+********** Daily attendance system **********
++ Number of BachNob Credit receive: 100
++ Bonus exp: 2 * (current lvl)
+
+
+
+********** Newbie gift system **********
++ Number of BachNob Credit receive: 1500

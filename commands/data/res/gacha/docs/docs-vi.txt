@@ -1,0 +1,267 @@
+********** Credit **********
+
+- Game gacha siêu cân bằng cho BachNobBot
+
+- Ý tưởng ban đầu: Diamond_Dr (Hoàng Anh)
+- Thằng dev code ngu: BachNob
+- Góp ý gameplay: novaminn (Bắp)
+- Đóng góp: LeiZanTheng, izuki, Waka, stephen le croissant
+- Vật cản trở chính trong quá trình phát triển: SussyGuy35
+
+
+
+********** Các card **********
+*** Common ***
++ Số card: 24
++ Danh sách các card:
+- SusHuman
+- TrollerGuy
+- CementCat
+- HypeCat
+- BuffaloKid
+- DripGoci
+- BachKhoa96
+- CandyKid
+- RosemaryRickRoll
+- AdvancedBaller
+- sedcfyhjuc
+- DrugKid
+- FunkyDunkyYummy
+- Dat400MIL
+- ButtSlapper
+- UhmActually...
+- Avis
+- Aberto
+- Anapned
+- Sectumsempra
+- Incarcarous
+- AmumuMogus
+- IssacMabol
+- Sonorus
+
+*** Uncommon ***
++ Số card: 24
++ Danh sách các card:
+- SusMonster
+- PrankKid
+- FreeFireKid
+- RacingBoy
+- Alonma
+- Susserman
+- LeCroissant
+- scizorr
+- ChingChing
+- Unicorn20cm
+- LazyFrox
+- Colloportus
+- BallerMaster
+- blossom
+- bubble
+- hitoribocchi
+- Babbling
+- Ferula
+- Penestrator
+- Confringo
+- ConMeoNguNgocDangYeuCutePhoMaiQue
+- buttercup
+- Lignocellulose
+- puccianne
+
+*** Rare ***
++ Số card: 18
++ Danh sách các card:
+- SushiBoi69
+- TrollFace
+- RubberbandBeast
+- Mr.Thuong
+- TikTokKid
+- NinjaLead
+- NyanNyanMeow
+- HaxKing
+- DaRoku
+- FreeWater
+- Wingardium
+- Stupefy
+- Deletrius
+- Finite
+- Langlock
+- Levicorpus
+- SheenHa
+- Mazzon
+
+*** Epic ***
++ Số card: 15
++ Danh sách các card:
+- SusLord
+- TrollerMaster
+- FuHoKing
+- LoveCastle
+- BeXuanMikeLonTon
+- TouchGrass
+- CoderThanSau
+- Minnn
+- NoEscapeBread
+- AnhHungHaoHan
+- Patrona
+- Episkey
+- Gubraithian
+- DongHT
+- MasterOfTroll
+
+*** Legendary ***
++ Số card: 9
++ Danh sách các card:
+- SussyGod
+- DatGG
+- BachNob
+- ThengTheTriLord
+- Decor
+- 10DiemVan
+- Eden88
+- Illuminati
+- J79
+
+*** Limited ***
++ Số card: 3
++ Danh sách các card:
+- VictorySweetTheForbiddenOne
+- LuuQuyHop
+- IjichiNijika
+
+
+
+********** Roll **********
+
+- Số Credit cần cho mỗi lần roll: 100
+- Số Credit nhận khi roll ra card đã sở hữu: 25
+
+*** Common ***
++ Tỉ lệ: 65%
++ Tỉ lệ cho mỗi card: ~2,708%
++ Số exp thưởng: 1
+
+*** Uncommon ***
++ Tỉ lệ: 20%
++ Tỉ lệ cho mỗi card: ~0,833%
++ Số exp thưởng: 4
+
+*** Rare ***
++ Tỉ lệ: 8%
++ Tỉ lệ cho mỗi card: ~0,44%
++ Số exp thưởng: 32
+
+*** Epic ***
++ Tỉ lệ: 5%
++ Tỉ lệ cho mỗi card: ~0,33%
++ Số exp thưởng: 64
+
+*** Legendary ***
++ Tỉ lệ: 2%
++ Tỉ lệ cho mỗi card: ~0,22%
++ Số exp thưởng: 128
+
+
+
+********** Guaranteed roll **********
+
+- Số Guarantee cần cho mỗi lần roll: 1
+- Số Credit nhận khi roll ra card đã sở hữu: 25
+
+*** Common ***
++ Tỉ lệ: 10%
++ Tỉ lệ cho mỗi card: ~0,42%
++ Số exp thưởng: 1
+
+*** Uncommon ***
++ Tỉ lệ: 35%
++ Tỉ lệ cho mỗi card: ~1,458%
++ Số exp thưởng: 4
+
+*** Rare ***
++ Tỉ lệ: 25%
++ Tỉ lệ cho mỗi card: ~1,389%
++ Số exp thưởng: 32
+
+*** Epic ***
++ Tỉ lệ: 20%
++ Tỉ lệ cho mỗi card: ~1,33%
++ Số exp thưởng: 64
+
+*** Legendary ***
++ Tỉ lệ: 10%
++ Tỉ lệ cho mỗi card: ~1,11%
++ Số exp thưởng: 128
+
+
+********** Hệ thống level **********
+
++ Công thức tính: 
+Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) - 1)^3)
++ Phần thưởng khi lên level: (lvl hiện tại) * 200 BachNob Credit và 1 BachNob Guarantee
+
+
+
+********** Minigame oẳn tù tì **********
+- Số tiền cược phải là số tự nhiên n với lvl*200 ≥ n ≥ 30
+
+***** Phần thưởng/hình phạt khi thắng/thua
++ Thắng: nhận được card của đối phương, số tiền cược và round(0.07 * số tiền cược) exp
++ Thua: mất số tiền cược và bài đã đánh
+
+***** Tỉ lệ ra bài đối phương *****
+*** Common ***
++ Tỉ lệ: 20%
++ Tỉ lệ cho mỗi class: ~6,67%
+
+*** Uncommon ***
++ Tỉ lệ: 30%
++ Tỉ lệ cho mỗi class: 10%
+
+*** Rare ***
++ Tỉ lệ: 25%
++ Tỉ lệ cho mỗi class: ~8,33%
+
+*** Epic ***
++ Tỉ lệ: 20%
++ Tỉ lệ cho mỗi class: ~6,67%
+
+*** Legendary ***
++ Tỉ lệ: 5%
++ Tỉ lệ cho mỗi class: ~1,67%
+
+***** Tỉ lệ thắng thua cho mỗi độ hiếm card *****
+*** Common ***
++ Thắng: ~33,33%
++ Hòa: ~6,67%
++ Thua: 60%
+
+*** Uncommon ***
++ Thắng: 40%
++ Hòa: 10%
++ Thua: 50%
+
+*** Rare ***
++ Thắng: 50%
++ Hòa: ~8,33%
++ Thua: ~41,67%
+
+*** Epic ***
++ Thắng: ~58,33%
++ Hòa: ~6,67%
++ Thua: 35%
+
+*** Legendary ***
++ Thắng: 65%
++ Hòa: ~1,67%
++ Thua: ~33,33%
+
+
+
+********** Hệ thống điểm danh hàng ngày **********
++ Số Credit nhận được: 100
++ Số exp thưởng: 2 * (lvl hiện tại)
+
+
+
+********** Hệ thống quà tân thủ **********
++ Số Credit nhận được: 1500

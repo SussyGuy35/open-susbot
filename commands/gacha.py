@@ -5,7 +5,7 @@ import random
 import datetime
 import enum
 import lib.sussyutils as sussyutils
-from lib.locareader import get_string_by_id
+from lib.locareader import get_string_by_id, get_string_list
 from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
 
@@ -13,6 +13,7 @@ config = get_config()
 
 CMD_NAME = "gacha"
 loca_sheet = f"loca/loca - {CMD_NAME}.csv"
+help_loca_sheet = "loca/loca - gachahelp.csv"
 card_database_path = cmddata.get_res_file_path("gacha/carddb.csv")
 save_data_path = "gacha_data.json"
 leaderboard_path = "gacha_leaderboard.json"
@@ -22,6 +23,14 @@ class RpsClass(enum.Enum):
     Rock = get_string_by_id(loca_sheet, "rps_rock", config.language)
     Paper = get_string_by_id(loca_sheet, "rps_paper", config.language)
     Scissors = get_string_by_id(loca_sheet, "rps_scissors", config.language)
+
+
+def get_help_text(prefix):
+    help_text = ""
+    for line in get_string_list(help_loca_sheet, config.language):
+        help_text += line + "\n"
+    return help_text.format(prefix)
+
 
 # MARK: some things
 maxiumum_gacha_pull = 10
@@ -80,8 +89,9 @@ def add_card_to_user(userid: str | int, cardid: str):
     userid = str(userid)
     if userid not in data.keys():
         create_user(userid)
-    data[userid]["cards"].append(cardid)
-    save()
+    if cardid not in data[userid]["cards"]:
+        data[userid]["cards"].append(cardid)
+        save()
 
 
 def remove_card_from_user(userid: str | int, cardid: str):
@@ -298,12 +308,12 @@ def card_class_to_enum(class_name: str) -> RpsClass:
 
 
 # MARK: Command Response
-def command_response(args: list[str], user: discord.User, bot: discord.Client) -> str | discord.Embed:
+def command_response(args: list[str], user: discord.User, bot: discord.Client) -> str | discord.Embed | discord.File:
     args_len = len(args)
     
     # region no args
     if args_len == 0:
-        pass # TODO: handle no args
+        return get_help_text(config.prefix)
     # endregion
 
     # region roll
@@ -671,6 +681,124 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
                 )
     # endregion
 
+    # region supraroll
+    if args[0] == "supraroll":
+        roll_count = 1
+        if args_len >= 2:
+            try:
+                roll_count = int(args[1])
+            except ValueError: # invalid roll count
+                return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
+                    minimum_gacha_pull,
+                    maxiumum_gacha_pull
+                )
+        
+        if roll_count < minimum_gacha_pull or roll_count > maxiumum_gacha_pull: # invalid roll count
+            return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
+                    minimum_gacha_pull,
+                    maxiumum_gacha_pull
+            )
+        
+        if get_user_data(user.id, "guarantee") < roll_count: # cant afford
+            return get_string_by_id(loca_sheet, "roll_supra_cant_afford", config.language).format(
+                roll_count - get_user_data(user.id, "guarantee"),
+                roll_count
+            )
+
+        msg = ""
+        total_bonus_exp = 0
+        total_bonus_money = 0
+        for n in range(roll_count):
+            rarity = get_card_roll_rarity(10,20,25,35,10)
+            pulled_card = get_random_card_by_rarity(rarity)
+            if pulled_card not in get_user_data(user.id, "cards"): # if user dont have the card
+                total_bonus_exp += get_bonus_exp_by_rarity(rarity)
+                msg += get_string_by_id(loca_sheet, "roll_result", config.language).format(
+                    n + 1,
+                    get_card_rarity_by_id(pulled_card),
+                    get_card_name_by_id(pulled_card),
+                    get_bonus_exp_by_rarity(rarity)
+                ) + "\n"
+                add_card_to_user(user.id, pulled_card)
+            else: # if user already have the card
+                total_bonus_money += bonus_money_when_pull_same_card
+                msg += get_string_by_id(loca_sheet, "roll_result_already_have", config.language).format(
+                    n + 1,
+                    get_card_rarity_by_id(pulled_card),
+                    get_card_name_by_id(pulled_card),
+                    bonus_money_when_pull_same_card
+                ) + "\n"
+        
+        # update user data
+        set_user_data(user.id, "exp", get_user_data(user.id, "exp") + total_bonus_exp)
+        set_user_data(user.id, "money", get_user_data(user.id, "money") + total_bonus_money)
+        set_user_data(user.id, "guarantee", get_user_data(user.id, "guarantee") - roll_count)
+        set_user_data(user.id, "roll", get_user_data(user.id, "roll") + roll_count)
+        
+        return discord.Embed(
+            title=get_string_by_id(loca_sheet, "roll_embed_title", config.language),
+            description=msg,
+            color=0x00ff00
+        )
+    # endregion
+
+    # region docs
+    if args[0] == "docs":
+        return discord.File(cmddata.get_res_file_path(f"gacha/docs/docs-{config.language}.txt"))
+    # endregion
+
+    # region give
+    if args[0] == "give":
+        if args_len < 2:
+            return get_string_by_id(loca_sheet, "give_invalid_user", config.language)
+        try:
+            target_user = bot.get_user(sussyutils.get_user_id_from_snowflake(args[1]))
+            if target_user is None:
+                return get_string_by_id(loca_sheet, "give_invalid_user", config.language)
+        except:
+            return get_string_by_id(loca_sheet, "give_invalid_user", config.language)
+        
+        if args_len < 3:
+            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+        try:
+            amount = int(args[2])
+        except:
+            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+        
+        if amount < 1:
+            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+        
+        if get_user_data(user.id, "money") < amount:
+            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+        
+        set_user_data(user.id, "money", get_user_data(user.id, "money") - amount)
+        set_user_data(target_user.id, "money", get_user_data(target_user.id, "money") + amount)
+        return get_string_by_id(loca_sheet, "give_success", config.language).format(
+            target_user.display_name,
+            amount
+        )
+    # endregion
+
+    # region dev only commands
+    if sussyutils.is_dev(user.id):
+        if args[0] == "set":
+            set_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2], int(args[3]))
+            return "done"
+        if args[0] == "get":
+            return str(get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2]))
+        if args[0] == "addbadge":
+            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").append(" ".join(args[2:]))
+            return "done"
+        if args[0] == "removebadge":
+            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").remove(" ".join(args[2:]))
+            return "done"
+        if args[0] == "addcard":
+            add_card_to_user(sussyutils.get_user_id_from_snowflake(args[1]), args[2])
+            return "done"
+    # endregion
+
+    return get_help_text(config.prefix)
+
 
 # MARK: Command Listener
 async def command_listener(message: discord.Message, args: list[str], bot: discord.Client):
@@ -681,6 +809,9 @@ async def command_listener(message: discord.Message, args: list[str], bot: disco
     
     elif isinstance(response, str):
         await message.reply(response, mention_author=False)
+    
+    elif isinstance(response, discord.File):
+        await message.reply(file=response, mention_author=False)
     
     await check_user_level_up(message.author.id, message.channel)
     process_leaderboard()
