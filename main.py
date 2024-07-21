@@ -277,7 +277,7 @@ async def on_message(message: discord.Message):
                 await gvs.command_listener(message, args)
             
             case 'gacha':
-                await gacha.command_listener(message, args)
+                await gacha.command_listener(message, args, client)
 
             # Invalid command
             case _:

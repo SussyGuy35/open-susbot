@@ -2,7 +2,8 @@ import discord
 import csv
 import json
 import random
-import lib.sussyutils
+import datetime
+import lib.sussyutils as sussyutils
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
@@ -14,14 +15,16 @@ loca_sheet = f"loca/loca - {CMD_NAME}.csv"
 card_database_path = cmddata.get_res_file_path("gacha/carddb.csv")
 save_data_path = "gacha.json"
 
-# some things
+# MARK: some things
 maxiumum_gacha_pull = 10
 minimum_gacha_pull = 1
 roll_price = 100
 bonus_money_when_pull_same_card = int(roll_price/4)
+bonus_credit_when_level_up = 200
+daily_bonus = 100
+newbie_bonus = 1500
 
-
-# save data
+# MARK: Data
 try:
     data = json.load(cmddata.file_save_open_read(save_data_path))
 except:
@@ -33,11 +36,14 @@ def save():
     json.dump(data, file)
 
 
-def create_user(userid: str):
+def create_user(userid: str | int):
+    userid = str(userid)
     data[userid] = {
         "exp": 0,
+        "level": 1,
         "cards": [],
         "money": 0,
+        "guarantee": 0,
         "roll": 0,
         "newbie": True,
         "last_daily": 0,
@@ -46,29 +52,76 @@ def create_user(userid: str):
     save()
 
 
-def set_user_data(userid: str, key: str, value):
+def set_user_data(userid: str | int, key: str, value):
+    userid = str(userid)
     if userid not in data.keys():
         create_user(userid)
     data[userid][key] = value
     save()
 
 
-def get_user_data(userid: str, key: str):
+def get_user_data(userid: str | int, key: str):
+    userid = str(userid)
     if userid not in data.keys():
         create_user(userid)
     return data[userid][key]
 
 
-def add_card_to_user(userid: str, cardid: str):
+def add_card_to_user(userid: str | int, cardid: str):
+    userid = str(userid)
     if userid not in data.keys():
         create_user(userid)
     data[userid]["cards"].append(cardid)
     save()
 
 
-# get card from database
+def remove_card_from_user(userid: str | int, cardid: str):
+    userid = str(userid)
+    if userid not in data.keys():
+        create_user(userid)
+    data[userid]["cards"].remove(cardid)
+    save()
 
-def get_random_card_by_rarity(rarity: str):
+
+def get_user_cards_rarity(userid: str | int, rarity: str) -> list[str]:
+    userid = str(userid)
+    if userid not in data.keys():
+        create_user(userid)
+    cards = []
+    for card in data[userid]["cards"]:
+        if get_card_rarity_by_id(card) == rarity:
+            cards.append(card)
+    return cards
+
+
+def exp_to_advance_level(level: int) -> int:
+    return 150*level + 10*(level-1)**3
+
+
+async def check_user_level_up(userid: str | int, channel: discord.TextChannel):
+    userid = str(userid)
+    if userid not in data.keys():
+        create_user(userid)
+    total_bonus_money = 0
+    total_bonus_guarantee = 0
+    while get_user_data(userid, "exp") >= exp_to_advance_level(get_user_data(userid, "level")):
+        total_bonus_money += bonus_credit_when_level_up * get_user_data(userid, "level")
+        total_bonus_guarantee += 1
+        set_user_data(userid, "level", get_user_data(userid, "level") + 1)
+    if total_bonus_money > 0:
+        set_user_data(userid, "money", get_user_data(userid, "money") + total_bonus_money)
+        set_user_data(userid, "guarantee", get_user_data(userid, "guarantee") + total_bonus_guarantee)
+        await channel.send(get_string_by_id(loca_sheet, "level_up_message", config.language).format(
+            "<@" + userid + ">",
+            data[userid]["level"],
+            total_bonus_money,
+            total_bonus_guarantee
+        ))
+        
+
+# MARK: Card Database
+
+def get_random_card_by_rarity(rarity: str) -> str:
     with open(card_database_path, encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         _cards = []
@@ -78,7 +131,7 @@ def get_random_card_by_rarity(rarity: str):
         return random.choice(_cards)
                 
 
-def get_card_name_by_id(id:str):
+def get_card_name_by_id(id:str) -> str:
     with open(card_database_path, encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
@@ -87,7 +140,7 @@ def get_card_name_by_id(id:str):
         return None
 
 
-def get_card_class_by_id(id:str):
+def get_card_class_by_id(id:str) -> str:
     with open(card_database_path, encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
@@ -96,7 +149,7 @@ def get_card_class_by_id(id:str):
         return None
 
 
-def get_card_rarity_by_id(id:str):
+def get_card_rarity_by_id(id:str) -> str:
     with open(card_database_path, encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
@@ -105,7 +158,7 @@ def get_card_rarity_by_id(id:str):
         return None
 
 
-def get_card_list_by_rarity(rarity: str):
+def get_card_list_by_rarity(rarity: str) -> list[str]:
     with open(card_database_path, encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         cards = []
@@ -115,7 +168,7 @@ def get_card_list_by_rarity(rarity: str):
         return cards
 
 
-def get_card_roll_rarity(s_percent,a_percent,b_percent,c_percent,d_percent):
+def get_card_roll_rarity(s_percent,a_percent,b_percent,c_percent,d_percent) -> str:
     if s_percent + a_percent + b_percent + c_percent + d_percent != 100:
         raise ValueError("Total percent must be 100!")
     
@@ -133,7 +186,7 @@ def get_card_roll_rarity(s_percent,a_percent,b_percent,c_percent,d_percent):
     return rarity
 
 
-def get_bonus_exp_by_rarity(rarity: str):
+def get_bonus_exp_by_rarity(rarity: str) -> int:
     match rarity:
         case "Common":
             return 1
@@ -149,34 +202,35 @@ def get_bonus_exp_by_rarity(rarity: str):
             return 0
 
 
-def command_response(args: list[str], user: discord.User) -> str | discord.Embed:
+def command_response(args: list[str], user: discord.User, bot: discord.Client) -> str | discord.Embed:
     args_len = len(args)
     
-    # MARK: no args
+    # region no args
     if args_len == 0:
         pass # TODO: handle no args
+    # endregion
 
-    # MARK: roll cmd
-    if args_len >= 1 and args[0] == "roll":
+    # region roll
+    if args[0] == "roll":
         roll_count = 1
         if args_len >= 2:
             try:
                 roll_count = int(args[1])
-            except ValueError:
+            except ValueError: # invalid roll count
                 return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
                     minimum_gacha_pull,
                     maxiumum_gacha_pull
                 )
         
-        if roll_count < minimum_gacha_pull or roll_count > maxiumum_gacha_pull:
+        if roll_count < minimum_gacha_pull or roll_count > maxiumum_gacha_pull: # invalid roll count
             return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
                     minimum_gacha_pull,
                     maxiumum_gacha_pull
-                )
+            )
         
-        if get_user_data(str(user.id), "money") < roll_count * roll_price:
+        if get_user_data(user.id, "money") < roll_count * roll_price: # cant afford
             return get_string_by_id(loca_sheet, "roll_cant_afford", config.language).format(
-                roll_count * roll_price - get_user_data(str(user.id), "money"),
+                roll_count * roll_price - get_user_data(user.id, "money"),
                 roll_count
             )
 
@@ -186,7 +240,7 @@ def command_response(args: list[str], user: discord.User) -> str | discord.Embed
         for n in range(roll_count):
             rarity = get_card_roll_rarity(2,5,8,20,65)
             pulled_card = get_random_card_by_rarity(rarity)
-            if pulled_card not in get_user_data(str(user.id), "cards"):
+            if pulled_card not in get_user_data(user.id, "cards"): # if user dont have the card
                 total_bonus_exp += get_bonus_exp_by_rarity(rarity)
                 msg += get_string_by_id(loca_sheet, "roll_result", config.language).format(
                     n + 1,
@@ -194,8 +248,8 @@ def command_response(args: list[str], user: discord.User) -> str | discord.Embed
                     get_card_name_by_id(pulled_card),
                     get_bonus_exp_by_rarity(rarity)
                 ) + "\n"
-                add_card_to_user(str(user.id), pulled_card)
-            else:
+                add_card_to_user(user.id, pulled_card)
+            else: # if user already have the card
                 total_bonus_money += bonus_money_when_pull_same_card
                 msg += get_string_by_id(loca_sheet, "roll_result_already_have", config.language).format(
                     n + 1,
@@ -203,21 +257,170 @@ def command_response(args: list[str], user: discord.User) -> str | discord.Embed
                     get_card_name_by_id(pulled_card),
                     bonus_money_when_pull_same_card
                 ) + "\n"
-        set_user_data(str(user.id), "exp", get_user_data(str(user.id), "exp") + total_bonus_exp)
-        set_user_data(str(user.id), "money", get_user_data(str(user.id), "money") - roll_count * roll_price + total_bonus_money)
-        set_user_data(str(user.id), "roll", get_user_data(str(user.id), "roll") + roll_count)
+        
+        # update user data
+        set_user_data(user.id, "exp", get_user_data(user.id, "exp") + total_bonus_exp)
+        set_user_data(user.id, "money", get_user_data(user.id, "money") - roll_count * roll_price + total_bonus_money)
+        set_user_data(user.id, "roll", get_user_data(user.id, "roll") + roll_count)
+        
         return discord.Embed(
             title=get_string_by_id(loca_sheet, "roll_embed_title", config.language),
             description=msg,
             color=0x00ff00
         )
+    # endregion
+
+    # region show
+    elif args[0] == "show":
+        user_to_show = user
+        if args_len >=  2:
+            try:
+                user_to_show = bot.get_user(sussyutils.get_user_id_from_snowflake(args[1]))
+                if user_to_show is None:
+                    user_to_show = user
+            except:
+                pass
+        response = discord.Embed(
+            title=get_string_by_id(loca_sheet, "show_card_prompt", config.language).format(user_to_show.display_name),
+            color=0x00ff00
+        )
+        
+        common_cards = get_user_cards_rarity(user_to_show.id, "Common")
+        uncommon_cards = get_user_cards_rarity(user_to_show.id, "Uncommon")
+        rare_cards = get_user_cards_rarity(user_to_show.id, "Rare")
+        epic_cards = get_user_cards_rarity(user_to_show.id, "Epic")
+        legendary_cards = get_user_cards_rarity(user_to_show.id, "Legendary")
+        limited_cards = get_user_cards_rarity(user_to_show.id, "Limited")
+        
+        if not common_cards+uncommon_cards+rare_cards+epic_cards+legendary_cards+limited_cards: # if user dont have any card
+            return get_string_by_id(loca_sheet, "show_card_no_card", config.language).format(user_to_show.display_name)
+
+        if len(limited_cards) > 0:
+            response.add_field(
+                name=f"Limited ({len(limited_cards)}/{len(get_card_list_by_rarity('Limited'))})",
+                value="\n".join([f"- `{get_card_name_by_id(card)}`" for card in limited_cards])
+            )
+
+        if len(legendary_cards) > 0:
+            response.add_field(
+                name=f"Legendary ({len(legendary_cards)}/{len(get_card_list_by_rarity('Legendary'))})",
+                value="\n".join([f"- `{get_card_name_by_id(card)}`" for card in legendary_cards])
+            )
+        
+        if len(epic_cards) > 0:
+            response.add_field(
+                name=f"Epic ({len(epic_cards)}/{len(get_card_list_by_rarity('Epic'))})",
+                value="\n".join([f"- `{get_card_name_by_id(card)}`" for card in epic_cards])
+            )
+        
+        if len(rare_cards) > 0:
+            response.add_field(
+                name=f"Rare ({len(rare_cards)}/{len(get_card_list_by_rarity('Rare'))})",
+                value="\n".join([f"- `{get_card_name_by_id(card)}`" for card in rare_cards])
+            )
+        
+        if len(uncommon_cards) > 0:
+            response.add_field(
+                name=f"Uncommon ({len(uncommon_cards)}/{len(get_card_list_by_rarity('Uncommon'))})",
+                value="\n".join([f"- `{get_card_name_by_id(card)}`" for card in uncommon_cards])
+            )
+        
+        if len(common_cards) > 0:
+            response.add_field(
+                name=f"Common ({len(common_cards)}/{len(get_card_list_by_rarity('Common'))})",
+                value="\n".join([f"- `{get_card_name_by_id(card)}`" for card in common_cards])
+            )
+        
+        return response
+    # endregion
+
+    # region daily
+    elif args[0] == "daily":
+        today = datetime.datetime.today()
+        today = int(today.strftime("%Y%m%d"))
+        last_daily = get_user_data(user.id, "last_daily")
+        if today == last_daily:
+            return get_string_by_id(loca_sheet, "daily_claimed_message", config.language)
+        else:
+            set_user_data(user.id, "money", get_user_data(user.id, "money") + daily_bonus)
+            bonus_exp = get_user_data(user.id, "level") * 2
+            set_user_data(user.id, "exp", get_user_data(user.id, "exp") + bonus_exp)
+            set_user_data(user.id, "last_daily", today)
+            return get_string_by_id(loca_sheet, "daily_message", config.language).format(
+                daily_bonus,
+                bonus_exp,
+                get_user_data(user.id, "money")
+            )
+
+    # endregion
+
+    # region newplayer
+    elif args[0] == "newplayer":
+        if not get_user_data(user.id, "newbie"):
+            return get_string_by_id(loca_sheet, "newplayer_claimed_message", config.language)
+        set_user_data(user.id, "money", get_user_data(user.id, "money") + newbie_bonus)
+        set_user_data(user.id, "newbie", False)
+        return get_string_by_id(loca_sheet, "newplayer_message", config.language).format(
+            newbie_bonus,
+            get_user_data(user.id, "money")
+        )
+    # endregion
+
+    # region userinfo
+    elif args[0] == "userinfo":
+        user_to_show = user
+        if args_len >=  2:
+            try:
+                user_to_show = bot.get_user(sussyutils.get_user_id_from_snowflake(args[1]))
+                if user_to_show is None:
+                    user_to_show = user
+            except:
+                pass
+        response = discord.Embed(
+            title=get_string_by_id(loca_sheet, "userinfo_embed_title", config.language),
+            color=0x00ff00
+        )
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_username", config.language),
+            value=user_to_show.display_name
+        )
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_level", config.language),
+            value=get_user_data(user_to_show.id, "level")
+        )
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_exp", config.language),
+            value=get_user_data(user_to_show.id, "exp")
+        )
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_exp_left", config.language),
+            value=exp_to_advance_level(get_user_data(user_to_show.id, "level"))-get_user_data(user_to_show.id, "exp")
+        )
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_credit", config.language),
+            value=get_user_data(user_to_show.id, "money")
+        )
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_guarantee", config.language),
+            value=get_user_data(user_to_show.id, "guarantee")
+        )
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_roll", config.language),
+            value=get_user_data(user_to_show.id, "roll")
+        )
+        response.set_thumbnail(url=user_to_show.display_avatar.url)
+        return response
+    # endregion
 
 
-async def command_listener(message: discord.Message, args: list[str]):
-    response = command_response(args, message.author)
-    
+# MARK: Command Listener
+async def command_listener(message: discord.Message, args: list[str], bot: discord.Client):
+    response = command_response(args, message.author, bot)
+
     if isinstance(response, discord.Embed):
         await message.reply(embed=response, mention_author=False)
     
     elif isinstance(response, str):
         await message.reply(response, mention_author=False)
+    
+    await check_user_level_up(message.author.id, message.channel)

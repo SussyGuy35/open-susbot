@@ -1,12 +1,21 @@
 string_id,vi,en
-game_complete,Chúc mừng **{0}** đã phá đảo trò này. You are a super player!,Congratulations **{0}** for beating this game. You are a super player!
-level_up_message,Chúc mừng **{0}** đã tăng cấp lên **level {1}**! Bạn nhận được **{2} BachNob Credit** và **{3} BachNob Guarantee**!,Congratulations **{0}** on leveling up to **level {1}**! You receive **{2} BachNob Credits** and **{3} BachNob Guarantees**!
-newplayer_message,Chúc mừng bạn nhận được **1500 BachNob Credit**! Hiện tại bạn có **{0} BachNob Credit**.,"Congratulations, you have received **1500 BachNob Credit**! You currently have **{0} BachNob Credits**."
+game_complete,Chúc mừng {0} đã phá đảo trò này. You are a super player!,Congratulations {0} for beating this game. You are a super player!
+level_up_message,Chúc mừng {0} đã tăng cấp lên **level {1}**! Bạn nhận được **{2} BachNob Credit** và **{3} BachNob Guarantee**!,Congratulations {0} on leveling up to **level {1}**! You receive **{2} BachNob Credits** and **{3} BachNob Guarantees**!
+newplayer_message,Chúc mừng bạn nhận được **{0} BachNob Credit**! Hiện tại bạn có **{1} BachNob Credit**.,"Congratulations, you have received **{0} BachNob Credit**! You currently have **{1} BachNob Credits**."
 newplayer_claimed_message,Bạn đã nhận nó rồi mà :),You already got it :)
 user_not_played_message,<@{0}> chưa từng chơi con game tuyệt tác này :(,<@{0}> has never played this masterpiece game :(
 badges,Huy hiệu:,Badges:
+userinfo_embed_title,Thông tin người chơi,User info
+userinfo_username,Tên người chơi,Username
+userinfo_level,Level,Level
+userinfo_exp,Exp,Exp
+userinfo_exp_left,Số exp cần đến lên cấp tiếp theo,Exp to advance to the next level
+userinfo_roll,Số lần đã roll,Number of times rolled
+userinfo_credit,BachNob Credit,BachNob Credit
+userinfo_guarantee,BachNob Guarantee,BachNob Guarantee
+userinfo_rank,Xếp hạng,Rank
 userinfo_template,Người chơi **{0}**:#- Level: {1}#- Exp: {2}. Cần thêm {3} exp để lên cấp tiếp theo.#- BachNob Credit: {4}#- BachNob Guarantee: {5}#- Số lần đã roll: {6},Player **{0}**:#- Level: {1}#- Exp: {2}. Need {3} more exp to advance to the next level.#- BachNob Credit: {4}#- BachNob Guarantee: {5}#- Number of times rolled: {6}
-daily_message,Bạn nhận được **100 BachNob Credit** và **{0} exp** cho hôm nay. Hiện tại bạn có **{1} BachNob Credit**!,You have received **100 BachNob Credit** and **{0} exp** for today. Currently you have **{1} BachNob Credit**!
+daily_message,Bạn nhận được **{0} BachNob Credit** và **{1} exp** cho hôm nay. Hiện tại bạn có **{2} BachNob Credit**!,You have received **{0} BachNob Credit** and **{1} exp** for today. Currently you have **{2} BachNob Credit**!
 daily_claimed_message,Hôm nay bạn đã nhận rồi mà :),You already got it today :)
 shop_command_help,Lệnh không hợp lệ!#Các lệnh `{0}gacha shop`:#- `{0}gacha shop sell <giá bán> <card muốn bán>`: Đăng bán card lên shop.#- `{0}gacha shop buy <item id>`: Mua vật phẩm trên shop.#- `{0}gacha shop list`: Hiện các vật phẩm đang được bán trên shop.,Invalid command!#`{0}gacha shop` commands:#- `{0}gacha shop sell <selling price> <card to sell>`: Post cards for sale to the shop.#- `{0}gacha shop buy <item id>`: Buy items on the shop.#- `{0}gacha shop list`: Show items being sold on the shop.
 prompt_no_card,Bạn còn không có thẻ 🐧,You don't even have any cards 🐧
