@@ -14,6 +14,6 @@ Các lệnh:,Commands:
 - `{0}amogus` hoặc `/amogus`: Amogus <:amogus:1135048323242397697>.,- `{0}amogus` or `/amogus`: Amogus <:amogus:1135048323242397697>.
 - `/randcat`: Ảnh mèo ngẫu nhiên.,- `/randcat`: Random cat picture.
 - `/randwaifu`: Ảnh waifu ngẫu nhiên.,- `/randwaifu`: Random waifu picture.
-- `/bean <người dùng>`: Bean người dùng nào đó.,- `/bean <user>`: Bean someone.
 - `/get_prefix`: Xem prefix của bot trong server hiện tại,- `/get_prefix`: Get bot's prefix in current server
 - `/khoa...`: Một số lệnh liên quan đến các câu nói bất hủ của anh Khoa,- `/khoa...`: Some commands for our god Khoa's immortal sayings
+- `{0}gacha`: Các lệnh gacha.,- `{0}gacha`: gacha commands.

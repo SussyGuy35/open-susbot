@@ -8,7 +8,8 @@ from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
-    avatar, bean, feedback, khoa, doino, clear
+    avatar, bean, feedback, khoa, doino, clear,
+    gacha
 )
 
 # import features
@@ -274,6 +275,9 @@ async def on_message(message: discord.Message):
 
             case 'gvs':
                 await gvs.command_listener(message, args)
+            
+            case 'gacha':
+                await gacha.command_listener(message, args, client)
 
             # Invalid command
             case _:
