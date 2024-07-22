@@ -142,6 +142,25 @@ async def check_user_level_up(userid: str | int, channel: discord.TextChannel):
         ))
 
 
+def check_user_beaten(userid: str | int, channel: discord.TextChannel):
+    userid = str(userid)
+    if "Super player" in get_user_data(userid, "badges"):
+        return
+    if len(get_user_cards_rarity(userid, "Legendary")) <= len(get_card_list_by_rarity("Legendary")):
+        return
+    if len(get_user_cards_rarity(userid, "Epic")) <= len(get_card_list_by_rarity("Epic")):
+        return
+    if len(get_user_cards_rarity(userid, "Rare")) <= len(get_card_list_by_rarity("Rare")):
+        return
+    if len(get_user_cards_rarity(userid, "Uncommon")) <= len(get_card_list_by_rarity("Uncommon")):
+        return
+    if len(get_user_cards_rarity(userid, "Common")) <= len(get_card_list_by_rarity("Common")):
+        return
+    data[userid]["badges"].append("Super player")
+    save()
+    channel.send(get_string_by_id(loca_sheet, "game_complete", config.language).format(f"<@{userid}>"))
+
+
 def get_leaderboard() -> dict[str, str]:
     try:
         leaderboard = json.load(cmddata.file_save_open_read(leaderboard_path))
@@ -815,3 +834,4 @@ async def command_listener(message: discord.Message, args: list[str], bot: disco
     
     await check_user_level_up(message.author.id, message.channel)
     process_leaderboard()
+    check_user_beaten(message.author.id, message.channel)
