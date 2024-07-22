@@ -270,3 +270,14 @@ Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) -
 
 ********** Hệ thống quà tân thủ **********
 + Số Credit nhận được: 1500
+
+
+
+********** Hệ thống chuyển BachNob Credit **********
++ Chuyển một số Credit của mình cho người khác
++ Yêu cầu tối thiểu: Level 3
+
+
+
+********** Hệ thống biến đổi card **********
++ Biến đổi 1 card đã sở hữu thành 25 BachNob Credit

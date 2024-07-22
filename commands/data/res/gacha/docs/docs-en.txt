@@ -270,3 +270,14 @@ Exp to next lvl = 150 * (current lvl) + 10 * (((current lvl) - 1)^3)
 
 ********** Newbie gift system **********
 + Number of BachNob Credit receive: 1500
+
+
+
+********** Give system **********
++ Give BachNob Credit to someone
++ Require level 3
+
+
+
+********** Card transform system **********
++ Transform a card into 25 BachNob Credit
