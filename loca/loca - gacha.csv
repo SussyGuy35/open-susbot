@@ -45,3 +45,5 @@ roll_supra_cant_afford,Bạn không có đủ BachNob Guarantee! Bạn cần th�
 give_invalid_user,Người nhận không hợp lệ!,Invalid receiver!
 give_invalid_amount,Số BachNob Credit chuyển không hợp lệ!,Invalid amount!
 give_success,Đã chuyển {0} **{1} BachNob Credit** thành công!,Gave {0} **{1} BachNob Credit**!
+give_requirement,Tính năng chuyển tiền yêu cầu tối thiểu **level {0}** để sử dụng!,This command require at least **level {0}** to use!
+transform_success,Đã biến đổi **{0}** thành **{1} BachNob Credit** thành công!,Successfully tranformed **{0}** into **{1} BachNob Credit**!

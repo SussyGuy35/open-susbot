@@ -11,3 +11,4 @@ Các lệnh `gacha`:,`gacha` commands:
 - `{0}gacha userinfo [người dùng]`: Hiện thông tin người dùng.,- `{0}gacha userinfo [user]`: Show user's infomations.
 - `{0}gacha lb`: Hiện bảng xếp hạng.,- `{0}gacha lb`: Show leaderboard.
 - `{0}gacha give <người nhận> <số BachNob Credit>`: Chuyển BachNob Credit cho người khác.,- `{0}gacha give <receiver> <amount>`: Give BachNob Credit to someone.
+- `{0}gacha transform <thẻ>`: Biến đổi thẻ nào đó thành 25 BachNob Credit.,- `{0}gacha transform <card>`: Transform a card into 25 BachNob Credit.

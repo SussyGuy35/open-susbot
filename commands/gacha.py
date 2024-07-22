@@ -42,6 +42,8 @@ daily_bonus = 100
 newbie_bonus = 1500
 rps_min_bet = 30
 rps_max_bet_multiplier = 200
+give_requirement_level = 3
+card_transform_price = 25
 
 # MARK: Data
 try:
@@ -768,6 +770,10 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
 
     # region give
     if args[0] == "give":
+        if get_user_data(user.id, "level") < give_requirement_level:
+            return get_string_by_id(loca_sheet, "give_requirement", config.language).format(
+                give_requirement_level
+            )
         if args_len < 2:
             return get_string_by_id(loca_sheet, "give_invalid_user", config.language)
         try:
@@ -795,6 +801,20 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
         return get_string_by_id(loca_sheet, "give_success", config.language).format(
             target_user.display_name,
             amount
+        )
+    # endregion
+
+    # region transform
+    elif args[0] == "transform":
+        if args_len < 2:
+            return get_string_by_id(loca_sheet, "missing_card_name", config.language)
+        if not get_card_id_by_name(args[1]) in get_user_data(user.id, "cards"):
+            return get_string_by_id(loca_sheet, "invalid_card", config.language)
+        remove_card_from_user(user.id, get_card_id_by_name(args[1]))
+        set_user_data(user.id, "money", get_user_data(user.id, "money") + card_transform_price)
+        return get_string_by_id(loca_sheet, "transform_success", config.language).format(
+            args[1],
+            card_transform_price
         )
     # endregion
 
