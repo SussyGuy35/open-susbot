@@ -255,6 +255,11 @@ Exp to next lvl = 150 * (current lvl) + 10 * (((current lvl) - 1)^3)
 + Draw: ~1,67%
 + Lose: ~33,33%
 
+*** Limited ***
++ Win: ~66,66%
++ Draw: 0%
++ Lose: ~33,33%
+
 
 
 ********** Daily attendance system **********

@@ -255,6 +255,11 @@ Exp để lên lvl kế = 150 * (lvl hiện tại) + 10 * (((lvl hiện tại) -
 + Hòa: ~1,67%
 + Thua: ~33,33%
 
+*** Limited ***
++ Thắng: ~66,66%
++ Hòa: 0%
++ Thua: ~33,33%
+
 
 
 ********** Hệ thống điểm danh hàng ngày **********
