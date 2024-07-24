@@ -148,15 +148,15 @@ def check_user_beaten(userid: str | int, channel: discord.TextChannel):
     userid = str(userid)
     if "Super player" in get_user_data(userid, "badges"):
         return
-    if len(get_user_cards_rarity(userid, "Legendary")) <= len(get_card_list_by_rarity("Legendary")):
+    if len(get_user_cards_rarity(userid, "Legendary")) < len(get_card_list_by_rarity("Legendary")):
         return
-    if len(get_user_cards_rarity(userid, "Epic")) <= len(get_card_list_by_rarity("Epic")):
+    if len(get_user_cards_rarity(userid, "Epic")) < len(get_card_list_by_rarity("Epic")):
         return
-    if len(get_user_cards_rarity(userid, "Rare")) <= len(get_card_list_by_rarity("Rare")):
+    if len(get_user_cards_rarity(userid, "Rare")) < len(get_card_list_by_rarity("Rare")):
         return
-    if len(get_user_cards_rarity(userid, "Uncommon")) <= len(get_card_list_by_rarity("Uncommon")):
+    if len(get_user_cards_rarity(userid, "Uncommon")) < len(get_card_list_by_rarity("Uncommon")):
         return
-    if len(get_user_cards_rarity(userid, "Common")) <= len(get_card_list_by_rarity("Common")):
+    if len(get_user_cards_rarity(userid, "Common")) < len(get_card_list_by_rarity("Common")):
         return
     data[userid]["badges"].append("Super player")
     save()
