@@ -147,35 +147,11 @@ async def get_vietqr(
         accountname: str | None = None,
         amount: int | None = None,
         note: str | None = None):
-    f"""
-    {get_string("command_doino_desc")}
-
-    Parameters
-    ----------
-    bankname: doino.bank_names, 
-        {get_string("bankname", "doino")}
-    accountnumber: str,
-        {get_string("accountnumber", "doino")}
-    accountname: str | None = None,
-        {get_string("accountname", "doino")}
-    amount: str | None = None, 
-        {get_string("amount", "doino")}
-    note: str | None = None
-        {get_string("note", "doino")}
-    """
     await doino.slash_command_listener(ctx, bankname, accountnumber, accountname, amount, note)
 
 
 @tree.command(name="clear", description=get_string("command_clear_desc"))
 async def clear_messages(ctx: discord.Interaction, number: int):
-    f"""
-    {get_string("command_clear_desc")}
-
-    Parameters
-    ----------
-    number: int
-        {get_string("messages_number", "clear")}
-    """
     await clear.slash_command_listener(ctx, number)
 
 
