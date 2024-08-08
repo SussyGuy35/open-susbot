@@ -2,7 +2,7 @@ import discord
 
 bot_name = "open-susbot"
 prefix = 'b!'
-bot_version = '2.1'
+bot_version = '2.2'
 
 TOKEN = 'ur bot token here'
 
