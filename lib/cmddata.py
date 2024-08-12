@@ -1,4 +1,6 @@
 """Using external data files for commands"""
+from pathlib import Path
+Path("commands/data/save + temp").mkdir(parents=True, exist_ok=True)
 
 def file_save_open_read(filepath: str):
     """Open save file for read"""
