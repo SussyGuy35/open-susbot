@@ -1,0 +1,7 @@
+string_id,vi,en
+no_permission,Bạn không có quyền dùng lệnh này!,No permission!
+bot_no_permission,Bot không có quyền!,Bot don't has permission!
+success,Đã gửi tin nhắn thành công!,Success!
+failed,Thất bại! Có lẽ là do bot không có emoji.,Failed! Maybe because bot don't have an emoji.
+role_added,Đã thêm role **{0}** trong **{1}**,Role **{0}** added in **{1}**!
+role_removed,Đã xóa role **{0}** trong **{1}**,Role **{0}** removed in **{1}**!

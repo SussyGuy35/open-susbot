@@ -9,7 +9,7 @@ from commands import (
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
-    gacha
+    gacha, reactionroles
 )
 
 # import features
@@ -18,6 +18,7 @@ import features.ghostping_detector
 import features.auto_react_emoji
 import features.gvscount
 import features.on_bot_mentioned
+import features.reaction_roles
 
 config = get_config()
 
@@ -155,6 +156,26 @@ async def clear_messages(ctx: discord.Interaction, number: int):
     await clear.slash_command_listener(ctx, number)
 
 
+@tree.command(name="send_reaction_roles_message", description=get_string("command_reaction_roles_desc"))
+async def send_reaction_roles_message(
+        ctx: discord.Interaction,
+        prompt_message: str,
+        role1: discord.Role,
+        emoji1: str,
+        role2: discord.Role | None,
+        emoji2: str | None,
+        role3: discord.Role | None,
+        emoji3: str | None,
+        role4: discord.Role | None,
+        emoji4: str | None,
+        role5: discord.Role | None,
+        emoji5: str | None,
+):
+    await reactionroles.slash_command_listener(
+        ctx, prompt_message, role1, emoji1, role2, emoji2, role3, emoji3, role4, emoji4, role5, emoji5
+    )
+
+
 # On ready event
 @client.event
 async def on_ready():
@@ -165,14 +186,20 @@ async def on_ready():
 
 # On message delete event
 @client.event
-async def on_message_delete(message):
+async def on_message_delete(message: discord.Message):
     await features.ghostping_detector.on_delete(message)
 
 
 # On message edit event
 @client.event
-async def on_message_edit(before, after):
+async def on_message_edit(before: discord.Message, after: discord.Message):
     await features.ghostping_detector.on_edit(before, after)
+
+
+# On raw reaction add event
+@client.event
+async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
+    await features.reaction_roles.reaction_roles_on_raw_reaction_add(payload, client)
 
 
 # On message event
