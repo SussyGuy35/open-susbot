@@ -2,6 +2,7 @@
 import discord
 import random
 import os
+import shlex
 from lib.sussyconfig import get_config
 
 config = get_config()
@@ -27,6 +28,11 @@ def string_hash_to_newline(_str: str) -> str:
 
     return _result + _str[_start:i]
 
+
+def parse_command(cmd: str) -> list[str]:
+    """Parse command string"""
+    return shlex.split(cmd)
+        
 
 def pick_random_file_from_dir(dir_path: str) -> str:
     """Return the name of a random file from given directory"""

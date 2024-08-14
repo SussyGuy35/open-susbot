@@ -826,10 +826,10 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
         if args[0] == "get":
             return str(get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2]))
         if args[0] == "addbadge":
-            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").append(" ".join(args[2:]))
+            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").append(args[2])
             return "done"
         if args[0] == "removebadge":
-            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").remove(" ".join(args[2:]))
+            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").remove(args[2])
             return "done"
         if args[0] == "addcard":
             add_card_to_user(sussyutils.get_user_id_from_snowflake(args[1]), args[2])

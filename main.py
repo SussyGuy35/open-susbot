@@ -1,7 +1,7 @@
 import discord
 from lib.sussyconfig import get_config
 from lib.locareader import get_string_by_id
-from lib.sussyutils import get_prefix
+from lib.sussyutils import get_prefix, parse_command
 
 # import commands
 from commands import (
@@ -234,7 +234,7 @@ async def on_message(message: discord.Message):
         command = message.content.split()[0].replace(prefix, '')
 
         plain_args = message.content[len(prefix + command) + 1:]
-        args = plain_args.split()
+        args = parse_command(plain_args)
 
         # Main thing
         match command:
@@ -256,7 +256,7 @@ async def on_message(message: discord.Message):
                 await echo.command_listener(message, plain_args)
 
             case 'pick':
-                await pick.command_listener(message, plain_args)
+                await pick.command_listener(message, args, plain_args)
 
             case 'randcaps':
                 await randcaps.command_listener(message, plain_args)
