@@ -4,10 +4,10 @@ import random
 
 def command_response(args: list[str], plain_args: str):
     options = []
-    if "," in plain_args:
-        options = plain_args.split(',')
-    else:
+    if '"' in plain_args:
         options = args
+    else:
+        options = plain_args.split(',')
     return random.choice(options)
 
 
