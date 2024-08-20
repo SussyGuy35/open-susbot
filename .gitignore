@@ -12,7 +12,8 @@ features/__pycache__/*
 config_override.py
 
 # Save and temp files
-commands/data/save + temp/*
+commands/data/save/*
+commands/data/temp/*
 
 # Test
 test.py

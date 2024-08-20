@@ -3,7 +3,7 @@ from os import remove
 from requests import get
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
-from lib.cmddata import get_save_file_path
+from lib.cmddata import get_temp_file_path, file_temp_open_write
 
 config = get_config()
 
@@ -22,7 +22,7 @@ def get_file(url, file_name) -> str:
             new_file_name = file_name[:-len(file_name.split(".")[-1])] + "gif"
         else:
             raise Exception("Can't download the file for some reasons")
-        with open(get_save_file_path(new_file_name), "wb+") as f:
+        with file_temp_open_write(new_file_name, "wb+") as f:
             f.write(file_data)
         return new_file_name
     else:
@@ -31,7 +31,7 @@ def get_file(url, file_name) -> str:
 
 def post_response_cleanup(response: discord.File | str):
     if isinstance(response, discord.File):
-        remove(get_save_file_path(response.filename))
+        remove(get_temp_file_path(response.filename))
 
 
 def command_response(attachment: discord.Attachment) -> discord.File | str:
@@ -42,7 +42,7 @@ def command_response(attachment: discord.Attachment) -> discord.File | str:
     except:
         return get_string_by_id(loca_sheet, "prompt_exception", config.language)
     else:
-        return discord.File(get_save_file_path(file_name))
+        return discord.File(get_temp_file_path(file_name))
 
 
 async def slash_command_listener(ctx: discord.Interaction, file: discord.Attachment):
