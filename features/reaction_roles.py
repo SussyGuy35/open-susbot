@@ -39,7 +39,7 @@ def add_reaction_role(message_id: int | str, emoji: str, role_id: int):
     save_reaction_roles()
 
 
-async def reaction_roles_on_raw_reaction_add(payload: discord.RawReactionActionEvent, bot: discord.Client):
+async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReactionActionEvent, bot: discord.Client):
     if payload.member.bot:
         return
     if not str(payload.message_id) in reaction_roles.keys():

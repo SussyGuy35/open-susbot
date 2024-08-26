@@ -220,7 +220,13 @@ async def on_message_edit(before: discord.Message, after: discord.Message):
 # On raw reaction add event
 @client.event
 async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
-    await features.reaction_roles.reaction_roles_on_raw_reaction_add(payload, client)
+    await features.reaction_roles.reaction_roles_on_raw_reaction_add_and_remove(payload, client)
+
+
+# On raw reaction remove event
+@client.event
+async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
+    await features.reaction_roles.reaction_roles_on_raw_reaction_add_and_remove(payload, client)
 
 
 # On message event
