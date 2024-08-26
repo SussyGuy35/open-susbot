@@ -40,30 +40,32 @@ def add_reaction_role(message_id: int | str, emoji: str, role_id: int):
 
 
 async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReactionActionEvent, bot: discord.Client):
-    if payload.member.bot:
+    guild: discord.Guild = bot.get_guild(payload.guild_id)
+    user: discord.Member = guild.get_member(payload.user_id)
+    if user.bot:
         return
     if not str(payload.message_id) in reaction_roles.keys():
         return
     for reaction_role in reaction_roles[str(payload.message_id)]:
         if not reaction_role["emoji"] == str(payload.emoji):
             continue
-        role = payload.member.guild.get_role(reaction_role["role_id"])
+        role = user.guild.get_role(reaction_role["role_id"])
         if not role:
             return
-        if role in payload.member.roles:
+        if role in user.roles:
             try:
-                await payload.member.remove_roles(role)
-                await payload.member.send(
-                    get_string_by_id(loca_sheet, "role_removed", config.language).format(role.name, payload.member.guild.name)
+                await user.remove_roles(role)
+                await user.send(
+                    get_string_by_id(loca_sheet, "role_removed", config.language).format(role.name, guild.name)
                 )
             except discord.Forbidden:
                 await bot.get_channel(payload.channel_id).send(get_string_by_id(loca_sheet, "bot_no_permission", config.language))
             break
         else:
             try:
-                await payload.member.add_roles(role)
-                await payload.member.send(
-                    get_string_by_id(loca_sheet, "role_added", config.language).format(role.name, payload.member.guild.name)
+                await user.add_roles(role)
+                await user.send(
+                    get_string_by_id(loca_sheet, "role_added", config.language).format(role.name, guild.name)
                 )
             except discord.Forbidden:
                 await bot.get_channel(payload.channel_id).send(get_string_by_id(loca_sheet, "bot_no_permission", config.language))
