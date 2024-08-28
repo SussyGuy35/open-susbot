@@ -7,7 +7,10 @@ def command_response(args: list[str], plain_args: str):
     if '"' in plain_args:
         options = args
     else:
-        options = plain_args.split(',')
+        if ',' in plain_args:
+            options = plain_args.split(',')
+        else:
+            options = args
     return random.choice(options)
 
 
