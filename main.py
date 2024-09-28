@@ -10,7 +10,7 @@ from commands import (
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
-    gacha, reactionroles
+    gacha, reactionroles, nijipray
 )
 
 # import features
@@ -308,6 +308,9 @@ async def on_message(message: discord.Message):
             
             case 'gacha':
                 await gacha.command_listener(message, args, client)
+            
+            case 'nijipray':
+                await nijipray.command_listener(message, client, args)
 
             # Invalid command
             case _:
