@@ -4,7 +4,7 @@ from lib.sussyconfig import get_config
 from lib.locareader import get_string_by_id
 from lib.sussyutils import get_prefix, parse_command
 
-# import commands
+# MARK: import commands
 from commands import (
     amogus, ask, creategif, echo, emoji as getemoji,
     gvs, help as bot_help, nijika, osu, pick,
@@ -13,7 +13,7 @@ from commands import (
     gacha, reactionroles, nijipray
 )
 
-# import features
+# MARK: import features
 import features.onready_things
 import features.ghostping_detector
 import features.auto_react_emoji
@@ -23,7 +23,7 @@ import features.reaction_roles
 
 config = get_config()
 
-# Config
+# MARK: Config
 bot_version = config.bot_version
 
 TOKEN = config.TOKEN
@@ -47,7 +47,7 @@ def get_string(id_: str, loca: str = "main"):
     return get_string_by_id(f"loca/loca - {loca}.csv", id_, config.language)
 
 
-# --- Slash command ---
+# MARK: Slash commands
 
 @tree.command(name="feedback", description=get_string("command_feedback_desc"))
 async def send_feedback(ctx: discord.Interaction):
@@ -197,7 +197,7 @@ async def send_reaction_roles_message(
     )
 
 
-# On ready event
+# MARK: On ready
 @client.event
 async def on_ready():
     # tree.clear_commands(guild = None) # Uncomment this to clear all commands
@@ -205,31 +205,31 @@ async def on_ready():
     await features.onready_things.on_ready(client)
 
 
-# On message delete event
+# MARK: On message delete
 @client.event
 async def on_message_delete(message: discord.Message):
     await features.ghostping_detector.on_delete(message)
 
 
-# On message edit event
+# MARK: On message edit
 @client.event
 async def on_message_edit(before: discord.Message, after: discord.Message):
     await features.ghostping_detector.on_edit(before, after)
 
 
-# On raw reaction add event
+# MARK: On raw reaction add
 @client.event
 async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
     await features.reaction_roles.reaction_roles_on_raw_reaction_add_and_remove(payload, client)
 
 
-# On raw reaction remove event
+# MARK: On raw reaction remove
 @client.event
 async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
     await features.reaction_roles.reaction_roles_on_raw_reaction_add_and_remove(payload, client)
 
 
-# On message event
+# MARK: On message
 @client.event
 async def on_message(message: discord.Message):
     # log console
@@ -263,7 +263,7 @@ async def on_message(message: discord.Message):
         plain_args = message.content[len(prefix + command) + 1:]
         args = parse_command(plain_args)
 
-        # Main thing
+        # MARK: Prefix commands
         match command:
 
             case 'debug':
@@ -316,6 +316,7 @@ async def on_message(message: discord.Message):
             case _:
                 await message.channel.send(get_string("command_not_found_prompt"))
 
+    # MARK: Features
     else:
         await features.on_bot_mentioned.reply(client, message)
         await features.gvscount.gvs(message, userid)

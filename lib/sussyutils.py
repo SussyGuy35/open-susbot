@@ -3,10 +3,12 @@ import discord
 import random
 import os
 import shlex
+import json
 from lib.sussyconfig import get_config
 
 config = get_config()
 
+# MARK: some useful functions
 
 def string_hash_to_newline(_str: str) -> str:
     """convert hash in given string to newline"""
@@ -40,6 +42,8 @@ def pick_random_file_from_dir(dir_path: str) -> str:
     return filename
 
 
+# MARK: snowflake functions
+
 def get_emoji_id_from_snowflake(snowflake: str) -> int:
     """Convert emoji snowflake to id"""
     emoji_id = int(snowflake.split()[0].split(":")[2].replace(">", ""))
@@ -57,6 +61,8 @@ def get_channel_id_from_snowflake(snowflake: str) -> int:
     channel_id = int(snowflake.replace("<#", "").replace(">", ""))
     return channel_id
 
+
+# MARK: bot related functions
 
 def get_prefix(guild: discord.Guild | None):
     """Get bot's prefix from given guild"""
