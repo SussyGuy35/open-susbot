@@ -197,6 +197,21 @@ async def send_reaction_roles_message(
     )
 
 
+@tree.command(name="nijipray")
+async def nijipray_command(ctx: discord.Interaction):
+    await nijipray.slash_command_listener_pray(ctx, client)
+
+
+@tree.command(name="nijipray_leaderboard")
+async def nijipray_leaderboard(ctx: discord.Interaction):
+    await nijipray.slash_command_listener_leaderboard(ctx, client)
+
+
+@tree.command(name="nijipray_info")
+async def nijipray_info(ctx: discord.Interaction, user: discord.User | None = None):
+    await nijipray.slash_command_listener_info(ctx, client, user)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():

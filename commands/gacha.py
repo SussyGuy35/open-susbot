@@ -561,6 +561,8 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
 
         for rank in range(1, min(11, len(leaderboard)+1)):
             user = bot.get_user(int(leaderboard[str(rank)]))
+            if get_user_data(leaderboard[str(rank)], "exp") == 0:
+                break
             response.add_field(
                 name=f"#{rank} - {user.display_name}",
                 value=f"Level: {get_user_data(user.id, 'level')} | Exp: {get_user_data(user.id, 'exp')}",

@@ -3,6 +3,7 @@ import lib.sussyutils as sussyutils
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
+from commands.nijika import command_response as get_nijika_image
 import json
 from datetime import datetime, timedelta
 import random
@@ -129,6 +130,8 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
 
         for rank in range(1, min(11, len(leaderboard)+1)):
             user = bot.get_user(int(leaderboard[str(rank)]))
+            if get_user_data(leaderboard[str(rank)], "prayers") == 0:
+                break
             response.add_field(
                 name=f"#{rank} - {user.display_name}",
                 value=f"Pray: {get_user_data(leaderboard[str(rank)], 'prayers')}",
@@ -186,6 +189,43 @@ async def command_listener(message: discord.Message, bot: discord.Client, args: 
         await message.reply(embed=response, mention_author=False)
     
     elif isinstance(response, str):
-        await message.reply(response, mention_author=False)
+        nijika_img = get_nijika_image()
+        await message.reply(response, mention_author=False, file=nijika_img)
 
     process_leaderboard()
+
+async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Client):
+    print(f"{ctx.user} used nijipray commands!")
+    await ctx.response.defer()
+    response = command_response([], bot, ctx.user)
+
+    if isinstance(response, discord.Embed):
+        await ctx.followup.send(embed=response)
+    
+    elif isinstance(response, str):
+        nijika_img = get_nijika_image()
+        await ctx.followup.send(response, file=nijika_img)
+    
+    process_leaderboard()
+
+
+async def slash_command_listener_leaderboard(ctx: discord.Interaction, bot: discord.Client):
+    print(f"{ctx.user} used nijipray leaderboard commands!")
+    await ctx.response.defer()
+    response = command_response(["leaderboard"], bot, ctx.user)
+
+    if isinstance(response, discord.Embed):
+        await ctx.followup.send(embed=response)
+    
+    elif isinstance(response, str):
+        await ctx.followup.send(response)
+
+
+async def slash_command_listener_info(ctx: discord.Interaction, bot: discord.Client, user: discord.User | None = None):
+    print(f"{ctx.user} used nijipray info commands!")
+    await ctx.response.defer()
+    userid = str(user.id) if user is not None else str(ctx.user.id)
+    response = command_response(["info", userid], bot, ctx.user)
+
+    if isinstance(response, discord.Embed):
+        await ctx.followup.send(embed=response)
