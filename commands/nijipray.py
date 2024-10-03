@@ -5,7 +5,8 @@ from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
 from commands.nijika import command_response as get_nijika_image
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
+from pytz import timezone
 import random
 
 config = get_config()
@@ -96,8 +97,8 @@ def get_user_rank(userid: str | int) -> int:
 def command_response(args: list[str], bot: discord.Client, user: discord.User) -> str:
     # region Normal pray
     if len(args) == 0:
-        today = datetime.now(timezone.utcoffset(timedelta(hours=7)))
-        last_pray = datetime.fromtimestamp(get_user_data(user.id, "last_pray"), timezone.utcoffset(timedelta(hours=7)))
+        today = datetime.now(timezone("Asia/Jakarta"))
+        last_pray = datetime.fromtimestamp(get_user_data(user.id, "last_pray"), timezone("Asia/Jakarta"))
         pray_num = get_user_data(user.id, "prayers")
         # check if pray yesterday
         if last_pray.date() == today.date() - timedelta(days=1) or get_user_data(user.id, "last_pray") == 0:
