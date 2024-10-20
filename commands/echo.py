@@ -1,5 +1,7 @@
 import discord
 
+cmd_names = ['echo', 'say', 't']
+
 
 async def delete_message(message: discord.Message):
     try:

@@ -1,6 +1,8 @@
 import discord
 import random
 
+cmd_names = ['randcaps', 'rc']
+
 
 def command_response(user_input: str):
     message_output = []

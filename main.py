@@ -279,57 +279,55 @@ async def on_message(message: discord.Message):
         args = parse_command(plain_args)
 
         # MARK: Prefix commands
-        match command:
+        if command == 'debug':
+            await message.channel.send(
+                f"user_id: {message.author.id}, channel_id: {message.channel.id}, guild: {message.guild}")
 
-            case 'debug':
-                await message.channel.send(
-                    f"user_id: {message.author.id}, channel_id: {message.channel.id}, guild: {message.guild}")
+        elif command == 'getloca':
+            await message.channel.send(get_string_by_id(f"loca/loca - {args[0]}.csv", args[1], args[2]))
 
-            case 'getloca':
-                await message.channel.send(get_string_by_id(f"loca/loca - {args[0]}.csv", args[1], args[2]))
+        elif command in bot_help.cmd_names:
+            await bot_help.command_listener(message)
 
-            case 'help':
-                await bot_help.command_listener(message)
+        elif command in ping.cmd_names:
+            await ping.command_listener(message, client)
 
-            case 'ping':
-                await ping.command_listener(message, client)
+        elif command in echo.cmd_names:
+            await echo.command_listener(message, plain_args)
 
-            case 'echo':
-                await echo.command_listener(message, plain_args)
+        elif command in pick.cmd_names:
+            await pick.command_listener(message, args, plain_args)
 
-            case 'pick':
-                await pick.command_listener(message, args, plain_args)
+        elif command in randcaps.cmd_names:
+            await randcaps.command_listener(message, plain_args)
 
-            case 'randcaps':
-                await randcaps.command_listener(message, plain_args)
+        elif command in osu.cmd_names:
+            await osu.command_listener(message, plain_args)
 
-            case 'osu':
-                await osu.command_listener(message, plain_args)
+        elif command in getemoji.cmd_names:
+            await getemoji.command_listener(message, client, args)
 
-            case 'emoji':
-                await getemoji.command_listener(message, client, args)
+        elif command in ask.cmd_names:
+            await ask.command_listener(message, plain_args)
 
-            case 'ask':
-                await ask.command_listener(message, plain_args)
+        elif command in nijika.cmd_names:
+            await nijika.command_listener(message)
 
-            case 'nijika':
-                await nijika.command_listener(message)
+        elif command in amogus.cmd_names:
+            await amogus.command_listener(message)
 
-            case 'amogus':
-                await amogus.command_listener(message)
-
-            case 'gvs':
-                await gvs.command_listener(message, args)
+        elif command in gvs.cmd_names:
+            await gvs.command_listener(message, args)
             
-            case 'gacha':
-                await gacha.command_listener(message, args, client)
+        elif command in gacha.cmd_names:
+            await gacha.command_listener(message, args, client)
             
-            case 'nijipray':
-                await nijipray.command_listener(message, client, args)
+        elif command in nijipray.cmd_names:
+            await nijipray.command_listener(message, client, args)
 
-            # Invalid command
-            case _:
-                await message.channel.send(get_string("command_not_found_prompt"))
+        # Invalid command
+        else:
+            await message.channel.send(get_string("command_not_found_prompt"))
 
     # MARK: Features
     else:

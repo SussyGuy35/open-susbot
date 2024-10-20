@@ -7,6 +7,8 @@ config = get_config()
 
 loca_sheet = "loca/loca - emoji.csv"
 
+cmd_names = ['emoji', 'e']
+
 
 def command_response(client: discord.Client, emoji: str):
     try:

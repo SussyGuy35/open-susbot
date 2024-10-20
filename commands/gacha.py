@@ -11,6 +11,8 @@ import lib.cmddata as cmddata
 
 config = get_config()
 
+cmd_names = ['gacha', 'g', 'card']
+
 CMD_NAME = "gacha"
 loca_sheet = f"loca/loca - {CMD_NAME}.csv"
 help_loca_sheet = "loca/loca - gachahelp.csv"

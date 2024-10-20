@@ -7,6 +7,8 @@ import lib.cmddata as cmddata
 
 config = get_config()
 
+cmd_names = ['gvs']
+
 file_path = "gvs.json"
 
 try:

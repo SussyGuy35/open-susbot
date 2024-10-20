@@ -8,6 +8,8 @@ config = get_config()
 
 loca_sheet = "loca/loca - osu.csv"
 
+cmd_names = ['osu', 'osuapi', 'o']
+
 ossapi_client = Ossapi(config.OSUAPI_CLIENT_ID, config.OSUAPI_CLIENT_SECRET)
 
 

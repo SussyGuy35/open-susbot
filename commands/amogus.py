@@ -2,6 +2,8 @@ import discord
 from lib.sussyutils import pick_random_file_from_dir
 import lib.cmddata as cmddata
 
+cmd_names = ["amogus", "sus"]
+
 img_path = cmddata.get_res_file_path("susimg/")
 
 

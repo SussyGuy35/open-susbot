@@ -1,6 +1,8 @@
 import discord
 import random
 
+cmd_names = ['pick', 'choose']
+
 
 def command_response(args: list[str], plain_args: str):
     options = []

@@ -7,6 +7,8 @@ config = get_config()
 
 loca_sheet = "loca/loca - help.csv"
 
+cmd_names = ["help", "h", "gethelp"]
+
 
 def get_help_text(prefix):
     help_text = ""

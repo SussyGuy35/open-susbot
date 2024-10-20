@@ -7,6 +7,8 @@ config = get_config()
 
 loca_sheet = "loca/loca - ask.csv"
 
+cmd_names = ['ask', 'question']
+
 ans = get_string_list(loca_sheet, config.language)
 
 

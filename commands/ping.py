@@ -6,6 +6,8 @@ config = get_config()
 
 loca_sheet = "loca/loca - ping.csv"
 
+cmd_names = ["ping", "pong"]
+
 
 def command_response(bot: discord.Client):
     return get_string_by_id(loca_sheet, "ping", config.language).format(round(bot.latency * 1000))

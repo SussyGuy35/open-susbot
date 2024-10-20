@@ -11,6 +11,8 @@ import random
 
 config = get_config()
 
+cmd_names = ['nijipray', 'njkp', 'nijip']
+
 CMD_NAME = "nijipray"
 loca_sheet = f"loca/loca - {CMD_NAME}.csv"
 save_data_path = f"{CMD_NAME}.json"
