@@ -21,7 +21,8 @@ async def slash_command_listener(
         role4: discord.Role | None,
         emoji4: str | None,
         role5: discord.Role | None,
-        emoji5: str | None, 
+        emoji5: str | None,
+        one_role: bool = False
         ):
     print(f"{ctx.user} used {CMD_NAME} commands!")
     await ctx.response.defer(ephemeral=True)
@@ -51,15 +52,15 @@ async def slash_command_listener(
     except discord.Forbidden:
         await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "bot_no_permission", config.language))
         return
-    reaction_roles.add_reaction_role(msg.id, emoji1, role1.id)
+    reaction_roles.add_reaction_role(msg.id, emoji1, role1.id, one_role)
     if role2 and emoji2:
-        reaction_roles.add_reaction_role(msg.id, emoji2, role2.id)
+        reaction_roles.add_reaction_role(msg.id, emoji2, role2.id, one_role)
     if role3 and emoji3:
-        reaction_roles.add_reaction_role(msg.id, emoji3, role3.id)
+        reaction_roles.add_reaction_role(msg.id, emoji3, role3.id, one_role)
     if role4 and emoji4:
-        reaction_roles.add_reaction_role(msg.id, emoji4, role4.id)
+        reaction_roles.add_reaction_role(msg.id, emoji4, role4.id, one_role)
     if role5 and emoji5:
-        reaction_roles.add_reaction_role(msg.id, emoji5, role5.id)
+        reaction_roles.add_reaction_role(msg.id, emoji5, role5.id, one_role)
     
     for emoji in [emoji1, emoji2, emoji3, emoji4, emoji5]:
         if emoji:

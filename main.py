@@ -191,9 +191,10 @@ async def send_reaction_roles_message(
         emoji4: str | None,
         role5: discord.Role | None,
         emoji5: str | None,
+        one_role: bool = False
 ):
     await reactionroles.slash_command_listener(
-        ctx, prompt_message, role1, emoji1, role2, emoji2, role3, emoji3, role4, emoji4, role5, emoji5
+        ctx, prompt_message, role1, emoji1, role2, emoji2, role3, emoji3, role4, emoji4, role5, emoji5, one_role
     )
 
 
