@@ -18,6 +18,8 @@ loca_sheet = f"loca/loca - {CMD_NAME}.csv"
 save_data_path = f"{CMD_NAME}.json"
 leaderboard_path = f"{CMD_NAME}_leaderboard.json"
 
+tz = timezone("Asia/Jakarta")
+
 # MARK: Data
 try:
     data = json.load(cmddata.file_save_open_read(save_data_path))
@@ -99,12 +101,17 @@ def get_user_rank(userid: str | int) -> int:
 def command_response(args: list[str], bot: discord.Client, user: discord.User) -> str:
     # region Normal pray
     if len(args) == 0:
-        today = datetime.now(timezone("Asia/Jakarta"))
-        last_pray = datetime.fromtimestamp(get_user_data(user.id, "last_pray"), timezone("Asia/Jakarta"))
+        today = datetime.now(tz)
+        last_pray = datetime.fromtimestamp(get_user_data(user.id, "last_pray"), tz)
         pray_num = get_user_data(user.id, "prayers")
         # check if pray yesterday
         if last_pray.date() == today.date() - timedelta(days=1) or get_user_data(user.id, "last_pray") == 0:
-            if pray_num >= 30 and random.choice([1,2,3,4,5]) == 1: # lucky
+            if random.choice([1,2,3,4,5]) == 1: # lucky
+                if pray_num >= 30:
+                    set_user_data(user.id, "prayers", pray_num + 3)
+                    set_user_data(user.id, "last_pray", today.timestamp())
+                    return get_string_by_id(loca_sheet, "pray_special", config.language)
+            
                 set_user_data(user.id, "prayers", pray_num + 2)
                 set_user_data(user.id, "last_pray", today.timestamp())
                 return get_string_by_id(loca_sheet, "pray_special", config.language)
