@@ -110,11 +110,11 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
                 if pray_num >= 30:
                     set_user_data(user.id, "prayers", pray_num + 3)
                     set_user_data(user.id, "last_pray", today.timestamp())
-                    return get_string_by_id(loca_sheet, "pray_special", config.language)
+                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(3)
             
                 set_user_data(user.id, "prayers", pray_num + 2)
                 set_user_data(user.id, "last_pray", today.timestamp())
-                return get_string_by_id(loca_sheet, "pray_special", config.language)
+                return get_string_by_id(loca_sheet, "pray_special", config.language).format(2)
 
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
