@@ -35,7 +35,8 @@ def create_user(userid: str | int):
     userid = str(userid)
     data[userid] = {
         "prayers": 0,
-        "last_pray": 0
+        "last_pray": 0,
+        "current_rate": 20
     }
     save()
 
@@ -104,20 +105,25 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
         today = datetime.now(tz)
         last_pray = datetime.fromtimestamp(get_user_data(user.id, "last_pray"), tz)
         pray_num = get_user_data(user.id, "prayers")
+        current_rate = get_user_data(user.id, "current_rate")
         # check if pray yesterday
         if last_pray.date() == today.date() - timedelta(days=1) or get_user_data(user.id, "last_pray") == 0:
-            if random.choice([1,2,3,4,5]) == 1: # lucky
+            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")):
                 if pray_num >= 30:
+                    set_user_data(user.id, "prayers", pray_num + 2)
+                    set_user_data(user.id, "last_pray", today.timestamp())
+                    set_user_data(user.id, "current_rate", 12 if pray_num+2 < 35 else 20)
+                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(2)
+                else:
                     set_user_data(user.id, "prayers", pray_num + 3)
                     set_user_data(user.id, "last_pray", today.timestamp())
+                    set_user_data(user.id, "current_rate", 12 if pray_num+3 < 35 else 20)
                     return get_string_by_id(loca_sheet, "pray_special", config.language).format(3)
-            
-                set_user_data(user.id, "prayers", pray_num + 2)
-                set_user_data(user.id, "last_pray", today.timestamp())
-                return get_string_by_id(loca_sheet, "pray_special", config.language).format(2)
+                
 
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
+            set_user_data(user.id, "current_rate", current_rate + (1 if current_rate <=20 else 2))
             return get_string_by_id(loca_sheet, "pray", config.language)
 
         if last_pray.date() == today.date():
@@ -190,6 +196,11 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
     # region bible
     if args[0] == "bible":
         return get_string_by_id(loca_sheet, "bible", config.language)
+    # endregion
+    # region nextpercent
+    if args[0] == "nextpercent":
+        current_rate = get_user_data(user.id, "current_rate")
+        return str(current_rate) + "%"
     # endregion
 
 async def command_listener(message: discord.Message, bot: discord.Client, args: list[str]):

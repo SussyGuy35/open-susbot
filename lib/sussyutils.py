@@ -3,7 +3,6 @@ import discord
 import random
 import os
 import shlex
-import json
 from lib.sussyconfig import get_config
 
 config = get_config()
@@ -40,6 +39,10 @@ def pick_random_file_from_dir(dir_path: str) -> str:
     """Return the name of a random file from given directory"""
     filename = random.choice(os.listdir(dir_path))
     return filename
+
+
+def roll_percentage(percent: float | int) -> bool:
+    return random.random()*100 <= percent
 
 
 # MARK: snowflake functions
