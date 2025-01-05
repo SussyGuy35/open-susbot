@@ -123,14 +123,14 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
 
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
-            set_user_data(user.id, "current_rate", current_rate + (1 if current_rate <=20 else 2))
+            set_user_data(user.id, "current_rate", current_rate + (1 if current_rate >=20 else 2))
             return get_string_by_id(loca_sheet, "pray", config.language)
 
         if last_pray.date() == today.date():
             return get_string_by_id(loca_sheet, "already_prayed", config.language)
 
         set_user_data(user.id, "last_pray", today.timestamp())
-        set_user_data(user.id, "current_rate", current_rate + (2 if current_rate <=20 else 4))
+        set_user_data(user.id, "current_rate", current_rate + (2 if current_rate >=20 else 4))
 
         return get_string_by_id(loca_sheet, "pray_choke", config.language)
     # endregion
