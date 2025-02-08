@@ -61,7 +61,7 @@ async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReac
                 user_reaction_roles.remove(role)
     if reaction_roles[str(payload.message_id)][0]["one_role"] and user_reaction_roles:
         try:
-            msg = get_string_by_id(loca_sheet, "one_role_only", config.language) + "\n"
+            msg = get_string_by_id(loca_sheet, "one_role_only", config.language).format(guild.name) + "\n"
             for role in user_reaction_roles:
                 msg += f"**{role.name}**\n"
             await user.send(msg)

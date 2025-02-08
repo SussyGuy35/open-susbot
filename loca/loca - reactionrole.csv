@@ -5,4 +5,4 @@ success,Đã gửi tin nhắn thành công!,Success!
 failed,Thất bại! Có lẽ là do bot không có emoji.,Failed! Maybe because bot don't have an emoji.
 role_added,Đã thêm role **{0}** trong **{1}**,Role **{0}** added in **{1}**!
 role_removed,Đã xóa role **{0}** trong **{1}**,Role **{0}** removed in **{1}**!
-one_role_only,Bạn chỉ có thể chọn 1 role. Bạn đã có các role sau:,You can only have 1 role. You already have:
+one_role_only,Từ **{0}**:#Bạn chỉ có thể chọn 1 role. Bạn đã có các role sau:,From **{0}**:#You can only have 1 role. You already have:
