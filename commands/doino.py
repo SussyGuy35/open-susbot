@@ -49,11 +49,11 @@ async def slash_command_listener(
     
     link = f"https://img.vietqr.io/image/{bankname}-{accountnumber}-print.png?"
     if amount:
-        link += f"amount={amount}&"
+        link += f'amount={amount}&'
     if note:
-        link += f"addInfo={note.replace(" ", "%20")}&"
+        link += f'addInfo={note.replace(" ", "%20")}&'
     if accountname:
-        link += f"accountName={accountname.replace(" ", "%20")}&"
+        link += f'accountName={accountname.replace(" ", "%20")}&'
 
     if requests.get(link).content == b'invalid acqId':
         rs = get_string_by_id(loca_sheet, "invalid_bank_name", config.language)
