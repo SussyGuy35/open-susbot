@@ -284,9 +284,6 @@ async def on_message(message: discord.Message):
             await message.channel.send(
                 f"user_id: {message.author.id}, channel_id: {message.channel.id}, guild: {message.guild}")
 
-        elif command == 'test': # will be removed
-            await message.channel.send("hêllo")
-        
         elif command == 'getloca':
             await message.channel.send(get_string_by_id(f"loca/loca - {args[0]}.csv", args[1], args[2]))
 
