@@ -20,6 +20,7 @@ import features.auto_react_emoji
 import features.gvscount
 import features.on_bot_mentioned
 import features.reaction_roles
+import features.autoqr
 
 config = get_config()
 
@@ -335,6 +336,7 @@ async def on_message(message: discord.Message):
         await features.on_bot_mentioned.reply(client, message)
         await features.gvscount.gvs(message, userid)
         await features.auto_react_emoji.react(autoreact_emojis, message)
+        await features.autoqr.check_auto_qr(message)
 
 
 client.run(TOKEN)
