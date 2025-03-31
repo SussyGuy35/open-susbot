@@ -2,3 +2,4 @@ discord.py
 ossapi
 requests
 pytz
+pymongo[srv]
