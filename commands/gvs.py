@@ -3,48 +3,33 @@ import json
 from lib.sussyutils import get_prefix, get_user_id_from_snowflake, is_dev
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
+from lib.mongomanager import MongoManager
 import lib.cmddata as cmddata
 
 config = get_config()
 
 cmd_names = ['gvs']
 
-file_path = "gvs.json"
-
-try:
-    data = json.load(cmddata.file_save_open_read(file_path))
-except:
-    data = {}
-
 loca_sheet = "loca/loca - gvs.csv"
-
-
-def save():
-    file = cmddata.file_save_open_write(file_path)
-    json.dump(data, file)
+collection = MongoManager.get_collection("gvs", config.MONGO_DB_NAME)
 
 
 def get_gvs(guildid: str, userid: str):
-    if guildid in data.keys() and userid in data[guildid].keys():
-        return data[guildid][userid]["gvs"]
-    return 0
+    guilddata = collection.find_one({"_id": str(guildid)})
+    if guilddata is None:
+        return 0
+    if userid not in guilddata:
+        return 0
+    return guilddata[userid]
 
 
 def set_gvs(guildid: str, userid: str, gvs_count: int):
-    if guildid in data.keys():
-        if userid in data[guildid].keys():
-            data[guildid][userid]["gvs"] = gvs_count
-        else:
-            data[guildid][userid] = {
-                "gvs": gvs_count
-            }
+    guilddata = collection.find_one({"_id": str(guildid)})
+    if guilddata is None:
+        collection.insert_one({"_id": str(guildid), userid: gvs_count})
     else:
-        data[guildid] = {}
-        data[guildid][userid] = {
-            "gvs": gvs_count
-        }
+        collection.update_one({"_id": str(guildid)}, {"$set": {userid: gvs_count}})
 
-    save()
 
 
 def gvs(userid: str, guildid: str):
@@ -64,23 +49,28 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
                 userid_to_get = str(get_user_id_from_snowflake(args[1]))
             else:
                 userid_to_get = str(author.id)
-            if guildid in data.keys() and userid_to_get in data[guildid]:
+
+            gvs = get_gvs(guildid, userid_to_get)
+            if gvs != 0:
                 return get_string_by_id(loca_sheet, "count_result", config.language).format(
                     f"<@{userid_to_get}>",
                     guild.name,
-                    data[guildid][userid_to_get]["gvs"]
+                    gvs
                 )
             else:
                 return get_string_by_id(loca_sheet, "zero_gvs", config.language)
         case "lb":
             msg = ""
             lb = {}
+            guild_data = collection.find_one({"_id": str(guildid)})
 
-            if guildid not in data.keys():
+            if guild_data is None:
                 return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
 
-            for key in data[guildid].keys():
-                lb[key] = data[guildid][key]['gvs']
+            for key in guild_data.keys():
+                if key == "_id":
+                    continue
+                lb[key] = guild_data[key]
 
             lb = dict(sorted(lb.items(), key=lambda item: item[1]))
             if len(lb) > 0:

@@ -9,6 +9,9 @@ TOKEN = 'ur bot token here'
 OSUAPI_CLIENT_ID = 'ur osu!api client id here'
 OSUAPI_CLIENT_SECRET = 'ur osu!api client secret here'
 
+MONGO_URI = 'mongodb uri here'
+MONGO_DB_NAME = 'ur db name here'
+
 language = "en"  # bot's language
 
 dev_ids = [  # place developer's id here!
