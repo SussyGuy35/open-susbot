@@ -112,7 +112,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
                 break
             response.add_field(
                 name=f"#{rank} - {user_display_name}",
-                value=f"Pray: {user["prayers"]}",
+                value=f"Pray: {user['prayers']}",
                 inline=False
             )
 
