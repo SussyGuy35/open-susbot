@@ -1,5 +1,5 @@
 discord.py
-ossapi
+ossapi = 5.2.0
 requests
 pytz
-pymongo[srv]
+pymongo[srv] = 4.11.3

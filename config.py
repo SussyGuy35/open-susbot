@@ -1,4 +1,5 @@
 import discord
+from pytz import timezone as tz
 
 bot_name = "open-susbot"
 prefix = 'b!'
@@ -13,6 +14,8 @@ MONGO_URI = 'mongodb uri here'
 MONGO_DB_NAME = 'ur db name here'
 
 language = "en"  # bot's language
+
+timezone = tz("Asia/Ho_Chi_Minh")  # timezone for the bot
 
 dev_ids = [  # place developer's id here!
 ]

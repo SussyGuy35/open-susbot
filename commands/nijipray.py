@@ -3,11 +3,11 @@ import lib.sussyutils as sussyutils
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
+from lib.mongomanager import MongoManager
 from commands.nijika import command_response as get_nijika_image
 import json
 from datetime import datetime, timedelta
-from pytz import timezone
-import random
+
 
 config = get_config()
 
@@ -15,86 +15,45 @@ cmd_names = ['nijipray', 'njkp', 'nijip']
 
 CMD_NAME = "nijipray"
 loca_sheet = f"loca/loca - {CMD_NAME}.csv"
-save_data_path = f"{CMD_NAME}.json"
-leaderboard_path = f"{CMD_NAME}_leaderboard.json"
+collection = MongoManager.get_collection("nijipray", config.MONGO_DB_NAME)
 
-tz = timezone("Asia/Jakarta")
-
-# MARK: Data
-try:
-    data = json.load(cmddata.file_save_open_read(save_data_path))
-except:
-    data = {}
-
-def save():
-    file = cmddata.file_save_open_write(save_data_path)
-    json.dump(data, file)
+tz = config.timezone
 
 
 def create_user(userid: str | int):
-    userid = str(userid)
-    data[userid] = {
-        "prayers": 0,
-        "last_pray": 0,
+    collection.insert_one({
+        "_id": str(userid), 
+        "prayers": 0, 
+        "last_pray": 0, 
         "current_rate": 20
     }
-    save()
+    )
 
 
 def set_user_data(userid: str | int, key: str, value):
-    userid = str(userid)
-    if userid not in data.keys():
+    if not collection.find_one({"_id": str(userid)}):
         create_user(userid)
-    data[userid][key] = value
-    save()
-
+    collection.update_one(
+        {"_id": str(userid)},
+        {"$set": {key: value}}
+    )
 
 def get_user_data(userid: str | int, key: str):
-    userid = str(userid)
-    if userid not in data.keys():
-        create_user(userid)
-    return data[userid][key]
+    return collection.find_one({"_id": str(userid)})[key]
 
 
-def get_leaderboard() -> dict[str, str]:
-    try:
-        leaderboard = json.load(cmddata.file_save_open_read(leaderboard_path))
-    except:
-        process_leaderboard()
-        return get_leaderboard()
-    
-    return leaderboard
-
-
-def save_leaderboard(leaderboard: dict[str, str]):
-    with cmddata.file_save_open_write(leaderboard_path) as file:
-        json.dump(leaderboard, file)
-
-
-def process_leaderboard():
-    # colect all user data
-    temp = {}
-    for user in data.keys():
-        if user not in temp.keys():
-            temp[user] = get_user_data(user, "prayers")
-    # sort by exp
-    temp = {userid: exp for userid, exp in sorted(temp.items(), key=lambda item: item[1], reverse=True)}
-    # create leaderboard
-    leaderboard = {}
-    rank = 1
-    for userid in temp.keys():
-        leaderboard[rank] = userid
-        rank += 1
-    save_leaderboard(leaderboard)
+def get_leaderboard(limit = 10) -> list:
+    return list(collection.aggregate([
+        {"$sort": {"prayers": -1}},
+        {"$limit": limit}
+    ]))
 
 
 def get_user_rank(userid: str | int) -> int:
     userid = str(userid)
-    if userid not in data.keys():
-        create_user(userid)
-    leaderboard = get_leaderboard()
-    for rank in leaderboard.keys():
-        if leaderboard[rank] == userid:
+    leaderboard = get_leaderboard(100)
+    for rank, user in enumerate(leaderboard, start=1):
+        if user["_id"] == userid:
             return rank
     return None
 
@@ -146,13 +105,14 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
             color=0x00ff00
         )
 
-        for rank in range(1, min(11, len(leaderboard)+1)):
-            user = bot.get_user(int(leaderboard[str(rank)]))
-            if get_user_data(leaderboard[str(rank)], "prayers") == 0:
+        for rank, user in enumerate(leaderboard, start=1):
+            _user = bot.get_user(int(user["_id"]))
+            user_display_name = _user.display_name if _user else "Unknown User"
+            if user["prayers"] == 0:
                 break
             response.add_field(
-                name=f"#{rank} - {user.display_name}",
-                value=f"Pray: {get_user_data(leaderboard[str(rank)], 'prayers')}",
+                name=f"#{rank} - {user_display_name}",
+                value=f"Pray: {user['prayers']}",
                 inline=False
             )
 
@@ -215,7 +175,6 @@ async def command_listener(message: discord.Message, bot: discord.Client, args: 
         nijika_img = get_nijika_image()
         await message.reply(response, mention_author=False, file=nijika_img)
 
-    process_leaderboard()
 
 async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Client):
     print(f"{ctx.user} used nijipray commands!")
@@ -229,7 +188,6 @@ async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Cli
         nijika_img = get_nijika_image()
         await ctx.followup.send(response, file=nijika_img)
     
-    process_leaderboard()
 
 
 async def slash_command_listener_leaderboard(ctx: discord.Interaction, bot: discord.Client):
