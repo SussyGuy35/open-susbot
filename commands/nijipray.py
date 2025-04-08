@@ -215,3 +215,6 @@ async def slash_command_listener_info(ctx: discord.Interaction, bot: discord.Cli
 
     if isinstance(response, discord.Embed):
         await ctx.followup.send(embed=response)
+    
+    elif isinstance(response, str):
+        await ctx.followup.send(response)
