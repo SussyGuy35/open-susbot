@@ -2,10 +2,8 @@ import discord
 import lib.sussyutils as sussyutils
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
-import lib.cmddata as cmddata
 from lib.mongomanager import MongoManager
 from commands.nijika import command_response as get_nijika_image
-import json
 from datetime import datetime, timedelta
 
 
@@ -39,7 +37,11 @@ def set_user_data(userid: str | int, key: str, value):
     )
 
 def get_user_data(userid: str | int, key: str):
-    return collection.find_one({"_id": str(userid)})[key]
+    user = collection.find_one({"_id": str(userid)})
+    if not user:
+        create_user(userid)
+        user = collection.find_one({"_id": str(userid)})
+    return user[key]
 
 
 def get_leaderboard(limit = 10) -> list:
