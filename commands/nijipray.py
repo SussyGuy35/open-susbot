@@ -131,6 +131,9 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
             except:
                 pass
         
+        if get_user_data(user_to_show.id, "prayers") == 0:
+            return get_string_by_id(loca_sheet, "userinfo_blank", config.language)
+        
         response = discord.Embed(
             title=get_string_by_id(loca_sheet, "userinfo_embed_title", config.language),
             color=0x00ff00
