@@ -10,7 +10,7 @@ from commands import (
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
-    gacha, reactionroles, nijipray
+    gacha, reactionroles, nijipray, momjoke
 )
 
 # MARK: import features
@@ -212,6 +212,13 @@ async def nijipray_leaderboard(ctx: discord.Interaction):
 @tree.command(name="nijipray_info")
 async def nijipray_info(ctx: discord.Interaction, user: discord.User | None = None):
     await nijipray.slash_command_listener_info(ctx, client, user)
+
+
+@tree.command(name="momjoke")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def get_momjoke(ctx: discord.Interaction):
+    await momjoke.slash_command_listener(ctx)
 
 
 # MARK: On ready
