@@ -60,6 +60,8 @@ async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReac
             return
         except discord.Forbidden:
             return
+    if role_to_add_or_remove is None:
+        return
     if role_to_add_or_remove in user.roles:
         try:
             await user.remove_roles(role_to_add_or_remove)
