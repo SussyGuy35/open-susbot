@@ -226,6 +226,7 @@ async def on_ready():
 @client.event
 async def on_message_delete(message: discord.Message):
     await features.ghostping_detector.on_delete(message)
+    await features.reaction_roles.reaction_roles_on_message_delete(message.id)
 
 
 # MARK: On message edit

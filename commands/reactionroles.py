@@ -1,5 +1,4 @@
 import discord
-import lib.sussyutils
 import lib.locareader
 from lib.sussyconfig import get_config
 import features.reaction_roles as reaction_roles
@@ -52,15 +51,16 @@ async def slash_command_listener(
     except discord.Forbidden:
         await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "bot_no_permission", config.language))
         return
-    reaction_roles.add_reaction_role(msg.id, emoji1, role1.id, one_role)
+    reaction_roles.create_reaction_role(msg.id, one_role)
+    reaction_roles.add_reaction_role(msg.id, emoji1, role1.id)
     if role2 and emoji2:
-        reaction_roles.add_reaction_role(msg.id, emoji2, role2.id, one_role)
+        reaction_roles.add_reaction_role(msg.id, emoji2, role2.id)
     if role3 and emoji3:
-        reaction_roles.add_reaction_role(msg.id, emoji3, role3.id, one_role)
+        reaction_roles.add_reaction_role(msg.id, emoji3, role3.id)
     if role4 and emoji4:
-        reaction_roles.add_reaction_role(msg.id, emoji4, role4.id, one_role)
+        reaction_roles.add_reaction_role(msg.id, emoji4, role4.id)
     if role5 and emoji5:
-        reaction_roles.add_reaction_role(msg.id, emoji5, role5.id, one_role)
+        reaction_roles.add_reaction_role(msg.id, emoji5, role5.id)
     
     for emoji in [emoji1, emoji2, emoji3, emoji4, emoji5]:
         if emoji:
