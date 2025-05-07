@@ -45,31 +45,8 @@ rps_max_bet_multiplier = 200
 give_requirement_level = 3
 card_transform_price = 25
 
-# MARK: Data
-# try:
-#     data = json.load(cmddata.file_save_open_read(save_data_path))
-# except:
-#     data = {}
-
-# def save():
-#     file = cmddata.file_save_open_write(save_data_path)
-#     json.dump(data, file)
-
 
 def create_user(userid: str | int):
-    # userid = str(userid)
-    # data[userid] = {
-    #     "exp": 0,
-    #     "level": 1,
-    #     "cards": [],
-    #     "money": 0,
-    #     "guarantee": 0,
-    #     "roll": 0,
-    #     "newbie": True,
-    #     "last_daily": 0,
-    #     "badges": []
-    # }
-    # save()
     collection.insert_one({
         "_id": str(userid),
         "exp": 0,
@@ -85,11 +62,6 @@ def create_user(userid: str | int):
 
 
 def set_user_data(userid: str | int, key: str, value):
-    # userid = str(userid)
-    # if userid not in data.keys():
-    #     create_user(userid)
-    # data[userid][key] = value
-    # save()
     if not collection.find_one({"_id": str(userid)}):
         create_user(userid)
     collection.update_one(
@@ -100,9 +72,6 @@ def set_user_data(userid: str | int, key: str, value):
 
 def get_user_data(userid: str | int, key: str):
     userid = str(userid)
-    # if userid not in data.keys():
-    #     create_user(userid)
-    # return data[userid][key]
     user = collection.find_one({"_id" : userid})
     if not user: 
         create_user(userid)
@@ -112,11 +81,6 @@ def get_user_data(userid: str | int, key: str):
 
 def add_card_to_user(userid: str | int, cardid: str):
     userid = str(userid)
-    # if userid not in data.keys():
-    #     create_user(userid)
-    # if cardid not in data[userid]["cards"]:
-    #     data[userid]["cards"].append(cardid)
-    #     save()
     user = collection.find_one({"_id" : userid})
     if not user:
         create_user(userid)
@@ -133,10 +97,6 @@ def add_card_to_user(userid: str | int, cardid: str):
 
 def remove_card_from_user(userid: str | int, cardid: str):
     userid = str(userid)
-    # if userid not in data.keys():
-    #     create_user(userid)
-    # data[userid]["cards"].remove(cardid)
-    # save()
     user = collection.find_one({"_id" : userid})
     if not user:
         create_user(userid)
@@ -152,8 +112,6 @@ def remove_card_from_user(userid: str | int, cardid: str):
 
 def get_user_cards_rarity(userid: str | int, rarity: str) -> list[str]:
     userid = str(userid)
-    # if userid not in data.keys():
-    #     create_user(userid)
     user = collection.find_one({"_id" : userid})
     if not user:
         create_user(userid)
@@ -175,8 +133,6 @@ def rps_bonus_exp(bet: int) -> int:
 
 async def check_user_level_up(userid: str | int, channel: discord.TextChannel):
     userid = str(userid)
-    # if userid not in data.keys():
-    #     create_user(userid)
     user = collection.find_one({"_id" : userid})
     if not user:
         create_user(userid)
@@ -199,7 +155,7 @@ async def check_user_level_up(userid: str | int, channel: discord.TextChannel):
         ))
 
 
-def check_user_beaten(userid: str | int, channel: discord.TextChannel):
+async def check_user_beaten(userid: str | int, channel: discord.TextChannel):
     userid = str(userid)
     user = collection.find_one({"_id" : userid})
     if not user:
@@ -218,7 +174,7 @@ def check_user_beaten(userid: str | int, channel: discord.TextChannel):
     if len(get_user_cards_rarity(userid, "Common")) < len(get_card_list_by_rarity("Common")):
         return
     user["badges"].append("Super player")
-    channel.send(get_string_by_id(loca_sheet, "game_complete", config.language).format(f"<@{userid}>"))
+    await channel.send(get_string_by_id(loca_sheet, "game_complete", config.language).format(f"<@{userid}>"))
 
 
 def get_leaderboard(limit : int | None = None) -> list:
@@ -239,39 +195,6 @@ def get_user_rank(userid: str | int) -> int:
         if user["_id"] == userid:
             return rank
     return None
-
-
-# def save_leaderboard(leaderboard: dict[str, str]):
-#     with cmddata.file_save_open_write(leaderboard_path) as file:
-#         json.dump(leaderboard, file)
-
-
-# def process_leaderboard():
-#     # colect all user data
-#     temp = {}
-#     for user in data.keys():
-#         if user not in temp.keys():
-#             temp[user] = get_user_data(user, "exp")
-#     # sort by exp
-#     temp = {userid: exp for userid, exp in sorted(temp.items(), key=lambda item: item[1], reverse=True)}
-#     # create leaderboard
-#     leaderboard = {}
-#     rank = 1
-#     for userid in temp.keys():
-#         leaderboard[rank] = userid
-#         rank += 1
-#     save_leaderboard(leaderboard)
-
-
-# def get_user_rank(userid: str | int) -> int:
-#     userid = str(userid)
-#     if userid not in data.keys():
-#         create_user(userid)
-#     leaderboard = get_leaderboard()
-#     for rank in leaderboard.keys():
-#         if leaderboard[rank] == userid:
-#             return rank
-#     return None
 
 
 # MARK: Card Database
@@ -627,15 +550,6 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             color=0x00ff00
         )
 
-        # for rank in range(1, min(11, len(leaderboard)+1)):
-        #     user = bot.get_user(int(leaderboard[str(rank)]))
-        #     if get_user_data(leaderboard[str(rank)], "exp") == 0:
-        #         break
-        #     response.add_field(
-        #         name=f"#{rank} - {user.display_name}",
-        #         value=f"Level: {get_user_data(user.id, 'level')} | Exp: {get_user_data(user.id, 'exp')}",
-        #         inline=False
-        #     )
         for rank, user in enumerate(leaderboard, start=1):
             _user = bot.get_user(int(user["_id"]))
             user_display_name = _user.display_name if _user else "Unknown User"
@@ -643,7 +557,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
                 break
             response.add_field(
                 name=f"#{rank} - {user_display_name}",
-                value=f"Level: {user['level']} | Exp: {user["exp"]}",
+                value=f"Level: {user['level']} | Exp: {user['exp']}",
                 inline=False
             )
 
@@ -933,4 +847,4 @@ async def command_listener(message: discord.Message, args: list[str], bot: disco
         await message.reply(file=response, mention_author=False)
     
     await check_user_level_up(message.author.id, message.channel)
-    check_user_beaten(message.author.id, message.channel)
+    await check_user_beaten(message.author.id, message.channel)
