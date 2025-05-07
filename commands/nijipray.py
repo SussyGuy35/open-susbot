@@ -44,16 +44,20 @@ def get_user_data(userid: str | int, key: str):
     return user[key]
 
 
-def get_leaderboard(limit = 10) -> list:
+def get_leaderboard(limit : int | None = None) -> list:
+    if limit:
+        return list(collection.aggregate([
+            {"$sort": {"prayers": -1}},
+            {"$limit": limit}
+        ]))
     return list(collection.aggregate([
         {"$sort": {"prayers": -1}},
-        {"$limit": limit}
     ]))
 
 
 def get_user_rank(userid: str | int) -> int:
     userid = str(userid)
-    leaderboard = get_leaderboard(100)
+    leaderboard = get_leaderboard()
     for rank, user in enumerate(leaderboard, start=1):
         if user["_id"] == userid:
             return rank
@@ -97,7 +101,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
     # endregion
     # region leaderboard
     if args[0] == "leaderboard" or args[0] == "rank" or args[0] == "lb":
-        leaderboard = get_leaderboard()
+        leaderboard = get_leaderboard(limit=10)
 
         if len(leaderboard) == 0:
             return get_string_by_id(loca_sheet, "leaderboard_empty", config.language)
