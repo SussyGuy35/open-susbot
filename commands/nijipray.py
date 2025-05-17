@@ -69,7 +69,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
             top_player = get_leaderboard(1)[0]
             top_player_pray = top_player["prayers"]
             # bonus percent base on point difference to top player
-            bonus_percent = min(7, (top_player_pray - pray_num)/5)
+            bonus_percent = max(0, min(7, (top_player_pray - pray_num)/5))
 
             if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent):
                 # point and multiplier
