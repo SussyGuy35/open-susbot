@@ -73,17 +73,23 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
         current_rate = get_user_data(user.id, "current_rate")
         # check if pray yesterday
         if last_pray.date() == today.date() - timedelta(days=1) or get_user_data(user.id, "last_pray") == 0:
-            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")):
-                if pray_num >= 30:
-                    set_user_data(user.id, "prayers", pray_num + 2)
-                    set_user_data(user.id, "last_pray", today.timestamp())
-                    set_user_data(user.id, "current_rate", 12 if pray_num+2 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(2)
-                else:
-                    set_user_data(user.id, "prayers", pray_num + 3)
-                    set_user_data(user.id, "last_pray", today.timestamp())
-                    set_user_data(user.id, "current_rate", 12 if pray_num+3 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(3)
+            # get top #1 player point
+            top_player = get_leaderboard(1)[0]
+            top_player_pray = top_player["prayers"]
+            # bonus percent base on point difference to top player
+            bonus_percent = max(0, min(7, (top_player_pray - pray_num)/5))
+
+            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent):
+                # point and multiplier
+                # x2 mult if weekend
+                mult = 2 if today.weekday() in (5, 6) else 1
+                point_earned = 2 if pray_num >= 50 else 3
+                total_point = point_earned * mult
+                
+                set_user_data(user.id, "prayers", pray_num + total_point)
+                set_user_data(user.id, "last_pray", today.timestamp())
+                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 20)
+                return get_string_by_id(loca_sheet, "pray_special", config.language).format(total_point)
                 
 
             set_user_data(user.id, "prayers", pray_num + 1)
