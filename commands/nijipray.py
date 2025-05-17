@@ -74,16 +74,14 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
             if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent):
                 # point and multiplier
                 # x2 mult if weekend
-                if today.weekday() == 5 or today.weekday() == 6:
-                    mult = 2
-                else:
-                    mult = 1
+                mult = 2 if today.weekday() in (5, 6) else 1
                 point_earned = 2 if pray_num >= 50 else 3
+                total_point = point_earned * mult
                 
-                set_user_data(user.id, "prayers", pray_num + point_earned*mult)
+                set_user_data(user.id, "prayers", pray_num + total_point)
                 set_user_data(user.id, "last_pray", today.timestamp())
                 set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 20)
-                return get_string_by_id(loca_sheet, "pray_special", config.language).format(point_earned*mult)
+                return get_string_by_id(loca_sheet, "pray_special", config.language).format(total_point)
                 
 
             set_user_data(user.id, "prayers", pray_num + 1)
