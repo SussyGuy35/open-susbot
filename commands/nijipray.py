@@ -2,10 +2,8 @@ import discord
 import lib.sussyutils as sussyutils
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
-import lib.cmddata as cmddata
 from lib.mongomanager import MongoManager
 from commands.nijika import command_response as get_nijika_image
-import json
 from datetime import datetime, timedelta
 
 
@@ -67,17 +65,25 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
         current_rate = get_user_data(user.id, "current_rate")
         # check if pray yesterday
         if last_pray.date() == today.date() - timedelta(days=1) or get_user_data(user.id, "last_pray") == 0:
-            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")):
-                if pray_num >= 30:
-                    set_user_data(user.id, "prayers", pray_num + 2)
-                    set_user_data(user.id, "last_pray", today.timestamp())
-                    set_user_data(user.id, "current_rate", 12 if pray_num+2 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(2)
+            # get top #1 player point
+            top_player = get_leaderboard(1)[0]
+            top_player_pray = top_player["prayers"]
+            # bonus percent base on point difference to top player
+            bonus_percent = min(7, (top_player_pray - pray_num)/5)
+
+            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent):
+                # point and multiplier
+                # x2 mult if weekend
+                if today.weekday() == 5 or today.weekday() == 6:
+                    mult = 2
                 else:
-                    set_user_data(user.id, "prayers", pray_num + 3)
-                    set_user_data(user.id, "last_pray", today.timestamp())
-                    set_user_data(user.id, "current_rate", 12 if pray_num+3 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(3)
+                    mult = 1
+                point_earned = 2 if pray_num >= 50 else 3
+                
+                set_user_data(user.id, "prayers", pray_num + point_earned*mult)
+                set_user_data(user.id, "last_pray", today.timestamp())
+                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 20)
+                return get_string_by_id(loca_sheet, "pray_special", config.language).format(point_earned*mult)
                 
 
             set_user_data(user.id, "prayers", pray_num + 1)
