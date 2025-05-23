@@ -4,7 +4,7 @@ services:
     build: .
     container_name: sussy-bot
     env_file: 
-      - .env
+      - config.py
     volumes:
       - .:/app
     restart: unless-stopped
