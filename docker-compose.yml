@@ -3,8 +3,6 @@ services:
   discord-bot:
     build: .
     container_name: sussy-bot
-    env_file: 
-      - config.py
     volumes:
       - .:/app
     restart: unless-stopped
