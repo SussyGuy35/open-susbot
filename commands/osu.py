@@ -50,16 +50,16 @@ def command_response(osu_api: Ossapi, prefix: str, command: str):
                 )
 
                 return rs
-            except:
-                return get_string_by_id(loca_sheet, "prompt_error", config.language)
+            except Exception as e:
+                return get_string_by_id(loca_sheet, "prompt_error", config.language) + "\n" + str(e)
 
         # Beatmap
         case 'beatmap':
             try:
                 beatmap = osu_api.search_beatmapsets(query=command[len(osu_command) + 1:]).beatmapsets[0]
                 return f'https://osu.ppy.sh/beatmapsets/{beatmap.id}\n'
-            except:
-                return get_string_by_id(loca_sheet, "prompt_error", config.language)
+            except Exception as e:
+                return get_string_by_id(loca_sheet, "prompt_error", config.language) + "\n" + str(e)
 
         case _:
             return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
