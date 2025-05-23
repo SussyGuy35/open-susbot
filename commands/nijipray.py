@@ -40,19 +40,27 @@ def set_user_data(userid: str | int, key: str, value):
     )
 
 def get_user_data(userid: str | int, key: str):
-    return collection.find_one({"_id": str(userid)})[key]
+    user = collection.find_one({"_id": str(userid)})
+    if not user:
+        create_user(userid)
+        user = collection.find_one({"_id": str(userid)})
+    return user[key]
 
 
-def get_leaderboard(limit = 10) -> list:
+def get_leaderboard(limit : int | None = None) -> list:
+    if limit:
+        return list(collection.aggregate([
+            {"$sort": {"prayers": -1}},
+            {"$limit": limit}
+        ]))
     return list(collection.aggregate([
         {"$sort": {"prayers": -1}},
-        {"$limit": limit}
     ]))
 
 
 def get_user_rank(userid: str | int) -> int:
     userid = str(userid)
-    leaderboard = get_leaderboard(100)
+    leaderboard = get_leaderboard()
     for rank, user in enumerate(leaderboard, start=1):
         if user["_id"] == userid:
             return rank
@@ -105,7 +113,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
     # endregion
     # region leaderboard
     if args[0] == "leaderboard" or args[0] == "rank" or args[0] == "lb":
-        leaderboard = get_leaderboard()
+        leaderboard = get_leaderboard(limit=10)
 
         if len(leaderboard) == 0:
             return get_string_by_id(loca_sheet, "leaderboard_empty", config.language)
@@ -138,6 +146,9 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
                     user_to_show = user
             except:
                 pass
+        
+        if get_user_data(user_to_show.id, "prayers") == 0:
+            return get_string_by_id(loca_sheet, "userinfo_blank", config.language)
         
         response = discord.Embed(
             title=get_string_by_id(loca_sheet, "userinfo_embed_title", config.language),
@@ -238,3 +249,6 @@ async def slash_command_listener_info(ctx: discord.Interaction, bot: discord.Cli
 
     if isinstance(response, discord.Embed):
         await ctx.followup.send(embed=response)
+    
+    elif isinstance(response, str):
+        await ctx.followup.send(response)
