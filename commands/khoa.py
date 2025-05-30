@@ -26,13 +26,13 @@ def search_khoa(q: str):
         return get_string_by_id(loca_sheet, "quote_not_found", config.language)
 
 
-def command_response(search: str = None) -> discord.File | str:
+def command_response(search: str | None = None) -> discord.File | str:
     if search:
         return search_khoa(search)
     return discord.File(img_path + pick_random_file_from_dir(img_path))
 
 
-async def slash_command_listener(ctx: discord.Interaction, search: str = None):
+async def slash_command_listener(ctx: discord.Interaction, search: str | None = None):
     print(f"{ctx.user} used khoabug command with search: {search}")
     await ctx.response.defer(ephemeral=True)
     responce = command_response(search)

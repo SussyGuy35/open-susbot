@@ -40,8 +40,6 @@ client = discord.Client(intents=intents)
 
 tree = discord.app_commands.CommandTree(client)
 
-autoreact_emojis = config.autoreact_emojis
-
 
 # loca thing
 def get_string(id_: str, loca: str = "main"):
@@ -88,7 +86,7 @@ async def get_nijika_image(ctx: discord.Interaction):
     await nijika.slash_command_listener(ctx)
 
 @tree.command(name="khoabug", description=get_string("command_khoabug_desc"))
-async def get_khoabug(ctx: discord.Interaction, search: str = None):
+async def get_khoabug(ctx: discord.Interaction, search: str | None = None):
     await khoa.slash_command_listener(ctx, search)
 
 @tree.command(name="khoalist", description=get_string("command_khoalist_desc"))
@@ -343,7 +341,7 @@ async def on_message(message: discord.Message):
     else:
         await features.on_bot_mentioned.reply(client, message)
         await features.gvscount.gvs(message, userid)
-        await features.auto_react_emoji.react(autoreact_emojis, message)
+        await features.auto_react_emoji.react(config.autoreact_emojis, message)
         await features.autoqr.check_auto_qr(message)
 
 
