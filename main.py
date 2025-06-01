@@ -10,7 +10,7 @@ from commands import (
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
-    gacha, reactionroles, nijipray, momjoke
+    gacha, reactionroles, nijipray, momjoke, incase
 )
 
 # MARK: import features
@@ -219,6 +219,13 @@ async def get_momjoke(ctx: discord.Interaction):
     await momjoke.slash_command_listener(ctx)
 
 
+@tree.command(name="trongtruonghop")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def get_momjoke(ctx: discord.Interaction):
+    await incase.slash_command_listener(ctx)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():
@@ -332,6 +339,9 @@ async def on_message(message: discord.Message):
             
         elif command in nijipray.cmd_names:
             await nijipray.command_listener(message, client, args)
+        
+        elif command in incase.cmd_names:
+            await incase.command_listener(message)
 
         # Invalid command
         else:
