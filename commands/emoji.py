@@ -1,9 +1,6 @@
 import discord
 from lib.locareader import get_string_by_id
 from lib.sussyutils import get_emoji_id_from_snowflake
-from lib.sussyconfig import get_config
-
-config = get_config()
 
 loca_sheet = "loca/loca - emoji.csv"
 
@@ -20,7 +17,7 @@ def command_response(client: discord.Client, emoji: str):
     if emoji_to_get is not None:
         embed = discord.Embed(
             title=emoji_to_get.name,
-            description=get_string_by_id(loca_sheet, "embed_desc", config.language).format(
+            description=get_string_by_id(loca_sheet, "embed_desc").format(
                 int(emoji_to_get.created_at.timestamp())
             ),
             color=0x03e3fc
@@ -28,7 +25,7 @@ def command_response(client: discord.Client, emoji: str):
         embed.set_image(url=emoji_to_get.url)
         return embed
     else:
-        return get_string_by_id(loca_sheet, "prompt_exception", config.language)
+        return get_string_by_id(loca_sheet, "prompt_exception")
 
 
 async def command_listener(message: discord.Message, bot: discord.Client, args: list):

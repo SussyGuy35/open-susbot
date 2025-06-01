@@ -39,7 +39,7 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
     guildid = str(guild.id)
 
     if len(args) <= 0:
-        return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+        return get_string_by_id(loca_sheet, "command_help").format(prefix)
 
     match args[0]:
         case "count":
@@ -50,20 +50,20 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
 
             gvs = get_gvs(guildid, userid_to_get)
             if gvs != 0:
-                return get_string_by_id(loca_sheet, "count_result", config.language).format(
+                return get_string_by_id(loca_sheet, "count_result").format(
                     f"<@{userid_to_get}>",
                     guild.name,
                     gvs
                 )
             else:
-                return get_string_by_id(loca_sheet, "zero_gvs", config.language)
+                return get_string_by_id(loca_sheet, "zero_gvs")
         case "lb":
             msg = ""
             lb = {}
             guild_data = collection.find_one({"_id": str(guildid)})
 
             if guild_data is None:
-                return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
+                return get_string_by_id(loca_sheet, "empty_leaderboard")
 
             for key in guild_data.keys():
                 if key == "_id":
@@ -83,22 +83,22 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
                         break
 
                 if msg == "":
-                    return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
+                    return get_string_by_id(loca_sheet, "empty_leaderboard")
 
                 leaderboard = discord.Embed(
-                    title=get_string_by_id(loca_sheet, "leaderboard_embed_title", config.language).format(guild.name),
+                    title=get_string_by_id(loca_sheet, "leaderboard_embed_title").format(guild.name),
                     color=0x00FFFF,
                     description="gke vay sao"
                 )
                 leaderboard.add_field(name='', value=msg)
                 return leaderboard
             else:
-                return get_string_by_id(loca_sheet, "empty_leaderboard", config.language)
+                return get_string_by_id(loca_sheet, "empty_leaderboard")
 
         case "set":
             if is_dev(author.id):
                 if len(args) < 3:
-                    return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+                    return get_string_by_id(loca_sheet, "command_help").format(prefix)
 
                 userid = str(get_user_id_from_snowflake(args[1]))
                 gvs_count = args[2]
@@ -106,7 +106,7 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
                 set_gvs(guildid, userid, int(gvs_count))            
         
         case _:
-            return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+            return get_string_by_id(loca_sheet, "command_help").format(prefix)
 
 
 async def command_listener(message: discord.Message, args: list):
@@ -119,7 +119,7 @@ async def command_listener(message: discord.Message, args: list):
         elif isinstance(response, str):
             await message.channel.send(response) # count command response
     else:
-        await message.channel.send(get_string_by_id(loca_sheet, "not_supported", config.language))
+        await message.channel.send(get_string_by_id(loca_sheet, "not_supported"))
 
 
 async def slash_command_listener_count(ctx: discord.Interaction, user: discord.User | None = None):
@@ -130,7 +130,7 @@ async def slash_command_listener_count(ctx: discord.Interaction, user: discord.U
     if ctx.channel.type in config.autoreact_emojis_supported_channel_types:
         await ctx.followup.send(command_response(prefix, ctx.guild, ctx.user, ["count", f"<@{userid_to_get}>"]))
     else:
-        await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported", config.language))
+        await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported"))
 
 
 async def slash_command_listener_lb(ctx: discord.Interaction):
@@ -144,7 +144,7 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
         elif isinstance(response, str):
             await ctx.followup.send(response)
     else:
-        await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported", config.language))
+        await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported"))
 
 
 async def slash_command_listener_react_message(ctx: discord.Interaction, message_id: str | None = None):
@@ -157,7 +157,7 @@ async def slash_command_listener_react_message(ctx: discord.Interaction, message
             message: discord.Message = await ctx.channel.fetch_message(ctx.channel.last_message_id)
     except:
         await ctx.followup.send(
-            get_string_by_id(loca_sheet, "react_command_response_invalid_id", config.language)
+            get_string_by_id(loca_sheet, "react_command_response_invalid_id")
         )
     else:
         for emoji in ["🇬", "🇰", "🇪", "🇻", "🇦", "🇾", "🇸", "🅰️", "🇴", "😳"]:
@@ -166,5 +166,5 @@ async def slash_command_listener_react_message(ctx: discord.Interaction, message
             except:
                 pass
         await ctx.followup.send(
-            get_string_by_id(loca_sheet, "react_command_response_success", config.language)
+            get_string_by_id(loca_sheet, "react_command_response_success")
         )

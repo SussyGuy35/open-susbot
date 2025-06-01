@@ -2,10 +2,8 @@ import discord, random
 import os
 from lib.sussyutils import pick_random_file_from_dir
 from lib.locareader import get_string_by_id
-from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
 
-config = get_config()
 
 img_path = cmddata.get_res_file_path("khoa/")
 loca_sheet = "loca/loca - khoa.csv"
@@ -23,7 +21,7 @@ def search_khoa(q: str):
     if matching_files != None:
         return discord.File(img_path + matching_files)
     else:
-        return get_string_by_id(loca_sheet, "quote_not_found", config.language)
+        return get_string_by_id(loca_sheet, "quote_not_found")
 
 
 def command_response(search: str | None = None) -> discord.File | str:
@@ -40,7 +38,7 @@ async def slash_command_listener(ctx: discord.Interaction, search: str | None = 
         await ctx.followup.send(responce)
     else:
         await ctx.channel.send(file=responce)
-        await ctx.followup.send(get_string_by_id(loca_sheet, "success", config.language))
+        await ctx.followup.send(get_string_by_id(loca_sheet, "success"))
 
 
 async def slash_command_listener_list(ctx: discord.Interaction):
@@ -51,5 +49,5 @@ async def slash_command_listener_list(ctx: discord.Interaction):
     res = [f.replace('_', ' ').replace('.jpg', '') for f in file_names]
     random_res = random.sample(res, min(len(res), 10))
     body = "\n".join([f"- > {item}" for item in random_res])
-    msg = get_string_by_id(loca_sheet, "list_command_response_template", config.language).format(body)
+    msg = get_string_by_id(loca_sheet, "list_command_response_template").format(body)
     await ctx.followup.send(msg)

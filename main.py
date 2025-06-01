@@ -43,7 +43,7 @@ tree = discord.app_commands.CommandTree(client)
 
 # loca thing
 def get_string(id_: str, loca: str = "main"):
-    return get_string_by_id(f"loca/loca - {loca}.csv", id_, config.language)
+    return get_string_by_id(f"loca/loca - {loca}.csv", id_)
 
 
 # MARK: Slash commands

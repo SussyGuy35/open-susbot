@@ -26,7 +26,7 @@ async def slash_command_listener(
     print(f"{ctx.user} used {CMD_NAME} commands!")
     await ctx.response.defer(ephemeral=True)
     if not ctx.user.guild_permissions.manage_roles:
-        await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "no_permission", config.language))
+        await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "no_permission"))
         return
     
     rs = ""
@@ -49,7 +49,7 @@ async def slash_command_listener(
     try:
         msg = await ctx.channel.send(embed=eb)
     except discord.Forbidden:
-        await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "bot_no_permission", config.language))
+        await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "bot_no_permission"))
         return
     reaction_roles.create_reaction_role(msg.id, one_role)
     reaction_roles.add_reaction_role(msg.id, emoji1, role1.id)
@@ -67,12 +67,12 @@ async def slash_command_listener(
             try:
                 await msg.add_reaction(emoji)
             except discord.errors.HTTPException:
-                await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "failed", config.language))
+                await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "failed"))
                 return
             except discord.Forbidden:
-                await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "bot_no_permission", config.language))
+                await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "bot_no_permission"))
                 return
     
-    await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "success", config.language))
+    await ctx.followup.send(lib.locareader.get_string_by_id(loca_sheet, "success"))
     
     

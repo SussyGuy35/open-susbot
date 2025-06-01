@@ -1,20 +1,17 @@
 import discord
 from lib.locareader import get_string_list, get_string_by_id
-from lib.sussyconfig import get_config
 import random
-
-config = get_config()
 
 loca_sheet = "loca/loca - ask.csv"
 
 cmd_names = ['ask', 'question']
 
-ans = get_string_list(loca_sheet, config.language)
+ans = get_string_list(loca_sheet)
 
 
 def command_response(question: str):
     if question == '':
-        return get_string_by_id("loca/loca - main.csv", "command_ask_no_question", config.language)
+        return get_string_by_id("loca/loca - main.csv", "command_ask_no_question")
     else:
         return random.choice(ans)
 

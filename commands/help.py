@@ -1,9 +1,6 @@
 import discord
 from lib.sussyutils import get_prefix
 from lib.locareader import get_string_list
-from lib.sussyconfig import get_config
-
-config = get_config()
 
 loca_sheet = "loca/loca - help.csv"
 
@@ -12,7 +9,7 @@ cmd_names = ["help", "h", "gethelp"]
 
 def get_help_text(prefix):
     help_text = ""
-    for line in get_string_list(loca_sheet, config.language):
+    for line in get_string_list(loca_sheet):
         help_text += line + "\n"
     return help_text.format(prefix)
 

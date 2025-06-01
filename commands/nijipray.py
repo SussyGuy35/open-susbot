@@ -78,36 +78,36 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
                     set_user_data(user.id, "prayers", pray_num + 2)
                     set_user_data(user.id, "last_pray", today.timestamp())
                     set_user_data(user.id, "current_rate", 12 if pray_num+2 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(2)
+                    return get_string_by_id(loca_sheet, "pray_special").format(2)
                 else:
                     set_user_data(user.id, "prayers", pray_num + 3)
                     set_user_data(user.id, "last_pray", today.timestamp())
                     set_user_data(user.id, "current_rate", 12 if pray_num+3 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special", config.language).format(3)
+                    return get_string_by_id(loca_sheet, "pray_special").format(3)
                 
 
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
             set_user_data(user.id, "current_rate", current_rate + (1 if current_rate >=20 else 2))
-            return get_string_by_id(loca_sheet, "pray", config.language)
+            return get_string_by_id(loca_sheet, "pray")
 
         if last_pray.date() == today.date():
-            return get_string_by_id(loca_sheet, "already_prayed", config.language)
+            return get_string_by_id(loca_sheet, "already_prayed")
 
         set_user_data(user.id, "last_pray", today.timestamp())
         set_user_data(user.id, "current_rate", current_rate + (2 if current_rate >=20 else 4))
 
-        return get_string_by_id(loca_sheet, "pray_choke", config.language)
+        return get_string_by_id(loca_sheet, "pray_choke")
     # endregion
     # region leaderboard
     if args[0] == "leaderboard" or args[0] == "rank" or args[0] == "lb":
         leaderboard = get_leaderboard(limit=10)
 
         if len(leaderboard) == 0:
-            return get_string_by_id(loca_sheet, "leaderboard_empty", config.language)
+            return get_string_by_id(loca_sheet, "leaderboard_empty")
         
         response = discord.Embed(
-            title=get_string_by_id(loca_sheet, "leaderboard", config.language),
+            title=get_string_by_id(loca_sheet, "leaderboard"),
             color=0x00ff00
         )
 
@@ -136,27 +136,27 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
                 pass
         
         if get_user_data(user_to_show.id, "prayers") == 0:
-            return get_string_by_id(loca_sheet, "userinfo_blank", config.language)
+            return get_string_by_id(loca_sheet, "userinfo_blank")
         
         response = discord.Embed(
-            title=get_string_by_id(loca_sheet, "userinfo_embed_title", config.language),
+            title=get_string_by_id(loca_sheet, "userinfo_embed_title"),
             color=0x00ff00
         )
         
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_username", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_username"),
             value=user_to_show.display_name,
             inline=False
         )
 
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_point", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_point"),
             value=get_user_data(user_to_show.id, "prayers"),
             inline=False
         )
 
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_rank", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_rank"),
             value=f"#{get_user_rank(user_to_show.id)}",
             inline=False
         )
@@ -166,7 +166,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
     # endregion
     # region bible
     if args[0] == "bible":
-        return get_string_by_id(loca_sheet, "bible", config.language)
+        return get_string_by_id(loca_sheet, "bible")
     # endregion
     # region nextpercent
     if args[0] == "nextpercent":
