@@ -222,7 +222,7 @@ async def get_momjoke(ctx: discord.Interaction):
 @tree.command(name="trongtruonghop")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def get_momjoke(ctx: discord.Interaction):
+async def trongtruonghop(ctx: discord.Interaction):
     await incase.slash_command_listener(ctx)
 
 
