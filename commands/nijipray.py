@@ -67,6 +67,10 @@ def get_user_rank(userid: str | int) -> int:
     return None
 
 
+def calculate_bonus_percent(user_pray: int, top_player_pray: int) -> float:
+    return max(0, min(7, (top_player_pray - user_pray) / 3))
+
+
 def command_response(args: list[str], bot: discord.Client, user: discord.User | discord.Member) -> str | discord.Embed:
     # region Normal pray
     if len(args) == 0:
@@ -81,7 +85,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
             top_player = get_leaderboard(1)[0]
             top_player_pray = top_player["prayers"]
             # bonus percent base on point difference to top player
-            bonus_percent = max(0, min(7, (top_player_pray - pray_num)/5))
+            bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
 
             if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent):
                 set_user_data(user.id, "special_pray_count", get_user_data(user.id, "special_pray_count") + 1)
@@ -200,7 +204,14 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
     # endregion
     # region nextpercent
     if args[0] == "nextpercent":
-        current_rate = get_user_data(user.id, "current_rate")
+        
+        top_player = get_leaderboard(1)[0]
+        top_player_pray = top_player["prayers"]
+        pray_num = get_user_data(user.id, "prayers")
+
+        bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
+
+        current_rate = get_user_data(user.id, "current_rate") + bonus_percent
         return str(current_rate) + "%"
     # endregion
 
