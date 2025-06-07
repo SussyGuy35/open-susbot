@@ -58,7 +58,7 @@ def get_leaderboard(limit : int | None = None) -> list:
     ]))
 
 
-def get_user_rank(userid: str | int) -> int:
+def get_user_rank(userid: str | int) -> int | None:
     userid = str(userid)
     leaderboard = get_leaderboard()
     for rank, user in enumerate(leaderboard, start=1):
@@ -67,8 +67,9 @@ def get_user_rank(userid: str | int) -> int:
     return None
 
 
-def calculate_bonus_percent(user_pray: int, top_player_pray: int) -> float:
-    return max(0, min(7, (top_player_pray - user_pray) / 3))
+def calculate_bonus_percent(user_pray: int, top_player_pray: int) -> float | int:
+    bp = max(0, min(7, (top_player_pray - user_pray) / 3))
+    return bp if not bp%1==0 else int(bp)
 
 
 def command_response(args: list[str], bot: discord.Client, user: discord.User | discord.Member) -> str | discord.Embed:
