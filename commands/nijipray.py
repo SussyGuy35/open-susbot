@@ -68,7 +68,7 @@ def get_user_rank(userid: str | int) -> int | None:
 
 
 def calculate_bonus_percent(user_pray: int, top_player_pray: int) -> float | int:
-    bp = max(0, min(7, (top_player_pray - user_pray) / 3))
+    bp = max(0, min(36, (top_player_pray - user_pray) / 3))
     return bp if not bp%1==0 else int(bp)
 
 
@@ -101,7 +101,6 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
                 set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 20)
                 return get_string_by_id(loca_sheet, "pray_special", config.language).format(total_point)
                 
-
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
             set_user_data(user.id, "current_rate", current_rate + (1 if current_rate >=20 else 2))
