@@ -1,8 +1,6 @@
 import discord
 from lib.locareader import get_string_by_id
-from lib.sussyconfig import get_config
 
-config = get_config()
 
 loca_sheet = "loca/loca - ping.csv"
 
@@ -10,7 +8,7 @@ cmd_names = ["ping", "pong"]
 
 
 def command_response(bot: discord.Client):
-    return get_string_by_id(loca_sheet, "ping", config.language).format(round(bot.latency * 1000))
+    return get_string_by_id(loca_sheet, "ping").format(round(bot.latency * 1000))
 
 
 async def command_listener(message: discord.Message, bot: discord.Client):

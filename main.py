@@ -10,7 +10,7 @@ from commands import (
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
-    gacha, reactionroles, nijipray, momjoke
+    gacha, reactionroles, nijipray, momjoke, incase
 )
 
 # MARK: import features
@@ -40,12 +40,10 @@ client = discord.Client(intents=intents)
 
 tree = discord.app_commands.CommandTree(client)
 
-autoreact_emojis = config.autoreact_emojis
-
 
 # loca thing
 def get_string(id_: str, loca: str = "main"):
-    return get_string_by_id(f"loca/loca - {loca}.csv", id_, config.language)
+    return get_string_by_id(f"loca/loca - {loca}.csv", id_)
 
 
 # MARK: Slash commands
@@ -88,7 +86,7 @@ async def get_nijika_image(ctx: discord.Interaction):
     await nijika.slash_command_listener(ctx)
 
 @tree.command(name="khoabug", description=get_string("command_khoabug_desc"))
-async def get_khoabug(ctx: discord.Interaction, search: str = None):
+async def get_khoabug(ctx: discord.Interaction, search: str | None = None):
     await khoa.slash_command_listener(ctx, search)
 
 @tree.command(name="khoalist", description=get_string("command_khoalist_desc"))
@@ -221,6 +219,13 @@ async def get_momjoke(ctx: discord.Interaction):
     await momjoke.slash_command_listener(ctx)
 
 
+@tree.command(name="trongtruonghop")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def trongtruonghop(ctx: discord.Interaction):
+    await incase.slash_command_listener(ctx)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():
@@ -334,6 +339,9 @@ async def on_message(message: discord.Message):
             
         elif command in nijipray.cmd_names:
             await nijipray.command_listener(message, client, args)
+        
+        elif command in incase.cmd_names:
+            await incase.command_listener(message)
 
         # Invalid command
         else:
@@ -343,7 +351,7 @@ async def on_message(message: discord.Message):
     else:
         await features.on_bot_mentioned.reply(client, message)
         await features.gvscount.gvs(message, userid)
-        await features.auto_react_emoji.react(autoreact_emojis, message)
+        await features.auto_react_emoji.react(config.autoreact_emojis, message)
         await features.autoqr.check_auto_qr(message)
 
 

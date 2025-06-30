@@ -2,10 +2,7 @@ import discord
 from os import remove
 from requests import get
 from lib.locareader import get_string_by_id
-from lib.sussyconfig import get_config
 from lib.cmddata import get_temp_file_path, file_temp_open_write
-
-config = get_config()
 
 loca_sheet = "loca/loca - creategif.csv"
 
@@ -38,9 +35,9 @@ def command_response(attachment: discord.Attachment) -> discord.File | str:
     try:
         file_name = get_file(attachment.url, attachment.filename)
     except ValueError:
-        return get_string_by_id(loca_sheet, "prompt_dont_support", config.language)
+        return get_string_by_id(loca_sheet, "prompt_dont_support")
     except:
-        return get_string_by_id(loca_sheet, "prompt_exception", config.language)
+        return get_string_by_id(loca_sheet, "prompt_exception")
     else:
         return discord.File(get_temp_file_path(file_name))
 

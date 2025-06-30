@@ -53,7 +53,7 @@ async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReac
                 user_reaction_roles.remove(role)
     if reaction_roles["one_role"] and user_reaction_roles:
         try:
-            msg = get_string_by_id(loca_sheet, "one_role_only", config.language).format(guild.name) + "\n"
+            msg = get_string_by_id(loca_sheet, "one_role_only").format(guild.name) + "\n"
             for role in user_reaction_roles:
                 msg += f"**{role.name}**\n"
             await user.send(msg)
@@ -66,18 +66,18 @@ async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReac
         try:
             await user.remove_roles(role_to_add_or_remove)
             await user.send(
-                get_string_by_id(loca_sheet, "role_removed", config.language).format(role_to_add_or_remove.name, guild.name)
+                get_string_by_id(loca_sheet, "role_removed").format(role_to_add_or_remove.name, guild.name)
             )
         except discord.Forbidden:
-            await bot.get_channel(payload.channel_id).send(get_string_by_id(loca_sheet, "bot_no_permission", config.language))
+            await bot.get_channel(payload.channel_id).send(get_string_by_id(loca_sheet, "bot_no_permission"))
     else:
         try:
             await user.add_roles(role_to_add_or_remove)
             await user.send(
-                get_string_by_id(loca_sheet, "role_added", config.language).format(role_to_add_or_remove.name, guild.name)
+                get_string_by_id(loca_sheet, "role_added").format(role_to_add_or_remove.name, guild.name)
             )
         except discord.Forbidden:
-            await bot.get_channel(payload.channel_id).send(get_string_by_id(loca_sheet, "bot_no_permission", config.language))   
+            await bot.get_channel(payload.channel_id).send(get_string_by_id(loca_sheet, "bot_no_permission"))   
 
 
 async def reaction_roles_on_message_delete(message_id: int | str):

@@ -40,21 +40,21 @@ async def on_delete(message: discord.Message):
         return
     print(f"{message.author.name} ghostping in {message.guild}!")
     ghostping = discord.Embed(
-        title=get_string_by_id(loca_sheet, "embed_title", config.language),
+        title=get_string_by_id(loca_sheet, "embed_title"),
         color=0xFF0000,
         timestamp=message.created_at,
-        description=get_string_by_id(loca_sheet, "embed_desc", config.language)
+        description=get_string_by_id(loca_sheet, "embed_desc")
     )
     ghostping.add_field(
-        name=get_string_by_id(loca_sheet, "name", config.language),
+        name=get_string_by_id(loca_sheet, "name"),
         value=f'{message.author} (<@{message.author.id}>)'
     )
     ghostping.add_field(
-        name=get_string_by_id(loca_sheet, "message", config.language),
+        name=get_string_by_id(loca_sheet, "message"),
         value=message.content
     )
     ghostping.add_field(
-        name=get_string_by_id(loca_sheet, "victim", config.language),
+        name=get_string_by_id(loca_sheet, "victim"),
         value=victims
     )
     try:
@@ -100,25 +100,25 @@ async def on_edit(before: discord.Message, after: discord.Message):
             return
         print(f"{before.author.name} ghostping in {before.guild}!")
         ghostping = discord.Embed(
-            title=get_string_by_id(loca_sheet, "embed_title", config.language),
+            title=get_string_by_id(loca_sheet, "embed_title"),
             color=0xFF0000,
             timestamp=after.created_at,
-            description=get_string_by_id(loca_sheet, "embed_desc", config.language)
+            description=get_string_by_id(loca_sheet, "embed_desc")
         )
         ghostping.add_field(
-            name=get_string_by_id(loca_sheet, "name", config.language),
+            name=get_string_by_id(loca_sheet, "name"),
             value=f'{before.author} (<@{before.author.id}>)'
         )
         ghostping.add_field(
-            name=get_string_by_id(loca_sheet, "original_message", config.language),
+            name=get_string_by_id(loca_sheet, "original_message"),
             value=before.content
         )
         ghostping.add_field(
-            name=get_string_by_id(loca_sheet, "edited_message", config.language),
+            name=get_string_by_id(loca_sheet, "edited_message"),
             value=after.content
         )
         ghostping.add_field(
-            name=get_string_by_id(loca_sheet, "victim", config.language),
+            name=get_string_by_id(loca_sheet, "victim"),
             value=victims
         )
 

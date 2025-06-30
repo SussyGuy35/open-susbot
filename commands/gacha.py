@@ -20,14 +20,14 @@ card_database_path = cmddata.get_res_file_path("gacha/carddb.csv")
 collection = MongoManager.get_collection("gacha", config.MONGO_DB_NAME)
 
 class RpsClass(enum.Enum):
-    Rock = get_string_by_id(loca_sheet, "rps_rock", config.language)
-    Paper = get_string_by_id(loca_sheet, "rps_paper", config.language)
-    Scissors = get_string_by_id(loca_sheet, "rps_scissors", config.language)
+    Rock = get_string_by_id(loca_sheet, "rps_rock")
+    Paper = get_string_by_id(loca_sheet, "rps_paper")
+    Scissors = get_string_by_id(loca_sheet, "rps_scissors")
 
 
 def get_help_text(prefix):
     help_text = ""
-    for line in get_string_list(help_loca_sheet, config.language):
+    for line in get_string_list(help_loca_sheet):
         help_text += line + "\n"
     return help_text.format(prefix)
 
@@ -147,7 +147,7 @@ async def check_user_level_up(userid: str | int, channel: discord.TextChannel):
         set_user_data(userid, "money", get_user_data(userid, "money") + total_bonus_money)
         set_user_data(userid, "guarantee", get_user_data(userid, "guarantee") + total_bonus_guarantee)
         user = collection.find_one({"_id" : userid})
-        await channel.send(get_string_by_id(loca_sheet, "level_up_message", config.language).format(
+        await channel.send(get_string_by_id(loca_sheet, "level_up_message").format(
             "<@" + userid + ">",
             user["level"],
             total_bonus_money,
@@ -174,7 +174,7 @@ async def check_user_beaten(userid: str | int, channel: discord.TextChannel):
     if len(get_user_cards_rarity(userid, "Common")) < len(get_card_list_by_rarity("Common")):
         return
     user["badges"].append("Super player")
-    await channel.send(get_string_by_id(loca_sheet, "game_complete", config.language).format(f"<@{userid}>"))
+    await channel.send(get_string_by_id(loca_sheet, "game_complete").format(f"<@{userid}>"))
 
 
 def get_leaderboard(limit : int | None = None) -> list:
@@ -320,7 +320,7 @@ def card_class_to_enum(class_name: str) -> RpsClass:
 
 
 # MARK: Command Response
-def command_response(args: list[str], user: discord.User, bot: discord.Client) -> str | discord.Embed | discord.File:
+def command_response(args: list[str], user: discord.Member, bot: discord.Client) -> str | discord.Embed | discord.File:
     args_len = len(args)
     
     # region no args
@@ -335,19 +335,19 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             try:
                 roll_count = int(args[1])
             except ValueError: # invalid roll count
-                return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
+                return get_string_by_id(loca_sheet, "roll_invalid_time").format(
                     minimum_gacha_pull,
                     maxiumum_gacha_pull
                 )
         
         if roll_count < minimum_gacha_pull or roll_count > maxiumum_gacha_pull: # invalid roll count
-            return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
+            return get_string_by_id(loca_sheet, "roll_invalid_time").format(
                     minimum_gacha_pull,
                     maxiumum_gacha_pull
             )
         
         if get_user_data(user.id, "money") < roll_count * roll_price: # cant afford
-            return get_string_by_id(loca_sheet, "roll_cant_afford", config.language).format(
+            return get_string_by_id(loca_sheet, "roll_cant_afford").format(
                 roll_count * roll_price - get_user_data(user.id, "money"),
                 roll_count
             )
@@ -360,7 +360,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             pulled_card = get_random_card_by_rarity(rarity)
             if pulled_card not in get_user_data(user.id, "cards"): # if user dont have the card
                 total_bonus_exp += get_bonus_exp_by_rarity(rarity)
-                msg += get_string_by_id(loca_sheet, "roll_result", config.language).format(
+                msg += get_string_by_id(loca_sheet, "roll_result").format(
                     n + 1,
                     get_card_rarity_by_id(pulled_card),
                     get_card_name_by_id(pulled_card),
@@ -369,7 +369,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
                 add_card_to_user(user.id, pulled_card)
             else: # if user already have the card
                 total_bonus_money += bonus_money_when_pull_same_card
-                msg += get_string_by_id(loca_sheet, "roll_result_already_have", config.language).format(
+                msg += get_string_by_id(loca_sheet, "roll_result_already_have").format(
                     n + 1,
                     get_card_rarity_by_id(pulled_card),
                     get_card_name_by_id(pulled_card),
@@ -382,7 +382,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
         set_user_data(user.id, "roll", get_user_data(user.id, "roll") + roll_count)
         
         return discord.Embed(
-            title=get_string_by_id(loca_sheet, "roll_embed_title", config.language),
+            title=get_string_by_id(loca_sheet, "roll_embed_title"),
             description=msg,
             color=0x00ff00
         )
@@ -399,7 +399,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             except:
                 pass
         response = discord.Embed(
-            title=get_string_by_id(loca_sheet, "show_card_prompt", config.language).format(user_to_show.display_name),
+            title=get_string_by_id(loca_sheet, "show_card_prompt").format(user_to_show.display_name),
             color=0x00ff00
         )
         
@@ -411,7 +411,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
         limited_cards = get_user_cards_rarity(user_to_show.id, "Limited")
         
         if not common_cards+uncommon_cards+rare_cards+epic_cards+legendary_cards+limited_cards: # if user dont have any card
-            return get_string_by_id(loca_sheet, "show_card_no_card", config.language).format(user_to_show.display_name)
+            return get_string_by_id(loca_sheet, "show_card_no_card").format(user_to_show.display_name)
 
         if len(limited_cards) > 0:
             response.add_field(
@@ -458,13 +458,13 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
         today = int(today.strftime("%Y%m%d"))
         last_daily = get_user_data(user.id, "last_daily")
         if today == last_daily:
-            return get_string_by_id(loca_sheet, "daily_claimed_message", config.language)
+            return get_string_by_id(loca_sheet, "daily_claimed_message")
         else:
             set_user_data(user.id, "money", get_user_data(user.id, "money") + daily_bonus)
             bonus_exp = get_user_data(user.id, "level") * 2
             set_user_data(user.id, "exp", get_user_data(user.id, "exp") + bonus_exp)
             set_user_data(user.id, "last_daily", today)
-            return get_string_by_id(loca_sheet, "daily_message", config.language).format(
+            return get_string_by_id(loca_sheet, "daily_message").format(
                 daily_bonus,
                 bonus_exp,
                 get_user_data(user.id, "money")
@@ -475,10 +475,10 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
     # region newplayer
     elif args[0] == "newplayer":
         if not get_user_data(user.id, "newbie"):
-            return get_string_by_id(loca_sheet, "newplayer_claimed_message", config.language)
+            return get_string_by_id(loca_sheet, "newplayer_claimed_message")
         set_user_data(user.id, "money", get_user_data(user.id, "money") + newbie_bonus)
         set_user_data(user.id, "newbie", False)
-        return get_string_by_id(loca_sheet, "newplayer_message", config.language).format(
+        return get_string_by_id(loca_sheet, "newplayer_message").format(
             newbie_bonus,
             get_user_data(user.id, "money")
         )
@@ -495,44 +495,44 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             except:
                 pass
         response = discord.Embed(
-            title=get_string_by_id(loca_sheet, "userinfo_embed_title", config.language),
+            title=get_string_by_id(loca_sheet, "userinfo_embed_title"),
             color=0x00ff00
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_username", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_username"),
             value=user_to_show.display_name
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_level", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_level"),
             value=get_user_data(user_to_show.id, "level")
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_exp", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_exp"),
             value=get_user_data(user_to_show.id, "exp")
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_exp_left", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_exp_left"),
             value=exp_to_advance_level(get_user_data(user_to_show.id, "level"))-get_user_data(user_to_show.id, "exp")
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_rank", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_rank"),
             value=f"#{get_user_rank(user_to_show.id)}"
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_credit", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_credit"),
             value=get_user_data(user_to_show.id, "money")
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_guarantee", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_guarantee"),
             value=get_user_data(user_to_show.id, "guarantee")
         )
         response.add_field(
-            name=get_string_by_id(loca_sheet, "userinfo_roll", config.language),
+            name=get_string_by_id(loca_sheet, "userinfo_roll"),
             value=get_user_data(user_to_show.id, "roll")
         )
         if len(get_user_data(user_to_show.id, "badges")) > 0:
             response.add_field(
-                name=get_string_by_id(loca_sheet, "userinfo_badges", config.language),
+                name=get_string_by_id(loca_sheet, "userinfo_badges"),
                 value="\n".join([f"- {badge}" for badge in get_user_data(user_to_show.id, "badges")])
             )
         response.set_thumbnail(url=user_to_show.display_avatar.url)
@@ -543,10 +543,10 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
     elif args[0] == "lb":
         leaderboard = get_leaderboard(10)
         if len(leaderboard) == 0:
-            return get_string_by_id(loca_sheet, "leaderboard_empty", config.language)
+            return get_string_by_id(loca_sheet, "leaderboard_empty")
         
         response = discord.Embed(
-            title=get_string_by_id(loca_sheet, "leaderboard_prompt", config.language),
+            title=get_string_by_id(loca_sheet, "leaderboard_prompt"),
             color=0x00ff00
         )
 
@@ -567,34 +567,34 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
     # region rps
     elif args[0] == "rps":
         if args_len < 2:
-            return get_string_by_id(loca_sheet, "invalid_bet_point", config.language).format(
+            return get_string_by_id(loca_sheet, "invalid_bet_point").format(
                 rps_min_bet,
                 rps_max_bet_multiplier*get_user_data(user.id, "level")
             )
         try:
             bet = int(args[1])
         except:
-            return get_string_by_id(loca_sheet, "invalid_bet_point", config.language).format(
+            return get_string_by_id(loca_sheet, "invalid_bet_point").format(
                 rps_min_bet,
                 rps_max_bet_multiplier*get_user_data(user.id, "level")
             )
         
         if bet < rps_min_bet or bet > rps_max_bet_multiplier*get_user_data(user.id, "level"):
-            return get_string_by_id(loca_sheet, "invalid_bet_point", config.language).format(
+            return get_string_by_id(loca_sheet, "invalid_bet_point").format(
                 rps_min_bet,
                 rps_max_bet_multiplier*get_user_data(user.id, "level")
             )
         if get_user_data(user.id, "money") < bet:
-            return get_string_by_id(loca_sheet, "rps_cant_afford", config.language)
+            return get_string_by_id(loca_sheet, "rps_cant_afford")
         
         if args_len < 3:
-            return get_string_by_id(loca_sheet, "missing_card_name", config.language)
+            return get_string_by_id(loca_sheet, "missing_card_name")
         
         card_to_play = args[2]
         if not get_card_id_by_name(card_to_play):
-            return get_string_by_id(loca_sheet, "non_existent_card", config.language)
+            return get_string_by_id(loca_sheet, "non_existent_card")
         if not get_card_id_by_name(card_to_play) in get_user_data(user.id, "cards"):
-            return get_string_by_id(loca_sheet, "invalid_card", config.language)
+            return get_string_by_id(loca_sheet, "invalid_card")
 
         bot_card = get_random_card_by_rarity(get_card_roll_rarity(5,20,25,30,20))
 
@@ -633,7 +633,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             set_user_data(user.id, "exp", get_user_data(user.id, "exp") + rps_bonus_exp(bet))
             if not bot_card in get_user_data(user.id, "cards"):
                 add_card_to_user(user.id, bot_card)
-                return get_string_by_id(loca_sheet, "rps_win", config.language).format(
+                return get_string_by_id(loca_sheet, "rps_win").format(
                     get_card_name_by_id(bot_card),
                     user_card_class.value,
                     bot_card_class.value,
@@ -641,7 +641,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
                     rps_bonus_exp(bet)
                 )
             else:
-                return get_string_by_id(loca_sheet, "rps_win_already_have", config.language).format(
+                return get_string_by_id(loca_sheet, "rps_win_already_have").format(
                     get_card_name_by_id(bot_card),
                     user_card_class.value,
                     bot_card_class.value,
@@ -652,7 +652,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
         elif result == "lose":
             set_user_data(user.id, "money", get_user_data(user.id, "money") - bet)
             remove_card_from_user(user.id, get_card_id_by_name(card_to_play))
-            return get_string_by_id(loca_sheet, "rps_lose", config.language).format(
+            return get_string_by_id(loca_sheet, "rps_lose").format(
                 get_card_name_by_id(bot_card),
                 user_card_class.value,
                 bot_card_class.value,
@@ -666,14 +666,14 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
                 set_user_data(user.id, "exp", get_user_data(user.id, "exp") + rps_bonus_exp(bet))
                 if not bot_card in get_user_data(user.id, "cards"):
                     add_card_to_user(user.id, bot_card)
-                    return get_string_by_id(loca_sheet, "rps_tie_win", config.language).format(
+                    return get_string_by_id(loca_sheet, "rps_tie_win").format(
                         get_card_name_by_id(bot_card),
                         user_card_class.value,
                         bet,
                         rps_bonus_exp(bet)
                     )    
                 else:
-                    return get_string_by_id(loca_sheet, "rps_tie_win_already_have", config.language).format(
+                    return get_string_by_id(loca_sheet, "rps_tie_win_already_have").format(
                         get_card_name_by_id(bot_card),
                         user_card_class.value,
                         bet,
@@ -683,14 +683,14 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             elif user_card_rank < bot_card_rank:
                 set_user_data(user.id, "money", get_user_data(user.id, "money") - bet)
                 remove_card_from_user(user.id, get_card_id_by_name(card_to_play))
-                return get_string_by_id(loca_sheet, "rps_tie_lose", config.language).format(
+                return get_string_by_id(loca_sheet, "rps_tie_lose").format(
                     get_card_name_by_id(bot_card),
                     user_card_class.value,
                     bet,
                     card_to_play
                 )
             else:
-                return get_string_by_id(loca_sheet, "rps_tie_tie", config.language).format(
+                return get_string_by_id(loca_sheet, "rps_tie_tie").format(
                     get_card_name_by_id(bot_card),
                     user_card_class.value
                 )
@@ -703,19 +703,19 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             try:
                 roll_count = int(args[1])
             except ValueError: # invalid roll count
-                return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
+                return get_string_by_id(loca_sheet, "roll_invalid_time").format(
                     minimum_gacha_pull,
                     maxiumum_gacha_pull
                 )
         
         if roll_count < minimum_gacha_pull or roll_count > maxiumum_gacha_pull: # invalid roll count
-            return get_string_by_id(loca_sheet, "roll_invalid_time", config.language).format(
+            return get_string_by_id(loca_sheet, "roll_invalid_time").format(
                     minimum_gacha_pull,
                     maxiumum_gacha_pull
             )
         
         if get_user_data(user.id, "guarantee") < roll_count: # cant afford
-            return get_string_by_id(loca_sheet, "roll_supra_cant_afford", config.language).format(
+            return get_string_by_id(loca_sheet, "roll_supra_cant_afford").format(
                 roll_count - get_user_data(user.id, "guarantee"),
                 roll_count
             )
@@ -728,7 +728,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
             pulled_card = get_random_card_by_rarity(rarity)
             if pulled_card not in get_user_data(user.id, "cards"): # if user dont have the card
                 total_bonus_exp += get_bonus_exp_by_rarity(rarity)
-                msg += get_string_by_id(loca_sheet, "roll_result", config.language).format(
+                msg += get_string_by_id(loca_sheet, "roll_result").format(
                     n + 1,
                     get_card_rarity_by_id(pulled_card),
                     get_card_name_by_id(pulled_card),
@@ -737,7 +737,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
                 add_card_to_user(user.id, pulled_card)
             else: # if user already have the card
                 total_bonus_money += bonus_money_when_pull_same_card
-                msg += get_string_by_id(loca_sheet, "roll_result_already_have", config.language).format(
+                msg += get_string_by_id(loca_sheet, "roll_result_already_have").format(
                     n + 1,
                     get_card_rarity_by_id(pulled_card),
                     get_card_name_by_id(pulled_card),
@@ -751,7 +751,7 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
         set_user_data(user.id, "roll", get_user_data(user.id, "roll") + roll_count)
         
         return discord.Embed(
-            title=get_string_by_id(loca_sheet, "roll_embed_title", config.language),
+            title=get_string_by_id(loca_sheet, "roll_embed_title"),
             description=msg,
             color=0x00ff00
         )
@@ -765,34 +765,34 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
     # region give
     if args[0] == "give":
         if get_user_data(user.id, "level") < give_requirement_level:
-            return get_string_by_id(loca_sheet, "give_requirement", config.language).format(
+            return get_string_by_id(loca_sheet, "give_requirement").format(
                 give_requirement_level
             )
         if args_len < 2:
-            return get_string_by_id(loca_sheet, "give_invalid_user", config.language)
+            return get_string_by_id(loca_sheet, "give_invalid_user")
         try:
             target_user = bot.get_user(sussyutils.get_user_id_from_snowflake(args[1]))
             if target_user is None:
-                return get_string_by_id(loca_sheet, "give_invalid_user", config.language)
+                return get_string_by_id(loca_sheet, "give_invalid_user")
         except:
-            return get_string_by_id(loca_sheet, "give_invalid_user", config.language)
+            return get_string_by_id(loca_sheet, "give_invalid_user")
         
         if args_len < 3:
-            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+            return get_string_by_id(loca_sheet, "give_invalid_amount")
         try:
             amount = int(args[2])
         except:
-            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+            return get_string_by_id(loca_sheet, "give_invalid_amount")
         
         if amount < 1:
-            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+            return get_string_by_id(loca_sheet, "give_invalid_amount")
         
         if get_user_data(user.id, "money") < amount:
-            return get_string_by_id(loca_sheet, "give_invalid_amount", config.language)
+            return get_string_by_id(loca_sheet, "give_invalid_amount")
         
         set_user_data(user.id, "money", get_user_data(user.id, "money") - amount)
         set_user_data(target_user.id, "money", get_user_data(target_user.id, "money") + amount)
-        return get_string_by_id(loca_sheet, "give_success", config.language).format(
+        return get_string_by_id(loca_sheet, "give_success").format(
             target_user.display_name,
             amount
         )
@@ -801,12 +801,12 @@ def command_response(args: list[str], user: discord.User, bot: discord.Client) -
     # region transform
     elif args[0] == "transform":
         if args_len < 2:
-            return get_string_by_id(loca_sheet, "missing_card_name", config.language)
+            return get_string_by_id(loca_sheet, "missing_card_name")
         if not get_card_id_by_name(args[1]) in get_user_data(user.id, "cards"):
-            return get_string_by_id(loca_sheet, "invalid_card", config.language)
+            return get_string_by_id(loca_sheet, "invalid_card")
         remove_card_from_user(user.id, get_card_id_by_name(args[1]))
         set_user_data(user.id, "money", get_user_data(user.id, "money") + card_transform_price)
-        return get_string_by_id(loca_sheet, "transform_success", config.language).format(
+        return get_string_by_id(loca_sheet, "transform_success").format(
             args[1],
             card_transform_price
         )

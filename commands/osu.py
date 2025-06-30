@@ -19,7 +19,7 @@ def command_response(osu_api: Ossapi, prefix: str, command: str):
     try:
         osu_command = command.split()[0]
     except:
-        return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+        return get_string_by_id(loca_sheet, "command_help").format(prefix)
 
     # Subcommand
     match osu_command:
@@ -32,7 +32,7 @@ def command_response(osu_api: Ossapi, prefix: str, command: str):
                 user_rank_history = user.rank_history
                 user_rank = user_rank_history.data[len(user_rank_history.data) - 1]
 
-                rs = get_string_by_id(loca_sheet, "user_info_template", config.language).format(
+                rs = get_string_by_id(loca_sheet, "user_info_template").format(
                     user.id,
                     user.username,
                     user.country.name,
@@ -40,10 +40,7 @@ def command_response(osu_api: Ossapi, prefix: str, command: str):
                     user_rank,
                     user.rank_highest.rank,
                     int(user.rank_highest.updated_at.timestamp()),
-                    get_string_by_id(loca_sheet, "status_online",
-                                     config.language) if user.is_online else get_string_by_id(loca_sheet,
-                                                                                              "status_offline",
-                                                                                              config.language),
+                    get_string_by_id(loca_sheet, "status_online") if user.is_online else get_string_by_id(loca_sheet, "status_offline"),
                     user_most_play_beatmap.beatmapset.title,
                     user_most_play_beatmap._beatmap.version,
                     user_most_play_beatmap.count
@@ -51,7 +48,7 @@ def command_response(osu_api: Ossapi, prefix: str, command: str):
 
                 return rs
             except Exception as e:
-                return get_string_by_id(loca_sheet, "prompt_error", config.language) + "\n" + str(e)
+                return get_string_by_id(loca_sheet, "prompt_error") + "\n" + str(e)
 
         # Beatmap
         case 'beatmap':
@@ -59,10 +56,10 @@ def command_response(osu_api: Ossapi, prefix: str, command: str):
                 beatmap = osu_api.search_beatmapsets(query=command[len(osu_command) + 1:]).beatmapsets[0]
                 return f'https://osu.ppy.sh/beatmapsets/{beatmap.id}\n'
             except Exception as e:
-                return get_string_by_id(loca_sheet, "prompt_error", config.language) + "\n" + str(e)
+                return get_string_by_id(loca_sheet, "prompt_error") + "\n" + str(e)
 
         case _:
-            return get_string_by_id(loca_sheet, "command_help", config.language).format(prefix)
+            return get_string_by_id(loca_sheet, "command_help").format(prefix)
 
 
 async def command_listener(message: discord.Message, usr_input: str):

@@ -1,9 +1,11 @@
 """Read bot's loca file"""
 import csv
+from lib.sussyconfig import get_config
 from lib.sussyutils import string_hash_to_newline
 
+config = get_config()
 
-def get_string_list(filepath: str, lang: str) -> list:
+def get_string_list(filepath: str, lang: str = config.language) -> list:
     rs = []
     with open(filepath, encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
@@ -18,7 +20,7 @@ def get_string_list(filepath: str, lang: str) -> list:
         return rs
 
 
-def get_string_by_id(filepath: str, id_: str, lang: str) -> str:
+def get_string_by_id(filepath: str, id_: str, lang: str = config.language) -> str:
     with open(filepath, encoding="utf8") as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:

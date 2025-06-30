@@ -1,14 +1,12 @@
 import discord
 from pytz import timezone as tz
 
+### Core config
 bot_name = "open-susbot"
 prefix = 'b!'
-bot_version = '2.3.1'
+bot_version = '2.4'
 
 TOKEN = 'ur bot token here'
-
-OSUAPI_CLIENT_ID = 'ur osu!api client id here'
-OSUAPI_CLIENT_SECRET = 'ur osu!api client secret here'
 
 MONGO_URI = 'mongodb uri here'
 MONGO_DB_NAME = 'ur db name here'
@@ -29,6 +27,11 @@ specific_prefix = {
 # 69420105727: "n!"
 # }
 
+### osu command configs
+OSUAPI_CLIENT_ID = 'ur osu!api client id here'
+OSUAPI_CLIENT_SECRET = 'ur osu!api client secret here'
+
+### autoreact configs
 autoreact_emojis = {
 }  # place autoreact emojis here in form "word: emoji"
 # Example:
@@ -42,6 +45,7 @@ autoreact_emojis_supported_channel_types = [
     discord.ChannelType.public_thread
 ] # Supported channel types
 
+### Ghostping detector configs
 enable_ghostping_detector = False  # enable ghostping detector or not
 ghostping_check_time_range = 15  # time to detect ghostping
 ghostping_detector_blacklist_guild = []  # place id of servers that don't use ghostping detector here!

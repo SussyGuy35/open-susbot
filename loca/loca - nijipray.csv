@@ -1,8 +1,8 @@
 string_id,vi,en
 pray,Bạn đã lạy Nijika. Bạn đã tiến thêm được 1 bước trên hành trình trở thành Nijikon mạnh nhất lịch sử.,You prayed Nijika. You have given one more step on the journey to become the most powerful Nijikon in history.
 pray_special,Bạn đã lạy Nijika. Nijika đã hiện lên và chúc phúc cho bạn. Bạn sẽ có một ngày tuyệt vời hôm nay. Cộng {0} bước trên hành trình trở thành Nijikon mạnh nhất lịch sử.,You prayed Nijika. Nijika has appeared and blessed you. You will have a great day today. Add {0} step on the journey to become the most powerful Nijikon in history.
-pray_choke,Bạn đã lạy Nijika. Vì hôm qua bạn đã quên cầu nguyện Nijika nên lượt cầu nguyện hôm nay của bạn sẽ không được tính. Hãy quay lại vào ngày mai nhé!,"You prayed Nijika. Because yesterday you forgot to pray Nijika, your prayer today will not be counted. Come back tomorrow!"
-already_prayed,Hôm nay bạn đã lạy Nijika rồi. Hãy quay lại ngày mai để tiếp tục cầu nguyện Nijika nhé!,You already prayed Nijika today. Come back to tomorrow to continue praying Nijika!
+pray_choke,Bạn đã lạy Nijika. Vì hôm qua bạn đã quên lạy Nijika nên lượt lạy hôm nay của bạn sẽ không được tính. Hãy quay lại vào ngày mai nhé!,"You prayed Nijika. Because yesterday you forgot to pray Nijika, your prayer today will not be counted. Come back tomorrow!"
+already_prayed,Hôm nay bạn đã lạy Nijika rồi. Hãy quay lại ngày mai để lạy Nijika nhé!,You already prayed Nijika today. Come back to tomorrow to continue praying Nijika!
 leaderboard,Bảng xếp hạng (top 10),Leaderboard (top 10)
 leaderboard_empty,Hiện không có ai trên bảng xếp hạng,Empty leaderboard
 userinfo_embed_title,Thông tin con chiên,User info
