@@ -23,6 +23,9 @@ def create_user(userid: str | int):
         "_id": str(userid), 
         "prayers": 0, 
         "last_pray": 0, 
+        "pray_count": 0,
+        "special_pray_count": 0,
+        "miss_count": 0,
         "current_rate": 20
     }
     )
@@ -55,7 +58,7 @@ def get_leaderboard(limit : int | None = None) -> list:
     ]))
 
 
-def get_user_rank(userid: str | int) -> int:
+def get_user_rank(userid: str | int) -> int | None:
     userid = str(userid)
     leaderboard = get_leaderboard()
     for rank, user in enumerate(leaderboard, start=1):
@@ -64,7 +67,12 @@ def get_user_rank(userid: str | int) -> int:
     return None
 
 
-def command_response(args: list[str], bot: discord.Client, user: discord.User) -> str:
+def calculate_bonus_percent(user_pray: int, top_player_pray: int) -> float | int:
+    bp = max(0, min(36, (top_player_pray - user_pray) / 3))
+    return bp if not bp%1==0 else int(bp)
+
+
+def command_response(args: list[str], bot: discord.Client, user: discord.User | discord.Member) -> str | discord.Embed:
     # region Normal pray
     if len(args) == 0:
         today = datetime.now(tz)
@@ -73,19 +81,26 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
         current_rate = get_user_data(user.id, "current_rate")
         # check if pray yesterday
         if last_pray.date() == today.date() - timedelta(days=1) or get_user_data(user.id, "last_pray") == 0:
-            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")):
-                if pray_num >= 30:
-                    set_user_data(user.id, "prayers", pray_num + 2)
-                    set_user_data(user.id, "last_pray", today.timestamp())
-                    set_user_data(user.id, "current_rate", 12 if pray_num+2 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special").format(2)
-                else:
-                    set_user_data(user.id, "prayers", pray_num + 3)
-                    set_user_data(user.id, "last_pray", today.timestamp())
-                    set_user_data(user.id, "current_rate", 12 if pray_num+3 < 35 else 20)
-                    return get_string_by_id(loca_sheet, "pray_special").format(3)
-                
+            set_user_data(user.id, "pray_count", get_user_data(user.id, "pray_count") + 1)
+            # get top #1 player point
+            top_player = get_leaderboard(1)[0]
+            top_player_pray = top_player["prayers"]
+            # bonus percent base on point difference to top player
+            bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
 
+            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent):
+                set_user_data(user.id, "special_pray_count", get_user_data(user.id, "special_pray_count") + 1)
+                # point and multiplier
+                # x2 mult if weekend
+                mult = 2 if today.weekday() in (5, 6) else 1
+                point_earned = 2 if pray_num >= 50 else 3
+                total_point = point_earned * mult
+                
+                set_user_data(user.id, "prayers", pray_num + total_point)
+                set_user_data(user.id, "last_pray", today.timestamp())
+                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 20)
+                return get_string_by_id(loca_sheet, "pray_special").format(total_point)
+                
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
             set_user_data(user.id, "current_rate", current_rate + (1 if current_rate >=20 else 2))
@@ -96,6 +111,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
 
         set_user_data(user.id, "last_pray", today.timestamp())
         set_user_data(user.id, "current_rate", current_rate + (2 if current_rate >=20 else 4))
+        set_user_data(user.id, "miss_count", get_user_data(user.id, "miss_count") + 1)
 
         return get_string_by_id(loca_sheet, "pray_choke")
     # endregion
@@ -111,14 +127,14 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
             color=0x00ff00
         )
 
-        for rank, user in enumerate(leaderboard, start=1):
-            _user = bot.get_user(int(user["_id"]))
+        for rank, usr in enumerate(leaderboard, start=1):
+            _user = bot.get_user(int(usr["_id"]))
             user_display_name = _user.display_name if _user else "Unknown User"
-            if user["prayers"] == 0:
+            if usr["prayers"] == 0:
                 break
             response.add_field(
                 name=f"#{rank} - {user_display_name}",
-                value=f"Pray: {user['prayers']}",
+                value=f"Pray: {usr['prayers']}",
                 inline=False
             )
 
@@ -161,6 +177,24 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
             inline=False
         )
 
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_pray", config.language),
+            value=get_user_data(user_to_show.id, "pray_count"),
+            inline=False
+        )
+
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_special_pray", config.language),
+            value=get_user_data(user_to_show.id, "special_pray_count"),
+            inline=False
+        )
+
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_miss", config.language),
+            value=get_user_data(user_to_show.id, "miss_count"),
+            inline=False
+        )
+
         response.set_thumbnail(url=user_to_show.display_avatar.url)
         return response
     # endregion
@@ -170,7 +204,14 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User) -
     # endregion
     # region nextpercent
     if args[0] == "nextpercent":
-        current_rate = get_user_data(user.id, "current_rate")
+        
+        top_player = get_leaderboard(1)[0]
+        top_player_pray = top_player["prayers"]
+        pray_num = get_user_data(user.id, "prayers")
+
+        bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
+
+        current_rate = get_user_data(user.id, "current_rate") + bonus_percent
         return str(current_rate) + "%"
     # endregion
 
