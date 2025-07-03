@@ -154,6 +154,10 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
         if get_user_data(user_to_show.id, "prayers") == 0:
             return get_string_by_id(loca_sheet, "userinfo_blank")
         
+        pray_num = get_user_data(user_to_show.id, "prayers")
+        top_player = get_leaderboard(1)[0]
+        top_player_pray = top_player["prayers"]
+
         response = discord.Embed(
             title=get_string_by_id(loca_sheet, "userinfo_embed_title"),
             color=0x00ff00
@@ -167,7 +171,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_point"),
-            value=get_user_data(user_to_show.id, "prayers"),
+            value=pray_num,
             inline=False
         )
 
@@ -192,6 +196,12 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_miss", config.language),
             value=get_user_data(user_to_show.id, "miss_count"),
+            inline=False
+        )
+
+        response.add_field(
+            name=get_string_by_id(loca_sheet, "userinfo_current_rate", config.language),
+            value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)}%",
             inline=False
         )
 
