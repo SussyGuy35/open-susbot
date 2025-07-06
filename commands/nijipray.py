@@ -105,7 +105,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
             # bonus percent base on point difference to top player
             bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
             # lucky rate base on user's luck
-            lucky_rate = calculate_lucky_rate(pray_num, get_user_data(user.id, "special_pray_count"))
+            lucky_rate = calculate_lucky_rate(get_user_data(user.id, "pray_count"), get_user_data(user.id, "special_pray_count"))
 
             if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent+ lucky_rate):
                 set_user_data(user.id, "special_pray_count", get_user_data(user.id, "special_pray_count") + 1)
