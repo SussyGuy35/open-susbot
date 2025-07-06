@@ -39,6 +39,7 @@ def set_user_data(userid: str | int, key: str, value):
         {"$set": {key: value}}
     )
 
+
 def get_user_data(userid: str | int, key: str):
     user = collection.find_one({"_id": str(userid)})
     if not user:
@@ -72,6 +73,22 @@ def calculate_bonus_percent(user_pray: int, top_player_pray: int) -> float | int
     return bp if not bp%1==0 else int(bp)
 
 
+def calculate_lucky_rate(praynum: int, special_praynum: int) -> float | int:
+    # 0.35 is the threshold
+    if praynum < 5:
+        return 0 # only start from 5th pray
+    
+    rate = special_praynum/praynum
+    if rate == 0:
+        return 12
+    elif rate < 0.35:
+        r = min(12, 1/rate)
+        return r if not r%1==0 else int(r)
+    else:
+        r = -10*rate
+        return r if not r%1==0 else int(r)
+
+
 def command_response(args: list[str], bot: discord.Client, user: discord.User | discord.Member) -> str | discord.Embed:
     # region Normal pray
     if len(args) == 0:
@@ -87,8 +104,10 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
             top_player_pray = top_player["prayers"]
             # bonus percent base on point difference to top player
             bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
+            # lucky rate base on user's luck
+            lucky_rate = calculate_lucky_rate(pray_num, get_user_data(user.id, "special_pray_count"))
 
-            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent):
+            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent+ lucky_rate):
                 set_user_data(user.id, "special_pray_count", get_user_data(user.id, "special_pray_count") + 1)
                 # point and multiplier
                 # x2 mult if weekend
@@ -155,6 +174,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
             return get_string_by_id(loca_sheet, "userinfo_blank")
         
         pray_num = get_user_data(user_to_show.id, "prayers")
+        special_pray_count = get_user_data(user_to_show.id, "special_pray_count")
         top_player = get_leaderboard(1)[0]
         top_player_pray = top_player["prayers"]
 
@@ -201,7 +221,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_current_rate", config.language),
-            value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)}%",
+            value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_num, special_pray_count)}%",
             inline=False
         )
 
