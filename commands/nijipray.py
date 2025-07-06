@@ -221,7 +221,8 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_current_rate", config.language),
-            value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_num, special_pray_count)}%",
+            # value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_num, special_pray_count)}%",
+            value=f"Pure: {get_user_data(user_to_show.id, 'current_rate')}%; bonus: {calculate_bonus_percent(pray_num, top_player_pray)}%; Lucky: {calculate_lucky_rate(pray_num, special_pray_count)}%; Total: {get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_num, special_pray_count)}%",
             inline=False
         )
 
