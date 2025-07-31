@@ -1,0 +1,4 @@
+string_id,vi,en
+afk_response,**{0}** đang **{1}**!,**{0}** are **{1}** right now!
+afk_set,Đã set trạng thái của bạn thành **{0}**!,Set your status to **{0}**
+afk_cleared,Đã bỏ trạng thái **{0}** của **{1}**!,"Welcome back, **{1}**! I removed your **{0}** status!"

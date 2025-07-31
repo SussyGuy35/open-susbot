@@ -10,7 +10,8 @@ from commands import (
     gvs, help as bot_help, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
-    gacha, reactionroles, nijipray, momjoke, incase
+    gacha, reactionroles, nijipray, momjoke, incase,
+    afk
 )
 
 # MARK: import features
@@ -21,6 +22,7 @@ import features.gvscount
 import features.on_bot_mentioned
 import features.reaction_roles
 import features.autoqr
+import features.afk_notificer
 
 config = get_config()
 
@@ -226,6 +228,11 @@ async def trongtruonghop(ctx: discord.Interaction):
     await incase.slash_command_listener(ctx)
 
 
+@tree.command(name="set_afk")
+async def set_afk(ctx: discord.Interaction, status: str | None = None):
+    await afk.slash_command_listener(ctx, status)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():
@@ -342,6 +349,9 @@ async def on_message(message: discord.Message):
         
         elif command in incase.cmd_names:
             await incase.command_listener(message)
+        
+        elif command in afk.cmd_names:
+            await afk.command_listener(message, message.author, plain_args)
 
         # Invalid command
         else:
@@ -353,6 +363,7 @@ async def on_message(message: discord.Message):
         await features.gvscount.gvs(message, userid)
         await features.auto_react_emoji.react(config.autoreact_emojis, message)
         await features.autoqr.check_auto_qr(message)
+        await features.afk_notificer.on_message(message)
 
 
 client.run(TOKEN)
