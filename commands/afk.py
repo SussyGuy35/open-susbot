@@ -13,7 +13,10 @@ async def command_listener(message: discord.Message, user: discord.Member | disc
     
     status = status or "AFK"
 
-    await user.edit(nick=f"[{status}] {user.display_name}")
+    if len(f"[{status}] {user.display_name}") < 32:
+        await user.edit(nick=f"[{status}] {user.display_name}")
+    elif len(f"[AFK] {user.display_name}") < 32:
+        await user.edit(nick=f"[AFK] {user.display_name}")
     afk_notificer.set_afk_status(str(user.id), status)
 
 

@@ -37,7 +37,7 @@ async def on_message(message: discord.Message):
     if author_afk_status:
         clear_afk_status(str(message.author.id))
 
-        await message.author.edit(nick=message.author.display_name.replace(f"[{author_afk_status}]", "").strip())
+        await message.author.edit(nick=message.author.display_name.replace(f"[{author_afk_status}]", "").replace("[AFK]","").strip())
 
         response = get_string_by_id(loca_sheet, "afk_cleared").format(
             author_afk_status,
