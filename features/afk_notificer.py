@@ -40,7 +40,7 @@ async def on_message(message: discord.Message):
         try:
             await message.author.edit(nick=message.author.display_name.replace(f"[{author_afk_status}]", "").replace("[AFK]","").strip())
         except discord.Forbidden:
-            return
+            pass
 
         response = get_string_by_id(loca_sheet, "afk_cleared").format(
             author_afk_status,

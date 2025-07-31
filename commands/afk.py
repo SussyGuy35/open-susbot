@@ -19,7 +19,7 @@ async def command_listener(message: discord.Message, user: discord.Member | disc
         elif len(f"[AFK] {user.display_name}") < 32:
             await user.edit(nick=f"[AFK] {user.display_name}")
     except discord.Forbidden:
-        return
+        pass
     afk_notificer.set_afk_status(str(user.id), status)
 
 
@@ -46,7 +46,7 @@ async def slash_command_listener(ctx: discord.Interaction, status: str | None = 
         elif len(f"[AFK] {member.display_name}") < 32:
             await member.edit(nick=f"[AFK] {member.display_name}")
     except discord.Forbidden:
-        return
+        pass
 
     afk_notificer.set_afk_status(str(ctx.user.id), status)
 
