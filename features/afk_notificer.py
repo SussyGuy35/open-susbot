@@ -32,12 +32,15 @@ async def on_message(message: discord.Message):
         return
 
     author_afk_status = get_afk_status(str(message.author.id))
-    if not isinstance(message.author, discord.Member):
+    if not message.guild or not isinstance(message.author, discord.Member):
         return
     if author_afk_status:
         clear_afk_status(str(message.author.id))
 
-        await message.author.edit(nick=message.author.display_name.replace(f"[{author_afk_status}]", "").replace("[AFK]","").strip())
+        try:
+            await message.author.edit(nick=message.author.display_name.replace(f"[{author_afk_status}]", "").replace("[AFK]","").strip())
+        except discord.Forbidden:
+            return
 
         response = get_string_by_id(loca_sheet, "afk_cleared").format(
             author_afk_status,

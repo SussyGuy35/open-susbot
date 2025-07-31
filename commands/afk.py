@@ -7,16 +7,19 @@ loca_sheet = f"loca/loca - {cmd_names[0]}.csv"
 
 
 async def command_listener(message: discord.Message, user: discord.Member | discord.User, status: str | None = None):
-    if message.guild is None or not isinstance(user, discord.Member):
+    if not message.guild or not isinstance(user, discord.Member):
         await message.channel.send("This command can only be used in a server.")
         return
     
     status = status or "AFK"
 
-    if len(f"[{status}] {user.display_name}") < 32:
-        await user.edit(nick=f"[{status}] {user.display_name}")
-    elif len(f"[AFK] {user.display_name}") < 32:
-        await user.edit(nick=f"[AFK] {user.display_name}")
+    try:
+        if len(f"[{status}] {user.display_name}") < 32:
+            await user.edit(nick=f"[{status}] {user.display_name}")
+        elif len(f"[AFK] {user.display_name}") < 32:
+            await user.edit(nick=f"[AFK] {user.display_name}")
+    except discord.Forbidden:
+        return
     afk_notificer.set_afk_status(str(user.id), status)
 
 
@@ -37,7 +40,13 @@ async def slash_command_listener(ctx: discord.Interaction, status: str | None = 
     if member is None:
         return
 
-    await member.edit(nick=f"[{status}] {ctx.user.display_name}")
+    try:
+        if len(f"[{status}] {member.display_name}") < 32:
+            await member.edit(nick=f"[{status}] {member.display_name}")
+        elif len(f"[AFK] {member.display_name}") < 32:
+            await member.edit(nick=f"[AFK] {member.display_name}")
+    except discord.Forbidden:
+        return
 
     afk_notificer.set_afk_status(str(ctx.user.id), status)
 

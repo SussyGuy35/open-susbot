@@ -11,7 +11,7 @@ from commands import (
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
     gacha, reactionroles, nijipray, momjoke, incase,
-    afk
+    afk, ryo
 )
 
 # MARK: import features
@@ -233,6 +233,13 @@ async def set_afk(ctx: discord.Interaction, status: str | None = None):
     await afk.slash_command_listener(ctx, status)
 
 
+@tree.command(name="ryo")
+@app_commands.allowed_installs(guilds=True, users=True)
+@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
+async def get_ryo_image(ctx: discord.Interaction):
+    await ryo.slash_command_listener(ctx)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():
@@ -352,6 +359,9 @@ async def on_message(message: discord.Message):
         
         elif command in afk.cmd_names:
             await afk.command_listener(message, message.author, plain_args)
+        
+        elif command in ryo.cmd_names:
+            await ryo.command_listener(message)
 
         # Invalid command
         else:
