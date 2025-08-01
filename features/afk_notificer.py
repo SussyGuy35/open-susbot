@@ -27,6 +27,15 @@ def clear_afk_status(user_id: str):
     collection.delete_one({"_id": str(user_id)})
 
 
+def remove_status_from_nickname(nickname: str, status: str) -> str:
+    if nickname.startswith(f"[{status}] "):
+        return nickname[len(f"[{status}] "):].strip()
+    elif nickname.startswith("[AFK] "):
+        return nickname[len("[AFK] "):].strip()
+    else:
+        return nickname
+
+
 async def on_message(message: discord.Message):
     if message.author.bot:
         return
@@ -38,7 +47,9 @@ async def on_message(message: discord.Message):
         clear_afk_status(str(message.author.id))
 
         try:
-            await message.author.edit(nick=message.author.display_name.replace(f"[{author_afk_status}]", "").replace("[AFK]","").strip())
+            await message.author.edit(nick=remove_status_from_nickname(
+                message.author.display_name, author_afk_status
+            ))
         except discord.Forbidden:
             pass
 
@@ -52,6 +63,6 @@ async def on_message(message: discord.Message):
         afk_status = get_afk_status(str(mention.id))
         if afk_status:
             response = get_string_by_id(loca_sheet, "afk_response").format(
-                mention.global_name, afk_status
+                remove_status_from_nickname(mention.display_name, afk_status), afk_status
             )
             await message.channel.send(response)
