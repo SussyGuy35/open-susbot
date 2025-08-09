@@ -56,8 +56,8 @@ async def send_feedback(ctx: discord.Interaction):
 
 
 @tree.command(name="help", description=get_string("command_help_desc"))
-async def get_help(ctx: discord.Interaction):
-    await bot_help.slash_command_listener(ctx)
+async def get_help(ctx: discord.Interaction, option: str | None = None):
+    await bot_help.slash_command_listener(ctx, option)
 
 
 @tree.command(name="ping", description=get_string("command_ping_desc"))
@@ -316,7 +316,7 @@ async def on_message(message: discord.Message):
             await message.channel.send(get_string_by_id(f"loca/loca - {args[0]}.csv", args[1], args[2]))
 
         elif command in bot_help.cmd_names:
-            await bot_help.command_listener(message)
+            await bot_help.command_listener(message, args)
 
         elif command in ping.cmd_names:
             await ping.command_listener(message, client)
