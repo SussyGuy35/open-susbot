@@ -22,9 +22,9 @@ class CommandParameterDescription:
 
 
 class CommandHelp:
-    def __init__(self, command_name: str, type: CommandType, description: str, usage: str, parameters: list[CommandParameterDescription] | None = None, aliases: list[str] | None = None):
+    def __init__(self, command_name: str, command_type: CommandType, description: str, usage: str, parameters: list[CommandParameterDescription] | None = None, aliases: list[str] | None = None):
         self.command_name = command_name
-        self.type = type
+        self.command_type = command_type
         self.description = description
         self.usage = usage
         self.parameters = parameters
@@ -55,7 +55,10 @@ class HelpManager:
     def get_command_help(cls, command_name: str) -> CommandHelp | None:
         for section in cls.commands_help.values():
             for command_help in section:
-                if command_help.command_name == command_name:
+                if (
+                    command_help.command_name == command_name
+                    or (command_help.aliases and command_name in command_help.aliases)
+                ):
                     return command_help
                 
 

@@ -1,0 +1,8 @@
+string_id,vi,en
+command_desc,Lấy avatar của ai đó 👀,Get someone's avatar
+command_usage,Dùng để xem avatar của ai đó,Use this command to see someone's avatar
+command_param_user_desc,Người bạn muốn xem avatar,The person you wanna see their avatar
+command_param_server_avatar_desc,False để xem avatar ở profile chính của người đó nếu họ có cài avatar riêng trong server này. Mặc định là True.,Set to False to see their global avatar. Default is True.
+avatar_embed_title,Avatar người dùng,User avatar
+avatar_embed_desc,Avatar của {0},{0}'s avatar
+avatar_noavatar,{0} còn không có avatar 🐧,{0} doesn't even have an avatar 🐧

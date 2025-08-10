@@ -11,7 +11,7 @@ cmd_names = ["help", "h", "gethelp"]
 ssyhelper.HelpManager.add_command_help(
     ssyhelper.CommandHelp(
         command_name="help",
-        type=ssyhelper.CommandType.HYBRID,
+        command_type=ssyhelper.CommandType.HYBRID,
         description=get_string_by_id(loca_sheet, "help_cmd_desc"),
         usage=get_string_by_id(loca_sheet, "help_cmd_usage"),
         parameters=[
@@ -51,14 +51,14 @@ def parse_command_args(args: list[str]) -> ssyhelper.HelpSection | str | None:
         return args[0]  # Return the command name if it's not an index
 
 
-def get_command_name(name: str, type: ssyhelper.CommandType, prefix: str | None = None) -> str:
-    if type == ssyhelper.CommandType.PREFIX:
+def get_command_name(name: str, command_type: ssyhelper.CommandType, prefix: str | None = None) -> str:
+    if command_type == ssyhelper.CommandType.PREFIX:
         if prefix is None:
             raise ValueError("Prefix must be provided for prefix commands.")
         return f"`{prefix}{name}`"
-    elif type == ssyhelper.CommandType.SLASH:
+    elif command_type == ssyhelper.CommandType.SLASH:
         return f"`/{name}`"
-    elif type == ssyhelper.CommandType.HYBRID:
+    elif command_type == ssyhelper.CommandType.HYBRID:
         if prefix is None:
             raise ValueError("Prefix must be provided for hybrid commands.")
         return f"`{prefix}{name}`, `/{name}`"
@@ -74,7 +74,7 @@ def get_help_text(section: ssyhelper.HelpSection, prefix: str) -> discord.Embed:
     commands = ssyhelper.HelpManager.get_commands_help_section(section)
     for command in commands:
         response.add_field(
-            name=get_command_name(command.command_name, command.type, prefix),
+            name=get_command_name(command.command_name, command.command_type, prefix),
             value=command.description,
             inline=False
         )
@@ -92,7 +92,7 @@ def get_command_help_text(command_name: str, prefix: str) -> discord.Embed:
         )
 
     response = discord.Embed(
-        title=get_command_name(command.command_name, command.type, prefix),
+        title=get_command_name(command.command_name, command.command_type, prefix),
         description=command.description,
         color=discord.Color.blurple()
     )
@@ -103,7 +103,7 @@ def get_command_help_text(command_name: str, prefix: str) -> discord.Embed:
 
     if command.parameters:
         params = "\n".join(
-            f"{'[*]' if param.required else ""} `{param.name}` - {param.description}".strip() for param in command.parameters
+            f"{'**[*]**' if param.required else ''} `{param.name}` - {param.description}".strip() for param in command.parameters
         )
         response.add_field(name=get_string_by_id(loca_sheet, "help_parameters"), value=params)
 
@@ -132,16 +132,16 @@ async def slash_command_listener(ctx: discord.Interaction, option: str | None = 
     print(f"{ctx.user} used help commands!")
     prefix = get_prefix(ctx.guild) if ctx.guild else get_prefix(None)
     if option is None:
-        await ctx.followup.send(embed=get_help_text(ssyhelper.HelpSection.CORE, prefix))
+        await ctx.followup.send(embed=get_help_text(ssyhelper.HelpSection.CORE, prefix), ephemeral=True)
     else:
         opt = parse_command_args([option])
         
         if opt is None:
-            await ctx.followup.send(embed=get_help_text(ssyhelper.HelpSection.CORE, prefix))
+            await ctx.followup.send(embed=get_help_text(ssyhelper.HelpSection.CORE, prefix), ephemeral=True)
             return
         
-        if isinstance(option, str):
-            await ctx.followup.send(embed=get_command_help_text(option, prefix))
+        if isinstance(opt, str):
+            await ctx.followup.send(embed=get_command_help_text(option, prefix), ephemeral=True)
             return
         
-        await ctx.followup.send(embed=get_help_text(opt))
+        await ctx.followup.send(embed=get_help_text(opt, prefix), ephemeral=True)

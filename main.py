@@ -6,8 +6,8 @@ from lib.sussyutils import get_prefix, parse_command
 
 # MARK: import commands
 from commands import (
-    amogus, ask, creategif, echo, emoji as getemoji,
-    gvs, help as bot_help, nijika, osu, pick,
+    help as bot_help, ask, creategif, echo, emoji as getemoji,
+    gvs, amogus, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
     gacha, reactionroles, nijipray, momjoke, incase,
@@ -60,14 +60,14 @@ async def get_help(ctx: discord.Interaction, option: str | None = None):
     await bot_help.slash_command_listener(ctx, option)
 
 
-@tree.command(name="ping", description=get_string("command_ping_desc"))
+@tree.command(name="ping", description=get_string("command_desc", "ping"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def pingpong(ctx: discord.Interaction):
     await ping.slash_command_listener(ctx, client)
 
 
-@tree.command(name="avatar", description=get_string("command_avatar_desc"))
+@tree.command(name="avatar", description=get_string("command_desc", "avatar"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_avatar(ctx: discord.Interaction, user: discord.User, server_avatar: bool = True):
@@ -155,12 +155,12 @@ async def bean_user(ctx: discord.Interaction, user: discord.User, reason: str):
     await bean.slash_command_listener(ctx, user, reason)
 
 
-@tree.command(name="get_prefix", description=get_string("command_getprefix_desc"))
+@tree.command(name="get_prefix", description=get_string("command_desc", "getprefix"))
 async def get_bot_prefix(ctx: discord.Interaction):
     await getprefix.slash_command_listener(ctx)
 
 
-@tree.command(name="doino", description=get_string("command_doino_desc"))
+@tree.command(name="doino", description=get_string("command_desc", "doino"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_vietqr(
@@ -228,7 +228,7 @@ async def trongtruonghop(ctx: discord.Interaction):
     await incase.slash_command_listener(ctx)
 
 
-@tree.command(name="set_afk")
+@tree.command(name="set_afk", description=get_string("command_desc", "afk"))
 async def set_afk(ctx: discord.Interaction, status: str | None = None):
     await afk.slash_command_listener(ctx, status)
 

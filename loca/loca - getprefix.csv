@@ -1,2 +1,4 @@
 string_id,vi,en
 prompt,Prefix của con bot trong server hiện tại: `{0}`. Hãy thử `{0}help`.,Bot's prefix in current server: `{0}`. Try `{0}help`.
+command_desc,Lấy prefix của con bot tại server hiện tại,Get bot's prefix in current server
+command_usage,Dùng để xem prefix của con bot tại server hiện tại.,Use this command to see which prefix the bot used in this server.
