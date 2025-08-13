@@ -1,6 +1,17 @@
 import discord
 import requests
 import random
+import lib.sussyhelper as sh
+
+sh.HelpManager.add_command_help(
+    sh.CommandHelp(
+        command_name="randwaifu",
+        command_type=sh.CommandType.SLASH,
+        description="random waifu image",
+        usage="random waifu image",
+    ),
+    sh.HelpSection.FUN
+)
 
 types = [
     "waifu",

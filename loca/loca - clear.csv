@@ -4,3 +4,6 @@ bot_no_permission,Bot không có quyền để dùng lệnh này trong server hi
 invalid_number,Số tin nhắn không hợp lệ! Số tin nhắn phải là số tự nhiên n với 0 < n <= 100.,Invalid number. Must be a natural number n with 0 < n < =100
 success,Đã xóa thành công {0} tin nhắn!,Deleted {0} messages successfully!
 messages_number,Số tin nhắn muốn xóa. 0 < n <= 100,Number of messages to delete. 0 < n <= 100
+command_desc,Xóa nhanh 1 số lượng tin nhắn trong kênh,Bulk delete a number of messages in current channel
+command_usage,Dùng để xóa nhanh 1 số lượng lớn tin nhắn trong kênh chat hiện tại. Hỗ trợ tối đa 100 tin nhắn.,Use this command to bulk delete a large number of messages in current channel. Support up to 100 messages per command.
+command_param_number_desc,Số tin nhắn bạn muốn xóa,Number of messages to delete. 0 < n <= 100

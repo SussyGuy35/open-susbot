@@ -1,0 +1,4 @@
+string_id,vi,en
+command_desc,Ảnh mèo ngẫu nhiên,Random image of cat
+command_usage,Hiện 1 ảnh mèo ngẫu nhiên,Show a random image of cat
+command_param_is_cat_girl_desc,"Nếu là True, con mèo hiện ra sẽ không phải mèo bình thường mà là gái mèo alime owo","If True, show a image of anime cat girl instead"

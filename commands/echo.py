@@ -43,10 +43,10 @@ async def command_listener(message: discord.Message, msg: str):
     await delete_message(message)
 
     if message.reference is None:
-        await message.channel.send(command_response(msg))
+        await message.channel.send(command_response(msg), allowed_mentions=discord.AllowedMentions.none())
     else:
         if message.reference.cached_message is None:
             original_message = await message.channel.fetch_message(message.reference.message_id)
         else:
             original_message = message.reference.cached_message
-        await original_message.reply(command_response(msg))
+        await original_message.reply(command_response(msg), mention_author=False, allowed_mentions=discord.AllowedMentions.none())

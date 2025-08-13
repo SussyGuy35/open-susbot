@@ -1,0 +1,4 @@
+string_id,vi,en
+command_desc,Chọn phương án ngẫu nhiên,Random choice
+command_usage,Chọn 1 phương án ngẫu nhiên trong các phương án được đưa ra,Pick a random choice
+command_param_options_desc,"Các phương án để lựa chọn. Cách nhau bởi dấu cách (nếu trong các phương án đều không có dấu cách), hoặc dấu phảy. Nếu trong các phương án có cả dấu cách và dấu phảy, hãy đặt nó trong ngoặc kép và cách nhau bởi dấu cách.",Choices

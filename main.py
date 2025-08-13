@@ -74,14 +74,14 @@ async def get_avatar(ctx: discord.Interaction, user: discord.User, server_avatar
     await avatar.slash_command_listener(ctx, user, server_avatar)
 
 
-@tree.command(name="emoji", description=get_string("command_emoji_desc"))
+@tree.command(name="emoji", description=get_string("command_desc", "emoji"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_emoji(ctx: discord.Interaction, emoji: str):
     await getemoji.slash_command_listener(client, ctx, emoji)
 
 
-@tree.command(name="nijika", description=get_string("command_nijika_desc"))
+@tree.command(name="nijika", description=get_string("command_desc", "nijika"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_nijika_image(ctx: discord.Interaction):
@@ -145,7 +145,7 @@ async def get_randwaifu(ctx: discord.Interaction):
     await randwaifu.slash_command_listener(ctx)
 
 
-@tree.command(name="create_gif", description=get_string("command_create_gif_desc"))
+@tree.command(name="create_gif", description=get_string("command_desc", "creategif"))
 async def create_gif(ctx: discord.Interaction, file: discord.Attachment):
     await creategif.slash_command_listener(ctx, file)
 
@@ -173,12 +173,12 @@ async def get_vietqr(
     await doino.slash_command_listener(ctx, bankname, accountnumber, accountname, amount, note)
 
 
-@tree.command(name="clear", description=get_string("command_clear_desc"))
+@tree.command(name="clear", description=get_string("command_desc", "clear"))
 async def clear_messages(ctx: discord.Interaction, number: int):
     await clear.slash_command_listener(ctx, number)
 
 
-@tree.command(name="send_reaction_roles_message", description=get_string("command_reaction_roles_desc"))
+@tree.command(name="send_reaction_roles_message", description=get_string("command_desc", "reactionrole"))
 async def send_reaction_roles_message(
         ctx: discord.Interaction,
         prompt_message: str,
@@ -233,7 +233,7 @@ async def set_afk(ctx: discord.Interaction, status: str | None = None):
     await afk.slash_command_listener(ctx, status)
 
 
-@tree.command(name="ryo")
+@tree.command(name="ryo", description=get_string("command_desc", "ryo"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_ryo_image(ctx: discord.Interaction):

@@ -1,3 +1,6 @@
 string_id,vi,en
 embed_desc,được thêm vào <t:{0}>,was added at <t:{0}>
 prompt_exception,Đã có lỗi xảy ra 🐧. Có thể là do bạn không cung cấp 1 custom emoji đúng 👀.,An error has occurred 🐧. Maybe it's because you didn't provide a correct custom emoji 👀.
+command_desc,Lấy emoji nào đó 👀,Get a emoji 👀
+command_usage,"Dùng để xem 1 emoji nào đó. Không hỗ trợ emoji mặc định, và con bot phải có trong server chứa emoji bạn đang muốn xem.","Use this command to see an emoji. Doesn't support default emoji, and the bot must in the server that contain that emoji"
+command_param_emoji_desc,Emoji bạn muốn xem,Emoji you wanna see

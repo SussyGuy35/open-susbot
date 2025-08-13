@@ -6,3 +6,6 @@ failed,Thất bại! Có lẽ là do bot không có emoji.,Failed! Maybe because
 role_added,Đã thêm role **{0}** trong **{1}**,Role **{0}** added in **{1}**!
 role_removed,Đã xóa role **{0}** trong **{1}**,Role **{0}** removed in **{1}**!
 one_role_only,Từ **{0}**:#Bạn chỉ có thể chọn 1 role. Bạn đã có các role sau:,From **{0}**:#You can only have 1 role. You already have:
+command_desc,Tạo tin nhắn mà bạn có thể react để nhận role,Send a message that you can react to get a role
+command_usage,"Sử dụng lệnh này để gửi 1 tin nhắn mà người dùng khác có thể react để được cấp role một cách tự động. Yêu cầu bot cần có quyền quản lý role, quyền gửi tin nhắn và role của bot phải cao hơn các role được cấp.",Send a reaction role message
+command_param_prompt_desc,"Xin lỗi vì quá lười viết hết đống mô tả, cứ tự mò cách dùng đi, dễ mà :)",Im too lazy to write sorry
