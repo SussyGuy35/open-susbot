@@ -105,7 +105,7 @@ def get_help_text(section: ssyhelper.HelpSection, prefix: str) -> discord.Embed:
     for command in commands:
         if isinstance(command, ssyhelper.CommandHelpGroup):
             response.add_field(
-                name=f"{get_string_by_id(loca_sheet, "commands_group")}: {get_command_name(command.command_name, command.command_type, command.parameters, prefix)}",
+                name=f"{get_string_by_id(loca_sheet, 'commands_group')}: {get_command_name(command.command_name, command.command_type, command.parameters, prefix)}",
                 value=command.description,
                 inline=False
             )
@@ -132,7 +132,7 @@ def get_command_help_text(command_name: str, prefix: str) -> discord.Embed:
 
     if isinstance(command, ssyhelper.CommandHelpGroup):
         response = discord.Embed(
-            title=f"{get_string_by_id(loca_sheet, "commands_group")}: {get_command_name(command.command_name, command.command_type, command.parameters, prefix)}",
+            title=f"{get_string_by_id(loca_sheet, 'commands_group')}: {get_command_name(command.command_name, command.command_type, command.parameters, prefix)}",
             description=command.description,
             color=discord.Color.blurple()
         )
@@ -235,7 +235,7 @@ async def command_listener(message: discord.Message, args: list[str]):
 
 
 async def slash_command_listener(ctx: discord.Interaction, option: str | None = None, subcommand: str | None = None):
-    await ctx.response.defer()
+    await ctx.response.defer(ephemeral=True)
     print(f"{ctx.user} used help commands!")
     prefix = get_prefix(ctx.guild) if ctx.guild else get_prefix(None)
     if option is None:

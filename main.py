@@ -180,6 +180,8 @@ async def clear_messages(ctx: discord.Interaction, number: int):
 
 
 @tree.command(name="send_reaction_roles_message", description=get_string("command_desc", "reactionrole"))
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+@app_commands.default_permissions(manage_roles=True)
 async def send_reaction_roles_message(
         ctx: discord.Interaction,
         prompt_message: str,
