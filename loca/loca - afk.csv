@@ -1,4 +1,7 @@
-string_id,vi,en
-afk_response,**{0}** đang **{1}**!,**{0}** are **{1}** right now!
-afk_set,Đã set trạng thái của bạn thành **{0}**!,Set your status to **{0}**
-afk_cleared,Đã bỏ trạng thái **{0}** của **{1}**!,"Welcome back, **{1}**! I removed your **{0}** status!"
+string_id,vi,en,,,
+afk_response,**{0}** đang **{1}**!,**{0}** are **{1}** right now!,,, 
+afk_set,Đã set trạng thái của bạn thành **{0}**!,Set your status to **{0}**,,,
+afk_cleared,Đã bỏ trạng thái **{0}** của **{1}**!,"Welcome back, **{1}**! I removed your **{0}** status!",,,
+command_desc,Nhắc nhở người khác khi bạn không có ở đó,Tell others that you are not here,,,
+command_usage,"Dùng để cài đặt trạng thái của bạn khi bạn không có ở đây, và nhắc nhở người khác nếu họ nhắc đến bạn.",Set your afk status and let others know your status if they mention you.,,,
+command_param_status_desc,Trạng thái của bạn,Your status,,,

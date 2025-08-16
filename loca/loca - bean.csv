@@ -1,3 +1,6 @@
 string_id,vi,en
 bean,Người dùng `{0}` đã bị bean vì lí do: `{1}`!,The user `{0}` have been beaned for reason: `{1}`!
 embed_desc,Bean người dùng nào đó,Bean someone
+command_usage,Dùng để bean (không phải ban) một người dùng nào đó,Bean (not ban) someone
+command_param_user_desc,Người bạn muốn bean,Person u wanna bean
+command_param_reason_desc,Lý do bạn bean người đó,The reason

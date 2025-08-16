@@ -7,3 +7,13 @@ command_help,Các lệnh `{0}gvs`:#- `{0}gvs count [id người dùng]` hoặc `
 not_supported,**gvs** không được hỗ trợ ở đây!,**gvs** is not supported here!
 react_command_response_success,Đã *gvs* tin nhắn đó thành công!,*gvs* succeed!
 react_command_response_invalid_id,"Id tin nhắn không hợp lệ, hoặc không thể gvs ở đây!","Invalid message id, or you cant gvs here!"
+gvs_cmd_desc,Gke vay sao,
+gvs_cmd_usage,"Lệnh này chỉ có các lệnh con, xem hướng dẫn của lệnh con để biết thêm chi tiết",
+gvs_count_cmd_desc,Xem số lần gvs của bạn hoặc ai đó,
+gvs_count_cmd_usage,Dùng lệnh này để xem số lần đã gvs của bạn hoặc của ai đó,
+gvs_count_param_user_desc,Người bạn muốn xem số lần đã gvs,
+gvs_lb_cmd_desc,Bảng xếp hạng gvs,
+gvs_lb_cmd_usage,Hiện bảng xếp hạng gvs,
+gvs_react_cmd_desc,Gke vay sao một tin nhắn nào đó,
+gvs_react_cmd_usage,Dùng lệnh này để gvs một tin nhắn nào đó,
+gvs_react_param_message_id_desc,"ID của tin nhắn bạn muốn gvs. Nếu không cung cấp, bot sẽ gvs tin nhắn gần nhất.",

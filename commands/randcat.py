@@ -1,6 +1,26 @@
 import discord
 import requests
+import lib.sussyhelper as sh
+import lib.locareader as loca_reader
 
+loca_sheet = "loca/loca - randcat.csv"
+
+sh.HelpManager.add_command_help(
+    sh.CommandHelp(
+        command_name="randcat",
+        command_type=sh.CommandType.SLASH,
+        description=loca_reader.get_string_by_id(loca_sheet, "command_desc"),
+        usage=loca_reader.get_string_by_id(loca_sheet, "command_usage"),
+        parameters=[
+            sh.CommandParameterDescription(
+                name="is_cat_girl",
+                description=loca_reader.get_string_by_id(loca_sheet, "command_param_is_cat_girl_desc"),
+                required=False
+            )
+        ]
+    ),
+    sh.HelpSection.FUN
+)
 
 def command_response(is_cat_girl):
     if is_cat_girl:

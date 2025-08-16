@@ -3,8 +3,26 @@ from os import remove
 from requests import get
 from lib.locareader import get_string_by_id
 from lib.cmddata import get_temp_file_path, file_temp_open_write
+import lib.sussyhelper as sh
 
 loca_sheet = "loca/loca - creategif.csv"
+
+sh.HelpManager.add_command_help(
+    sh.CommandHelp(
+        command_name="create_gif",
+        command_type=sh.CommandType.SLASH,
+        description=get_string_by_id(loca_sheet, "command_desc"),
+        usage=get_string_by_id(loca_sheet, "command_usage"),
+        parameters=[
+            sh.CommandParameterDescription(
+                name="file",
+                description=get_string_by_id(loca_sheet, "command_param_file_desc"),
+                required=True
+            )
+        ]
+    ),
+    sh.HelpSection.GENERAL
+)
 
 
 def get_file(url, file_name) -> str:

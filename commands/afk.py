@@ -1,9 +1,27 @@
 import discord
 import lib.locareader
 import features.afk_notificer as afk_notificer
+import lib.sussyhelper as sh
 
 cmd_names = ["afk"]
 loca_sheet = f"loca/loca - {cmd_names[0]}.csv"
+
+sh.HelpManager.add_command_help(
+    sh.CommandHelp(
+        command_name=cmd_names[0],
+        command_type=sh.CommandType.HYBRID,
+        description=lib.locareader.get_string_by_id(loca_sheet, "command_desc"),
+        usage=lib.locareader.get_string_by_id(loca_sheet, "command_usage"),
+        parameters=[
+            sh.CommandParameterDescription(
+                name="status",
+                description=lib.locareader.get_string_by_id(loca_sheet, "command_param_status_desc"),
+                required=False
+            )
+        ]
+    ),
+    sh.HelpSection.GENERAL
+)
 
 
 async def command_listener(message: discord.Message, user: discord.Member | discord.User, status: str | None = None):

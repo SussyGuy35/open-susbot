@@ -2,9 +2,47 @@ import discord
 from lib.locareader import get_string_by_id
 import requests
 import typing
+import lib.sussyhelper as sh
 
 CMD_NAME = "doino"
 loca_sheet = f"loca/loca - {CMD_NAME}.csv"
+
+sh.HelpManager.add_command_help(
+    sh.CommandHelp(
+        command_name=CMD_NAME,
+        command_type=sh.CommandType.SLASH,
+        description=get_string_by_id(loca_sheet, "command_desc"),
+        usage=get_string_by_id(loca_sheet, "command_usage"),
+        parameters=[
+            sh.CommandParameterDescription(
+                name="bankname",
+                description=get_string_by_id(loca_sheet, "command_param_bankname_desc"),
+                required=True
+            ),
+            sh.CommandParameterDescription(
+                name="accountnumber",
+                description=get_string_by_id(loca_sheet, "command_param_accountnumber_desc"),
+                required=True
+            ),
+            sh.CommandParameterDescription(
+                name="accountname",
+                description=get_string_by_id(loca_sheet, "command_param_accountname_desc"),
+                required=False
+            ),
+            sh.CommandParameterDescription(
+                name="amount",
+                description=get_string_by_id(loca_sheet, "command_param_amount_desc"),
+                required=False
+            ),
+            sh.CommandParameterDescription(
+                name="note",
+                description=get_string_by_id(loca_sheet, "command_param_note_desc"),
+                required=False
+            )
+        ]
+    ),
+    sh.HelpSection.GENERAL
+)
 
 bank_names = typing.Literal[
     "ACB", 

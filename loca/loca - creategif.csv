@@ -1,3 +1,6 @@
 string_id,vi,en
-prompt_dont_support,File đã là gif hoặc không được hỗ trợ (đi mà hỏi thằng chủ bot),This file is already a gif or not supported
+prompt_dont_support,File đã là gif hoặc không được hỗ trợ (đi mà hỏi thằng dev),This file is already a gif or not supported
 prompt_exception,Đã có lỗi trong quá trình xử lý,There was an error during the processing
+command_desc,Tạo gif,Create gif
+command_usage,Dùng để đổi đuôi file của 1 file ảnh nào đó thành gif (để có thể lưu bằng nút ngôi sao),Change file extension to gif for easy save
+command_param_file_desc,Ảnh bạn muốn đổi thành gif,Your image
