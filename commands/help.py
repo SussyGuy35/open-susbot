@@ -186,7 +186,12 @@ def get_sub_command_help_text(parent_command_name: str, command_name: str, prefi
             description=get_string_by_id(loca_sheet, 'help_invalid_command_desc'),
             color=discord.Color.red()
         )
-    sub_command = next((cmd for cmd in command.commands if cmd.command_name == command_name), None)
+    sub_command = next(
+        (cmd for cmd in command.commands
+         if cmd.command_name == command_name
+         or (cmd.aliases and command_name in cmd.aliases)),
+        None
+    )
     if sub_command is None:
         return discord.Embed(
             title=get_string_by_id(loca_sheet, "help_invalid_subcommand"),

@@ -56,6 +56,10 @@ async def send_feedback(ctx: discord.Interaction):
 
 
 @tree.command(name="help", description=get_string("command_help_desc"))
+@app_commands.describe(
+    option=get_string("help_param_option_desc", "help"),
+    subcommand=get_string("help_param_subcommand_desc", "help"),
+)
 async def get_help(ctx: discord.Interaction, option: str | None = None, subcommand: str | None = None):
     await bot_help.slash_command_listener(ctx, option, subcommand)
 
@@ -175,6 +179,7 @@ async def get_vietqr(
 
 @tree.command(name="clear", description=get_string("command_desc", "clear"))
 @app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+@app_commands.default_permissions(manage_messages=True)
 async def clear_messages(ctx: discord.Interaction, number: int):
     await clear.slash_command_listener(ctx, number)
 
