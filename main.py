@@ -87,11 +87,11 @@ async def get_emoji(ctx: discord.Interaction, emoji: str):
 async def get_nijika_image(ctx: discord.Interaction):
     await nijika.slash_command_listener(ctx)
 
-@tree.command(name="khoabug", description=get_string("command_khoabug_desc"))
+@tree.command(name="khoabug", description=get_string("command_desc", "khoa"))
 async def get_khoabug(ctx: discord.Interaction, search: str | None = None):
     await khoa.slash_command_listener(ctx, search)
 
-@tree.command(name="khoalist", description=get_string("command_khoalist_desc"))
+@tree.command(name="khoalist", description=get_string("list_command_desc", "khoa"))
 async def get_khoalist(ctx: discord.Interaction):
     await khoa.slash_command_listener_list(ctx)
 
@@ -102,36 +102,36 @@ async def get_amogus_image(ctx: discord.Interaction):
     await amogus.slash_command_listener(ctx)
 
 
-@tree.command(name="osu_user", description=get_string("command_osu_user_desc"))
+@tree.command(name="osu_user", description=get_string("osu_user_cmd_desc", "osu"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def osu_user(ctx: discord.Interaction, username: str):
     await osu.slash_command_listener_user(ctx, username)
 
 
-@tree.command(name="osu_beatmap", description=get_string("command_osu_beatmap_desc"))
+@tree.command(name="osu_beatmap", description=get_string("osu_beatmap_cmd_desc", "osu"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
     await osu.slash_command_listener_beatmap(ctx, beatmap)
 
 
-@tree.command(name="gvs_count", description=get_string("command_gvs_count_desc"))
+@tree.command(name="gvs_count", description=get_string("gvs_count_cmd_desc", "gvs"))
 async def gvs_count(ctx: discord.Interaction, user: discord.User | None = None):
     await gvs.slash_command_listener_count(ctx, user)
 
 
-@tree.command(name="gvs_leaderboard", description=get_string("command_gvs_leaderboard_desc"))
+@tree.command(name="gvs_leaderboard", description=get_string("gvs_lb_cmd_desc", "gvs"))
 async def gvs_lb(ctx: discord.Interaction):
     await gvs.slash_command_listener_lb(ctx)
 
 
-@tree.command(name="gvs_react", description=get_string("command_gvs_react_desc"))
+@tree.command(name="gvs_react", description=get_string("gvs_react_cmd_desc", "gvs"))
 async def gvs_react(ctx: discord.Interaction, message_id: str | None = None):
     await gvs.slash_command_listener_react_message(ctx, message_id)
 
 
-@tree.command(name="randcat", description=get_string("command_randcat_desc"))
+@tree.command(name="randcat", description=get_string("command_desc", "randcat"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_randcat(ctx: discord.Interaction, is_cat_girl: bool = False):
@@ -174,6 +174,7 @@ async def get_vietqr(
 
 
 @tree.command(name="clear", description=get_string("command_desc", "clear"))
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
 async def clear_messages(ctx: discord.Interaction, number: int):
     await clear.slash_command_listener(ctx, number)
 
@@ -199,17 +200,17 @@ async def send_reaction_roles_message(
     )
 
 
-@tree.command(name="nijipray")
+@tree.command(name="nijipray", description=get_string("command_desc", "nijipray"))
 async def nijipray_command(ctx: discord.Interaction):
     await nijipray.slash_command_listener_pray(ctx, client)
 
 
-@tree.command(name="nijipray_leaderboard")
+@tree.command(name="nijipray_leaderboard", description=get_string("lb_cmd_desc", "nijipray"))
 async def nijipray_leaderboard(ctx: discord.Interaction):
     await nijipray.slash_command_listener_leaderboard(ctx, client)
 
 
-@tree.command(name="nijipray_info")
+@tree.command(name="nijipray_info", description=get_string("info_cmd_desc", "nijipray"))
 async def nijipray_info(ctx: discord.Interaction, user: discord.User | None = None):
     await nijipray.slash_command_listener_info(ctx, client, user)
 

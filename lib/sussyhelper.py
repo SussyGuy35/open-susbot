@@ -31,6 +31,12 @@ class CommandHelp:
         self.aliases = aliases
 
 
+class CommandHelpGroup(CommandHelp):
+    def __init__(self, group_name: str, command_type: CommandType, description: str, usage: str, commands: list[CommandHelp], aliases: list[str] | None = None):
+        super().__init__(group_name, command_type, description, usage, aliases=aliases)
+        self.commands = commands
+
+
 class HelpManager:
     commands_help: dict[int, list[CommandHelp]] = {
         HelpSection.CORE.value: [],

@@ -21,7 +21,7 @@ sh.HelpManager.add_command_help(
             )
         ]
     ),
-    sh.HelpSection.GENERAL2
+    sh.HelpSection.GENERAL
 )
 
 

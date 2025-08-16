@@ -1,11 +1,15 @@
 string_id,vi,en
-help_cmd_desc,Hiện trợ giúp. Dùng `{prefix}help [tên lệnh]` để xem trợ giúp cho từng lệnh.,Show help. Use `{prefix}help [command name]` to show help for a command.
+help_cmd_desc,Hiện trợ giúp. Dùng `{prefix}help [tên lệnh] [tên lệnh con]` để xem trợ giúp cho từng lệnh.,Show help. Use `{prefix}help [command name] [sub command name]` to show help for a command.
 help_cmd_usage,Dùng để hiện danh sách các lệnh và cách sử dụng cho từng lệnh.,Use this command to show the commands list and show help for a command.
 help_param_option_desc,Số thứ tự trang muốn xem hoặc tên lệnh muốn xem.,Page number or command name.
+help_param_subcommand_desc,Tên lệnh con muốn xem,Name of the subcommand
 help_title,HELP,HELP
 help_footer,Trang: {0}/{1},Page: {0}/{1}
+help_footer2,Sử dụng {0}help [số trang] để xem các trang,Use {0}help [page number] to see another page
 help_invalid_command,Không thể tìm được lệnh đó!,Cannot find that command!
 help_invalid_command_desc,Vui lòng cung cấp đúng tên lệnh!,Please provide the correct command name!
 help_usage,Công dụng,Usage
 help_parameters,Các tùy chọn,Options
 help_aliases,Tên khác,Aliases
+commands_group,Nhóm lệnh,Commands group
+help_commands_in_group,Các lệnh con,Sub-commands
