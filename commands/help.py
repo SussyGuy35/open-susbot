@@ -62,8 +62,8 @@ def get_command_name(name: str, command_type: ssyhelper.CommandType, parameters:
             raise ValueError("Prefix must be provided for prefix commands.")
         para_str = ""
         if parameters:
-            para_str = " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
-        return f"`{prefix}{name} {para_str}`"
+            para_str = " " + " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
+        return f"`{prefix}{name}{para_str}`"
     elif command_type == ssyhelper.CommandType.SLASH:
         return f"`/{name}`"
     elif command_type == ssyhelper.CommandType.HYBRID:
@@ -71,8 +71,8 @@ def get_command_name(name: str, command_type: ssyhelper.CommandType, parameters:
             raise ValueError("Prefix must be provided for hybrid commands.")
         para_str = ""
         if parameters:
-            para_str = " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
-        return f"`{prefix}{name} {para_str}`, `/{name}`"
+            para_str = " " + " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
+        return f"`{prefix}{name}{para_str}`, `/{name}`"
 
 
 def get_sub_command_name(name: str, parent_name: str, command_type: ssyhelper.CommandType, parameters: list[ssyhelper.CommandParameterDescription] | None, prefix: str | None = None) -> str:
@@ -81,8 +81,8 @@ def get_sub_command_name(name: str, parent_name: str, command_type: ssyhelper.Co
             raise ValueError("Prefix must be provided for prefix commands.")
         para_str = ""
         if parameters:
-            para_str = " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
-        return f"`{prefix}{parent_name} {name} {para_str}`"
+            para_str = " " + " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
+        return f"`{prefix}{parent_name} {name}{para_str}`"
     elif command_type == ssyhelper.CommandType.SLASH:
         return f"`/{parent_name}_{name}`"
     elif command_type == ssyhelper.CommandType.HYBRID:
@@ -90,8 +90,8 @@ def get_sub_command_name(name: str, parent_name: str, command_type: ssyhelper.Co
             raise ValueError("Prefix must be provided for hybrid commands.")
         para_str = ""
         if parameters:
-            para_str = " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
-        return f"`{prefix}{parent_name} {name} {para_str}`, `/{parent_name}_{name}`"
+            para_str = " " + " ".join(f"<{param.name}>" if param.required else f"[{param.name}]" for param in parameters)
+        return f"`{prefix}{parent_name} {name}{para_str}`, `/{parent_name}_{name}`"
 
 
 def get_help_text(section: ssyhelper.HelpSection, prefix: str) -> discord.Embed:

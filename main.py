@@ -56,8 +56,8 @@ async def send_feedback(ctx: discord.Interaction):
 
 
 @tree.command(name="help", description=get_string("command_help_desc"))
-async def get_help(ctx: discord.Interaction, option: str | None = None):
-    await bot_help.slash_command_listener(ctx, option)
+async def get_help(ctx: discord.Interaction, option: str | None = None, subcommand: str | None = None):
+    await bot_help.slash_command_listener(ctx, option, subcommand)
 
 
 @tree.command(name="ping", description=get_string("command_desc", "ping"))
