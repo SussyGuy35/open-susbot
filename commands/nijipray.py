@@ -160,12 +160,12 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
                 
                 set_user_data(user.id, "prayers", pray_num + total_point)
                 set_user_data(user.id, "last_pray", today.timestamp())
-                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 20)
+                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 14)
                 return get_string_by_id(loca_sheet, "pray_special").format(total_point)
                 
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
-            set_user_data(user.id, "current_rate", current_rate + (1 if current_rate >=20 else 2))
+            set_user_data(user.id, "current_rate", current_rate + (3 if current_rate >=20 else 2))
             return get_string_by_id(loca_sheet, "pray")
 
         if last_pray.date() == today.date():
