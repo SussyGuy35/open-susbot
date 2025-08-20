@@ -8,6 +8,7 @@ from lib.locareader import get_string_by_id, get_string_list
 from lib.sussyconfig import get_config
 import lib.cmddata as cmddata
 from lib.mongomanager import MongoManager
+import lib.sussyhelper as ssyhelper
 
 config = get_config()
 
@@ -18,6 +19,146 @@ loca_sheet = f"loca/loca - {CMD_NAME}.csv"
 help_loca_sheet = "loca/loca - gachahelp.csv"
 card_database_path = cmddata.get_res_file_path("gacha/carddb.csv")
 collection = MongoManager.get_collection("gacha", config.MONGO_DB_NAME)
+
+
+ssyhelper.HelpManager.add_command_help(
+    ssyhelper.CommandHelpGroup(
+        group_name=CMD_NAME,
+        command_type=ssyhelper.CommandType.PREFIX,
+        description=get_string_by_id(loca_sheet, "gacha_cmd_desc"),
+        usage=get_string_by_id(loca_sheet, "gacha_cmd_usage"),
+        commands=[
+            ssyhelper.CommandHelp(
+                command_name="roll",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_roll_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_roll_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="count",
+                        description=get_string_by_id(loca_sheet, "gacha_roll_param_count_desc"),
+                        required=False
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="show",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_show_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_show_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="user",
+                        description=get_string_by_id(loca_sheet, "gacha_show_param_user_desc"),
+                        required=False
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="daily",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_daily_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_daily_cmd_usage")
+            ),
+            ssyhelper.CommandHelp(
+                command_name="newplayer",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_newplayer_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_newplayer_cmd_usage")
+            ),
+            ssyhelper.CommandHelp(
+                command_name="userinfo",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_userinfo_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_userinfo_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="user",
+                        description=get_string_by_id(loca_sheet, "gacha_userinfo_param_user_desc"),
+                        required=False
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="lb",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_leaderboard_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_leaderboard_cmd_usage")
+            ),
+            ssyhelper.CommandHelp(
+                command_name="supraroll",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_supraroll_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_supraroll_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="count",
+                        description=get_string_by_id(loca_sheet, "gacha_supraroll_param_count_desc"),
+                        required=False
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="transform",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_transform_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_transform_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="card",
+                        description=get_string_by_id(loca_sheet, "gacha_transform_param_card_desc"),
+                        required=True
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="rps",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_rps_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_rps_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="bet",
+                        description=get_string_by_id(loca_sheet, "gacha_rps_param_bet_desc"),
+                        required=True
+                    ),
+                    ssyhelper.CommandParameterDescription(
+                        name="card",
+                        description=get_string_by_id(loca_sheet, "gacha_rps_param_card_desc"),
+                        required=True
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="give",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_give_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_give_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="user",
+                        description=get_string_by_id(loca_sheet, "gacha_give_param_user_desc"),
+                        required=True
+                    ),
+                    ssyhelper.CommandParameterDescription(
+                        name="amount",
+                        description=get_string_by_id(loca_sheet, "gacha_give_param_amount_desc"),
+                        required=True
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="docs",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "gacha_docs_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gacha_docs_cmd_usage")
+            )
+        ],
+        aliases=cmd_names[1:]
+    ),
+    ssyhelper.HelpSection.GENERAL
+)
+
 
 class RpsClass(enum.Enum):
     Rock = get_string_by_id(loca_sheet, "rps_rock")

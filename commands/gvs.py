@@ -3,6 +3,7 @@ from lib.sussyutils import get_prefix, get_user_id_from_snowflake, is_dev
 from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
 from lib.mongomanager import MongoManager
+import lib.sussyhelper as ssyhelper
 
 config = get_config()
 
@@ -10,6 +11,50 @@ cmd_names = ['gvs']
 
 loca_sheet = "loca/loca - gvs.csv"
 collection = MongoManager.get_collection("gvs", config.MONGO_DB_NAME)
+
+ssyhelper.HelpManager.add_command_help(
+    ssyhelper.CommandHelpGroup(
+        group_name="gvs",
+        command_type=ssyhelper.CommandType.HYBRID,
+        description=get_string_by_id(loca_sheet, "gvs_cmd_desc"),
+        usage=get_string_by_id(loca_sheet, "gvs_cmd_usage"),
+        commands=[
+            ssyhelper.CommandHelp(
+                command_name="count",
+                command_type=ssyhelper.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "gvs_count_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gvs_count_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="user",
+                        description=get_string_by_id(loca_sheet, "gvs_count_param_user_desc"),
+                        required=False
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="lb",
+                command_type=ssyhelper.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "gvs_lb_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gvs_lb_cmd_usage")
+            ),
+            ssyhelper.CommandHelp(
+                command_name="react",
+                command_type=ssyhelper.CommandType.SLASH,
+                description=get_string_by_id(loca_sheet, "gvs_react_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "gvs_react_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="message_id",
+                        description=get_string_by_id(loca_sheet, "gvs_react_param_message_id_desc"),
+                        required=False
+                    )
+                ]
+            )
+        ]
+    ),
+    ssyhelper.HelpSection.GENERAL2
+)
 
 
 def get_gvs(guildid: str, userid: str):

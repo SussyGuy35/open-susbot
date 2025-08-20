@@ -1,0 +1,4 @@
+string_id,vi,en
+command_desc,Làm viết hoa ngẫu nhiên một đoạn chữ,Random caps a string of text
+command_usage,Dùng lệnh này để làm viết hoa ngẫu nhiên một đoạn chữ được cung cấp.,Use this command to make a string of text random caps
+command_param_text_desc,Đoạn văn bản ,The text

@@ -5,6 +5,7 @@ from lib.sussyconfig import get_config
 from lib.mongomanager import MongoManager
 from commands.nijika import command_response as get_nijika_image
 from datetime import datetime, timedelta
+import lib.sussyhelper as ssyhelper
 
 
 config = get_config()
@@ -16,6 +17,48 @@ loca_sheet = f"loca/loca - {CMD_NAME}.csv"
 collection = MongoManager.get_collection("nijipray", config.MONGO_DB_NAME)
 
 tz = config.timezone
+
+
+ssyhelper.HelpManager.add_command_help(
+    ssyhelper.CommandHelpGroup(
+        group_name=CMD_NAME,
+        command_type=ssyhelper.CommandType.HYBRID,
+        description=get_string_by_id(loca_sheet, "command_desc"),
+        usage=get_string_by_id(loca_sheet, "command_usage"),
+        commands=[
+            ssyhelper.CommandHelp(
+                command_name="leaderboard",
+                command_type=ssyhelper.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "lb_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "lb_cmd_usage"),
+                aliases=["lb", "rank"]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="info",
+                command_type=ssyhelper.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "info_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "info_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="user",
+                        description=get_string_by_id(loca_sheet, "info_param_user_desc"),
+                        required=False
+                    )
+                ],
+                aliases=["userinfo"]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="bible",
+                command_type=ssyhelper.CommandType.PREFIX,
+                description=get_string_by_id(loca_sheet, "bible_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "bible_cmd_usage")
+            )
+        ],
+        aliases=cmd_names[1:]
+    ),
+    ssyhelper.HelpSection.GENERAL2
+)
+
 
 
 def create_user(userid: str | int):
@@ -117,12 +160,12 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
                 
                 set_user_data(user.id, "prayers", pray_num + total_point)
                 set_user_data(user.id, "last_pray", today.timestamp())
-                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 20)
+                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 14)
                 return get_string_by_id(loca_sheet, "pray_special").format(total_point)
                 
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
-            set_user_data(user.id, "current_rate", current_rate + (1 if current_rate >=20 else 2))
+            set_user_data(user.id, "current_rate", current_rate + (3 if current_rate >=20 else 2))
             return get_string_by_id(loca_sheet, "pray")
 
         if last_pray.date() == today.date():

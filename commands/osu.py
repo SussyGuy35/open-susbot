@@ -3,12 +3,53 @@ from lib.locareader import get_string_by_id
 from lib.sussyutils import get_prefix
 from lib.sussyconfig import get_config
 from ossapi import *
+import lib.sussyhelper as ssyhelper
 
 config = get_config()
 
 loca_sheet = "loca/loca - osu.csv"
 
-cmd_names = ['osu', 'osuapi', 'o']
+cmd_names = ['osu', 'o']
+
+
+ssyhelper.HelpManager.add_command_help(
+    ssyhelper.CommandHelpGroup(
+        group_name="osu",
+        command_type=ssyhelper.CommandType.HYBRID,
+        description=get_string_by_id(loca_sheet, "osu_cmd_desc"),
+        usage=get_string_by_id(loca_sheet, "osu_cmd_usage"),
+        commands=[
+            ssyhelper.CommandHelp(
+                command_name="user",
+                command_type=ssyhelper.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "osu_user_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "osu_user_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="username",
+                        description=get_string_by_id(loca_sheet, "osu_user_param_username_desc"),
+                        required=True
+                    )
+                ]
+            ),
+            ssyhelper.CommandHelp(
+                command_name="beatmap",
+                command_type=ssyhelper.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "osu_beatmap_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "osu_beatmap_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="beatmap",
+                        description=get_string_by_id(loca_sheet, "osu_beatmap_param_beatmap_desc"),
+                        required=True
+                    )
+                ]
+            )
+        ],
+        aliases=cmd_names[1:]
+    ),
+    ssyhelper.HelpSection.GENERAL2
+)
 
 ossapi_client = Ossapi(config.OSUAPI_CLIENT_ID, config.OSUAPI_CLIENT_SECRET)
 

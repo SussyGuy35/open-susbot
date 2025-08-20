@@ -2,3 +2,8 @@ string_id,vi,en
 list_command_response_template,\# Tổng hợp một số câu nói bất hủ của ăng Khoa (chắc ăng Khoa cũng k biết đâu :0):#{0},\# Summary of some immortal sayings of our god Khoa (maybe he even doesn't know):#{0}
 quote_not_found,"Không thể tìm thấy câu nói nào như vậy trong cơ sở dữ liệu các câu nói bất hủ của anh Khoa. Có thể là do anh Khoa chưa nói câu nào như vậy, hoặc nếu có hãy gửi ảnh chụp màn hình cho chúng tôi để có thể thêm nó vào cơ sở dữ liệu lớn nhất thế giới về các câu nói bất hủ của anh Khoa.","No such saying could be found in the database of our god Khoa's immortal sayings. Maybe it's because he hasn't said anything like that yet, or if so, please send us a screenshot so we can add it to the world's largest database of Khoa's immortal sayings."
 success,Đã gửi câu nói của anh Khoa thành công!,Upload success!
+command_desc,Gửi một câu nói ngẫu nhiên của anh Khoa.,
+command_usage,Dùng lệnh này để gửi một câu nói ngẫu nhiên hoặc cụ thể của anh Khoa,
+command_param_search_desc,"Từ khóa để tìm kiếm cụ thể một câu nói nào đó, nếu không có bot sẽ gửi 1 câu nói ngẫu nhiên",
+list_command_desc,Danh sách một số câu nói của anh Khoa,
+list_command_usage,Dùng để hiện thị một số câu nói nổi tiếng của anh Khoa,

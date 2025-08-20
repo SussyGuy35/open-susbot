@@ -2,11 +2,29 @@ import discord
 import lib.locareader
 from lib.sussyconfig import get_config
 import features.reaction_roles as reaction_roles
+import lib.sussyhelper as sh
 
 config = get_config()
 
 CMD_NAME = "send_reaction_roles_message"
 loca_sheet = f"loca/loca - reactionrole.csv"
+
+sh.HelpManager.add_command_help(
+    sh.CommandHelp(
+        command_name=CMD_NAME,
+        command_type=sh.CommandType.SLASH,
+        description=lib.locareader.get_string_by_id(loca_sheet, "command_desc"),
+        usage=lib.locareader.get_string_by_id(loca_sheet, "command_usage"),
+        parameters=[
+            sh.CommandParameterDescription(
+                name="a little message from bot's dev",
+                description=lib.locareader.get_string_by_id(loca_sheet, "command_param_prompt_desc"),
+                required=True
+            )
+        ]
+    ),
+    sh.HelpSection.MODERATION
+)
 
 async def slash_command_listener(
         ctx: discord.Interaction,

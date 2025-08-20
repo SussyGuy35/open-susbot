@@ -4,3 +4,11 @@ user_info_template,https://osu.ppy.sh/users/{0}#Tên người chơi: **{1}**#Qu�
 status_online,**trực tuyến** 🟢,**online** 🟢
 status_offline,**ngoại tuyến** 🔴,**offline** 🔴
 prompt_error,Đã có lỗi xảy ra!,An error has occurred
+osu_cmd_desc,Một số lệnh liên quan đến game osu!,
+osu_cmd_usage,"Một số lệnh liên quan đến game osu! sử dụng osu!api. Vui lòng xem hướng dẫn chi tiết của các lệnh con. Lưu ý: Mấy lệnh này được làm từ giai đoạn đầu của quá trình phát triển con bot, chủ yếu là để test cái api nên chất lượng của nó khá...",
+osu_user_cmd_desc,Tìm profile của người chơi osu! theo tên,
+osu_user_cmd_usage,Dùng lệnh này để tìm profile của một người chơi osu! nào đó theo tên người dùng.,
+osu_user_param_username_desc,Tên người dùng bạn muốn tìm,
+osu_beatmap_cmd_desc,Tìm beatmap theo tên,
+osu_beatmap_cmd_usage,Dùng lệnh này để tìm một beatmap nào đó theo tên,
+osu_beatmap_param_beatmap_desc,Tên beatmap muốn tìm,

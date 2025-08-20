@@ -15,3 +15,12 @@ userinfo_miss,Số lần quên ,Miss count
 userinfo_blank,Con chiên này chưa giác ngộ,Have not prayed yet
 userinfo_current_rate,Tỉ lệ nổ trong lần lạy tiếp theo,Next pray special rate
 bible,"Nijika là ai? Đối với người mù, cô ấy là thị giác. Đối với người đói, cô ấy là đầu bếp. Đối với người khát, cô ấy là nước. Nếu Nijika suy nghĩ, tôi đồng ý. Nếu Nijika nói, tôi lắng nghe. Nếu Nijika có một triệu người hâm mộ, tôi là một trong số họ. Nếu Nijika có mười người hâm mộ, tôi là một trong số họ. Nếu Nijika chỉ có một người hâm mộ, đó là tôi. Nếu Nijika không có người hâm mộ, tôi không còn tồn tại nữa. Nếu cả thế giới chống lại Nijika, tôi chống lại cả thế giới. Tôi sẽ yêu Nijika cho đến hơi thở cuối cùng của mình.","Who is Nijika? For the blind, she is vision. For the hungry, she is the chef. For the thirsty, she is water. If Nijika thinks, I agree. If Nijika speaks, I'm listening. If Nijika has a million fans, I am one of them. If Nijika has ten fans, I am one of them. If Nijika has only one fan, that is me. If Nijika has no fans, I no longer exist. If the whole world is against Nijika, I am against the whole world. I will love Nijika until my very last breath. "
+command_desc,Lạy thánh Nijika,
+command_usage,"Dùng lệnh này để lạy Đức thánh mẫu Nijika. Ngoài ra còn các lệnh con, xem để biết chức năng",
+lb_cmd_desc,Bảng xếp hạng Nijikon,
+lb_cmd_usage,"Xem bảng xếp hạng các con chiên của nhà thờ Nijika và số điểm Nijikon của họ. Chỉ có top 10 được hiển thị, ai top dưới vui lòng dùng lệnh info để biết hạng của mình.",
+info_cmd_desc,Thông tin con chiên,
+info_cmd_usage,"Xem các thông tin của con chiên như điểm Nijikon, số lần lạy, xếp hạng, tỉ lệ nổ trong lần tới,...",
+info_param_user_desc,Con chiên bạn muốn xem,
+bible_cmd_desc,Kinh thánh Nijika,
+bible_cmd_usage,Hiện bài kinh thánh Nijika,

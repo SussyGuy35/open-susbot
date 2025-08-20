@@ -1,2 +1,4 @@
 string_id,vi,en
 ping,pong! ({0}ms) <:njnk:1094916486029639710>,pong! ({0}ms) <:njnk:1094916486029639710>
+command_desc,Ping pong ping pong,Ping pong ping pong
+command_usage,"Dùng để kiểm tra xem con bot có đang chạy hay không, đồng thời kiểm tra độ trễ con bot",Check if the bot is still running and check the latency.

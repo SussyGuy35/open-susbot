@@ -1,7 +1,9 @@
 string_id,vi,en
 invalid_bank_name,Tên ngân hàng không hợp lệ!,Invalid bank name
-bankname,Tên ngân hàng,Bank name
-accountnumber,Số tài khoản người nhận,Account number
-accountname,Tên chủ tài khoản,Account name
-amount,Số tiền nhận,Amount
-note,Nội dung chuyển khoản,Note
+command_param_bankname_desc,Tên ngân hàng,Bank name
+command_param_accountnumber_desc,Số tài khoản người nhận,Account number
+command_param_accountname_desc,Tên chủ tài khoản,Account name
+command_param_amount_desc,Số tiền nhận,Amount
+command_param_note_desc,Nội dung chuyển khoản,Note
+command_desc,Tạo mã QR chuyển tiền,Generate a VietQR code
+command_usage,Dùng để tạo mã QR chuyển tiền thông qua VietQR một cách nhanh chóng,Quickly generate a VietQR code for you

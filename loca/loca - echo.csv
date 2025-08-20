@@ -1,0 +1,4 @@
+string_id,vi,en
+command_desc,Nói gì đó,Say something
+command_usage,Dùng để làm cho con bot nói gì đó theo ý bạn,Make the bot say something for you
+command_param_message_desc,Câu bạn muốn cho con bot nói,Thing that you want the bot to say

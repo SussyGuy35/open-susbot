@@ -6,8 +6,8 @@ from lib.sussyutils import get_prefix, parse_command
 
 # MARK: import commands
 from commands import (
-    amogus, ask, creategif, echo, emoji as getemoji,
-    gvs, help as bot_help, nijika, osu, pick,
+    help as bot_help, ask, creategif, echo, emoji as getemoji,
+    gvs, amogus, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
     gacha, reactionroles, nijipray, momjoke, incase,
@@ -56,42 +56,46 @@ async def send_feedback(ctx: discord.Interaction):
 
 
 @tree.command(name="help", description=get_string("command_help_desc"))
-async def get_help(ctx: discord.Interaction):
-    await bot_help.slash_command_listener(ctx)
+@app_commands.describe(
+    option=get_string("help_param_option_desc", "help"),
+    subcommand=get_string("help_param_subcommand_desc", "help"),
+)
+async def get_help(ctx: discord.Interaction, option: str | None = None, subcommand: str | None = None):
+    await bot_help.slash_command_listener(ctx, option, subcommand)
 
 
-@tree.command(name="ping", description=get_string("command_ping_desc"))
+@tree.command(name="ping", description=get_string("command_desc", "ping"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def pingpong(ctx: discord.Interaction):
     await ping.slash_command_listener(ctx, client)
 
 
-@tree.command(name="avatar", description=get_string("command_avatar_desc"))
+@tree.command(name="avatar", description=get_string("command_desc", "avatar"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_avatar(ctx: discord.Interaction, user: discord.User, server_avatar: bool = True):
     await avatar.slash_command_listener(ctx, user, server_avatar)
 
 
-@tree.command(name="emoji", description=get_string("command_emoji_desc"))
+@tree.command(name="emoji", description=get_string("command_desc", "emoji"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_emoji(ctx: discord.Interaction, emoji: str):
     await getemoji.slash_command_listener(client, ctx, emoji)
 
 
-@tree.command(name="nijika", description=get_string("command_nijika_desc"))
+@tree.command(name="nijika", description=get_string("command_desc", "nijika"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_nijika_image(ctx: discord.Interaction):
     await nijika.slash_command_listener(ctx)
 
-@tree.command(name="khoabug", description=get_string("command_khoabug_desc"))
+@tree.command(name="khoabug", description=get_string("command_desc", "khoa"))
 async def get_khoabug(ctx: discord.Interaction, search: str | None = None):
     await khoa.slash_command_listener(ctx, search)
 
-@tree.command(name="khoalist", description=get_string("command_khoalist_desc"))
+@tree.command(name="khoalist", description=get_string("list_command_desc", "khoa"))
 async def get_khoalist(ctx: discord.Interaction):
     await khoa.slash_command_listener_list(ctx)
 
@@ -102,36 +106,36 @@ async def get_amogus_image(ctx: discord.Interaction):
     await amogus.slash_command_listener(ctx)
 
 
-@tree.command(name="osu_user", description=get_string("command_osu_user_desc"))
+@tree.command(name="osu_user", description=get_string("osu_user_cmd_desc", "osu"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def osu_user(ctx: discord.Interaction, username: str):
     await osu.slash_command_listener_user(ctx, username)
 
 
-@tree.command(name="osu_beatmap", description=get_string("command_osu_beatmap_desc"))
+@tree.command(name="osu_beatmap", description=get_string("osu_beatmap_cmd_desc", "osu"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def osu_beatmap(ctx: discord.Interaction, beatmap: str):
     await osu.slash_command_listener_beatmap(ctx, beatmap)
 
 
-@tree.command(name="gvs_count", description=get_string("command_gvs_count_desc"))
+@tree.command(name="gvs_count", description=get_string("gvs_count_cmd_desc", "gvs"))
 async def gvs_count(ctx: discord.Interaction, user: discord.User | None = None):
     await gvs.slash_command_listener_count(ctx, user)
 
 
-@tree.command(name="gvs_leaderboard", description=get_string("command_gvs_leaderboard_desc"))
+@tree.command(name="gvs_leaderboard", description=get_string("gvs_lb_cmd_desc", "gvs"))
 async def gvs_lb(ctx: discord.Interaction):
     await gvs.slash_command_listener_lb(ctx)
 
 
-@tree.command(name="gvs_react", description=get_string("command_gvs_react_desc"))
+@tree.command(name="gvs_react", description=get_string("gvs_react_cmd_desc", "gvs"))
 async def gvs_react(ctx: discord.Interaction, message_id: str | None = None):
     await gvs.slash_command_listener_react_message(ctx, message_id)
 
 
-@tree.command(name="randcat", description=get_string("command_randcat_desc"))
+@tree.command(name="randcat", description=get_string("command_desc", "randcat"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_randcat(ctx: discord.Interaction, is_cat_girl: bool = False):
@@ -145,7 +149,7 @@ async def get_randwaifu(ctx: discord.Interaction):
     await randwaifu.slash_command_listener(ctx)
 
 
-@tree.command(name="create_gif", description=get_string("command_create_gif_desc"))
+@tree.command(name="create_gif", description=get_string("command_desc", "creategif"))
 async def create_gif(ctx: discord.Interaction, file: discord.Attachment):
     await creategif.slash_command_listener(ctx, file)
 
@@ -155,12 +159,12 @@ async def bean_user(ctx: discord.Interaction, user: discord.User, reason: str):
     await bean.slash_command_listener(ctx, user, reason)
 
 
-@tree.command(name="get_prefix", description=get_string("command_getprefix_desc"))
+@tree.command(name="get_prefix", description=get_string("command_desc", "getprefix"))
 async def get_bot_prefix(ctx: discord.Interaction):
     await getprefix.slash_command_listener(ctx)
 
 
-@tree.command(name="doino", description=get_string("command_doino_desc"))
+@tree.command(name="doino", description=get_string("command_desc", "doino"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_vietqr(
@@ -173,12 +177,16 @@ async def get_vietqr(
     await doino.slash_command_listener(ctx, bankname, accountnumber, accountname, amount, note)
 
 
-@tree.command(name="clear", description=get_string("command_clear_desc"))
+@tree.command(name="clear", description=get_string("command_desc", "clear"))
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+@app_commands.default_permissions(manage_messages=True)
 async def clear_messages(ctx: discord.Interaction, number: int):
     await clear.slash_command_listener(ctx, number)
 
 
-@tree.command(name="send_reaction_roles_message", description=get_string("command_reaction_roles_desc"))
+@tree.command(name="send_reaction_roles_message", description=get_string("command_desc", "reactionrole"))
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+@app_commands.default_permissions(manage_roles=True)
 async def send_reaction_roles_message(
         ctx: discord.Interaction,
         prompt_message: str,
@@ -199,17 +207,17 @@ async def send_reaction_roles_message(
     )
 
 
-@tree.command(name="nijipray")
+@tree.command(name="nijipray", description=get_string("command_desc", "nijipray"))
 async def nijipray_command(ctx: discord.Interaction):
     await nijipray.slash_command_listener_pray(ctx, client)
 
 
-@tree.command(name="nijipray_leaderboard")
+@tree.command(name="nijipray_leaderboard", description=get_string("lb_cmd_desc", "nijipray"))
 async def nijipray_leaderboard(ctx: discord.Interaction):
     await nijipray.slash_command_listener_leaderboard(ctx, client)
 
 
-@tree.command(name="nijipray_info")
+@tree.command(name="nijipray_info", description=get_string("info_cmd_desc", "nijipray"))
 async def nijipray_info(ctx: discord.Interaction, user: discord.User | None = None):
     await nijipray.slash_command_listener_info(ctx, client, user)
 
@@ -228,12 +236,12 @@ async def trongtruonghop(ctx: discord.Interaction):
     await incase.slash_command_listener(ctx)
 
 
-@tree.command(name="set_afk")
+@tree.command(name="set_afk", description=get_string("command_desc", "afk"))
 async def set_afk(ctx: discord.Interaction, status: str | None = None):
     await afk.slash_command_listener(ctx, status)
 
 
-@tree.command(name="ryo")
+@tree.command(name="ryo", description=get_string("command_desc", "ryo"))
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
 async def get_ryo_image(ctx: discord.Interaction):
@@ -316,7 +324,7 @@ async def on_message(message: discord.Message):
             await message.channel.send(get_string_by_id(f"loca/loca - {args[0]}.csv", args[1], args[2]))
 
         elif command in bot_help.cmd_names:
-            await bot_help.command_listener(message)
+            await bot_help.command_listener(message, args)
 
         elif command in ping.cmd_names:
             await ping.command_listener(message, client)
