@@ -11,7 +11,7 @@ from commands import (
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
     gacha, reactionroles, nijipray, momjoke, incase,
-    afk, ryo
+    afk, ryo, encrypt, decrypt
 )
 
 # MARK: import features
@@ -370,6 +370,12 @@ async def on_message(message: discord.Message):
         
         elif command in ryo.cmd_names:
             await ryo.command_listener(message)
+        
+        elif command in encrypt.cmd_names:
+            await encrypt.command_listener(message, plain_args)
+        
+        elif command in decrypt.cmd_names:
+            await decrypt.command_listener(message, plain_args)
 
         # Invalid command
         else:
