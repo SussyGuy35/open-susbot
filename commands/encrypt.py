@@ -36,6 +36,6 @@ def command_response(msg: str):
 async def command_listener(message: discord.Message, msg: str): 
     await delete_message(message)
     
-    await message.channel.send(command_response(msg))
+    await message.channel.send(command_response(msg), allowed_mentions=discord.AllowedMentions.none())
 
 

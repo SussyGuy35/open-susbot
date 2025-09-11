@@ -22,8 +22,8 @@ key = ['ỵ', '^', 'Ẵ', 'ớ', 'Ờ', 'ệ', 'ụ', 'Ỹ', 'ù', 'ộ', 'Ă', 
 def command_response(msg: str):
     decipher_text = ""
     for letter in msg:
-        index = chars.index(letter)   
-        decipher_text += key[index]      
+        index = key.index(letter)   
+        decipher_text += chars[index]      
         decipher_text = decipher_text.replace("@everyone", "`@everyone`").replace("@here", "`@here`")
 
     return decipher_text
