@@ -1,0 +1,5 @@
+string_id,vi,en
+command_desc,Giải mã hóa tin nhắn,
+command_usage,Dùng để giải mã một tin nhắn đã được mã hóa bằng lệnh `encrypt`,
+command_param_message_desc,Tin nhắn cần giải mã,
+invalid_message,"Không hỗ trợ mã hoá các kí tự đặc biệt hay những kí tự nước ngoài, emoji, ..., hãy thử xoá những kí tự ấy nhé!",
