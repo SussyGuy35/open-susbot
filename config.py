@@ -11,6 +11,14 @@ TOKEN = 'ur bot token here'
 MONGO_URI = 'mongodb uri here'
 MONGO_DB_NAME = 'ur db name here'
 
+S3_CONFIG = {
+    'endpoint_url': 'https://minio1.webtui.vn:9000',  # MinIO server URL
+    'aws_access_key_id': 'user',                 
+    'aws_secret_access_key': 'password',             
+    'region_name': 'us-east-1'                        # Region (Doesn't matter much for MinIO, but boto3 requires it)
+}
+S3_BUCKET_NAME = 'bucket-name-here'  # Bucket must be set to Public (Read Only or Public)
+
 language = "en"  # bot's language
 
 timezone = tz("Asia/Ho_Chi_Minh")  # timezone for the bot

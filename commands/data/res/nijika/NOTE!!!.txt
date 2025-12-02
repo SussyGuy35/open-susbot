@@ -1,0 +1,2 @@
+since the bot no longer store images locally but instead in a s3 storage, we have no reason to have image files here anymore
+archive of all files: https://drive.google.com/drive/folders/1O3UcORB79cuzn_0yIXKYMbGSDYYEZKQn?usp=sharing

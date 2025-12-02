@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import lib.sussyhelper as ssyhelper
 
 
+
 config = get_config()
 
 cmd_names = ['nijipray', 'njkp', 'nijip']
@@ -298,7 +299,9 @@ async def command_listener(message: discord.Message, bot: discord.Client, args: 
     
     elif isinstance(response, str):
         nijika_img = get_nijika_image()
-        await message.reply(response, mention_author=False, file=nijika_img)
+        rs = discord.Embed(title="Nijipray",description=response,type="image",color=0xfff47a)
+        rs.set_image(url=nijika_img)
+        await message.reply(embed=rs, mention_author=False)
 
 
 async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Client):
@@ -311,7 +314,9 @@ async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Cli
     
     elif isinstance(response, str):
         nijika_img = get_nijika_image()
-        await ctx.followup.send(response, file=nijika_img)
+        rs = discord.Embed(title="Nijipray",description=response,type="image",color=0xfff47a)
+        rs.set_image(url=nijika_img)
+        await ctx.followup.send(embed=rs)
     
 
 

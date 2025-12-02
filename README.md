@@ -1,8 +1,6 @@
 # Open Susbot
 
-Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
-
-~~Note that this project is intended to use as a starting point to develop your own Discord bot, not to use it as-is!~~ this is not true anymore i think
+Source code for **BachNobBot**. Used in multiple server.
 
 ## Features
 - Some commands to make bot say sth or maybe other
@@ -18,35 +16,14 @@ Just a *fairly simple* Discord bot. Made _by idiots, for idiots!_
 
 ## How to install and make bot running (local)
 
-### Step 1: Install python (>= 3.10)
+- Step 1: Install python (>= 3.10)
+- Step 2: Clone this repository
+- Step 3: Install all dependencies
+- Step 4: Create a MongoDB Atlas database
+- Step 5: Configure a MinIO bucket contain all [resource files](https://drive.google.com/drive/folders/192ICyvN_oT7LLl1dPY9n1zkpH3RsqrnY)
+- Step 6: Configure the bot in dev portal and `config.py` file.
+- Step 7: Run `main.py` file with python
 
-- Go to [Python's official website](https://www.python.org/) to download python.
-- Install it (idk).
-- Remember to install pip and add python to PATH if you're using windows!
-
-### Step 2: Clone this repository
-- Install git (if you haven't)
-- `git clone https://github.com/SussyGuy35/open-susbot.git`
-### Step 3: Install all dependencies
-
-- Windows: `python -m pip install -r requirements.txt`
-- Linux: `python3 -m pip install -r requirements.txt`
-- Mac: idk im not a mac guy (maybe same as Linux i think)
-
-### Step 4: Configure the bot
-Go to Discord dev portal, get your bot's token and remember to enable `Presence Intent`, `Server members Intent` and `Message content intent`
-
-Go to `config.py` file and place your discord bot's token, your osu!api client id and client secret (you can get it from your osu! account setting page) here.
-
-Make an MongoDB Atlas account (if you don't have one), grab your URI and put it in `MONGO_URI`. Then create a database and put its name in `MONGO_DB_NAME`
-
-You can also configure other things here.
-
-### Step 5: Run the bot
-Go to the root of the project and run `main.py` file.
-- Windows: `python main.py` or `py main.py`
-- Linux: `python3 main.py`
-- Mac: same as linux i think
 
 **_Now your bot is up and running. Have fun!_**
 
@@ -108,6 +85,7 @@ You can make a new library for the bot and place it in `lib/` folder. Main file 
 
 ## External links
 - [Loca sheets](https://docs.google.com/spreadsheets/d/1LdVClaONs9r1HDMiOU4GfBdQOD2FoPDNFSC_y6UwMF8/edit?usp=sharing)
+- [Resources](https://drive.google.com/drive/folders/192ICyvN_oT7LLl1dPY9n1zkpH3RsqrnY)
 - [discord.py API docs](https://discordpy.readthedocs.io/en/stable/api.html)
 - [Discord Developer Portal](https://discord.com/developers/applications)
 - [osu!'s home page](https://osu.ppy.sh)

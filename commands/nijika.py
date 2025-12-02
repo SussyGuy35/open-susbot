@@ -1,8 +1,8 @@
 import discord
-from lib.sussyutils import pick_random_file_from_dir
-import lib.cmddata as cmddata
 import lib.sussyhelper as sh
 import lib.locareader as loca_reader
+import lib.miniomanager as store
+import random
 
 loca_sheet = "loca/loca - nijika.csv"
 cmd_names = ['nijika', 'njk', 'doritos']
@@ -19,11 +19,8 @@ sh.HelpManager.add_command_help(
 )
 
 
-img_path = cmddata.get_res_file_path("nijika/")
-
-
 def command_response():
-    return discord.File(img_path + pick_random_file_from_dir(img_path))
+    return random.choice(store.list_images(prefix='nijika/'))
 
 
 async def command_listener(message: discord.Message):
@@ -33,4 +30,4 @@ async def command_listener(message: discord.Message):
 async def slash_command_listener(ctx: discord.Interaction):
     print(f"{ctx.user} used nijika commands!")
     await ctx.response.defer()
-    await ctx.followup.send(file=command_response())
+    await ctx.followup.send(command_response())
