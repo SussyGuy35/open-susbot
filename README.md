@@ -21,28 +21,11 @@ Source code for **BachNobBot**. Used in multiple server.
 - Step 3: Install all dependencies
 - Step 4: Create a MongoDB Atlas database
 - Step 5: Configure a MinIO bucket contain all [resource files](https://drive.google.com/drive/folders/192ICyvN_oT7LLl1dPY9n1zkpH3RsqrnY)
-- Step 6: Configure the bot in dev portal and `config.py` file.
+- Step 6: Configure the bot in dev portal, `config.json` and `.env` file.
 - Step 7: Run `main.py` file with python
 
 
 **_Now your bot is up and running. Have fun!_**
-
-## How to automatically deploy the bot to remote server with Github Actions and Docker
-
-### Setup the host
-idk just setup git, docker and ssh
-then pull this repo to your host
-
-### Setup Github Actions
-The source code already contain an action to deploy the bot. All you need to do is go to **Settings > Environments > secrets** then add 3 secrets:
-- `HOST`: the host's address
-- `USERNAME`: the host's username
-- `SSH_KEY`: the ssh key to connect to the host
-
-### Configure the bot
-See the sections somewhere above
-
-**_Now when you pull to main the action will automatically run! You can also run it manually._**
 
 ## Developing the bot
 ### Developing new command

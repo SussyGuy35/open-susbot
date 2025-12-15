@@ -1,0 +1,30 @@
+{
+  "dev_ids": [
+    920935878375927808,
+    703530385660969061
+  ],
+  "banned_users": [],
+  "specific_prefix": {
+    "1216603829647441980": "n!",
+    "876491642809491477": "n!"
+  },
+  "autoreact_emojis": {
+    "tin chuan chua anh": ["🇯", "🇺", "🇦", "🇳"],
+    "suthatnonao": ["🇸", "🇺", "✝️", "🇭", "🇦", "🇹", "♑", "🇴", "🇳", "🅰️", "⭕", "🤯"],
+    "syntax là gì v mấy anh": ["🇸", "🇾", "🇳", "🇹", "🇦", "🇽", "🇱", "🅰️", "🇬", "🇮", "❓"],
+    "gvs": ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"]
+  },
+  "settings": {
+    "language": "vi",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "enable_ghostping_detector": true,
+    "ghostping_detection_cooldown_seconds": 7,
+    "ghostping_detection_blacklist_guilds": [
+      "919945978902106132",
+      "1144866337617879121",
+      "1246296110599897140"
+    ],
+    "ghostping_detection_blacklist_users": []
+  }
+
+}

@@ -1,60 +1,52 @@
 import discord
 from pytz import timezone as tz
+from dotenv import load_dotenv
+import os
+import json
+
+load_dotenv()  # take environment variables from .env file
+
+json_config = {}
+with open('config.json', 'r', encoding='utf-8') as f:
+    json_config = json.load(f)
 
 ### Core config
-bot_name = "open-susbot"
-prefix = 'b!'
-bot_version = '2.4'
+bot_name = os.getenv("BOT_NAME", "open-susbot")
+prefix = os.getenv("PREFIX", "b!")
+bot_version = os.getenv("BOT_VERSION", "2.4.2")
 
-TOKEN = 'ur bot token here'
+TOKEN = os.getenv("DISCORD_TOKEN")
 
-MONGO_URI = 'mongodb uri here'
-MONGO_DB_NAME = 'ur db name here'
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
 
 S3_CONFIG = {
-    'endpoint_url': 'https://minio1.webtui.vn:9000',  # MinIO server URL
-    'aws_access_key_id': 'user',                 
-    'aws_secret_access_key': 'password',             
-    'region_name': 'us-east-1'                        # Region (Doesn't matter much for MinIO, but boto3 requires it)
+    'endpoint_url': os.getenv("S3_ENDPOINT_URL"),
+    'aws_access_key_id': os.getenv("S3_ACCESS_KEY_ID"),                 
+    'aws_secret_access_key': os.getenv("S3_SECRET_ACCESS_KEY"),             
+    'region_name': os.getenv("S3_REGION_NAME", "us-east-1") 
 }
-S3_BUCKET_NAME = 'bucket-name-here'  # Bucket must be set to Public (Read Only or Public)
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")  # Bucket must be set to Public (Read Only or Public)
 
-language = "en"  # bot's language
+language = json_config["settings"]["language"]
 
-timezone = tz("Asia/Ho_Chi_Minh")  # timezone for the bot
+timezone = tz(json_config["settings"]["timezone"])
 
-dev_ids = [  # place developer's id here!
-]
+dev_ids = json_config["dev_ids"]
 
-banned_users = []  # place banned users' id here!
+banned_users = json_config["banned_users"]
 
-specific_prefix = {
-}  # Place custom prefix for specific server here in form "server_id: prefix"
-# Example:
-# specific_prefix = {
-# 69420105727: "n!"
-# }
+specific_prefix = {int(k): v for k, v in json_config["specific_prefix"].items()}
 
 ### osu command configs
-OSUAPI_CLIENT_ID = 'ur osu!api client id here'
-OSUAPI_CLIENT_SECRET = 'ur osu!api client secret here'
+OSUAPI_CLIENT_ID = os.getenv("OSUAPI_CLIENT_ID")
+OSUAPI_CLIENT_SECRET = os.getenv("OSUAPI_CLIENT_SECRET")
 
 ### autoreact configs
-autoreact_emojis = {
-}  # place autoreact emojis here in form "word: emoji"
-# Example:
-# autoreact_emojis = {
-#   "gvs": ["🇬","🇰","🇪","🇻","🇦","🇾","🇸","🅰️","🇴","😳"],
-#   "tin chuan chua anh": ["🇯", "🇺", "🇦", "🇳"]
-# }
-autoreact_emojis_supported_channel_types = [
-    discord.ChannelType.text,
-    discord.ChannelType.voice,
-    discord.ChannelType.public_thread
-] # Supported channel types
+autoreact_emojis = json_config["settings"]["autoreact_emojis"]
 
 ### Ghostping detector configs
-enable_ghostping_detector = False  # enable ghostping detector or not
-ghostping_check_time_range = 15  # time to detect ghostping
-ghostping_detector_blacklist_guild = []  # place id of servers that don't use ghostping detector here!
-ghostping_detector_blacklist_user = []  # place id of users that should not be warned by the ghostping detector here!
+enable_ghostping_detector = json_config["settings"]["enable_ghostping_detector"]
+ghostping_check_time_range = json_config["settings"]["ghostping_detection_cooldown_seconds"]
+ghostping_detector_blacklist_guild = json_config["settings"]["ghostping_detection_blacklist_guilds"]
+ghostping_detector_blacklist_user = json_config["settings"]["ghostping_detection_blacklist_users"]
