@@ -43,7 +43,7 @@ OSUAPI_CLIENT_ID = os.getenv("OSUAPI_CLIENT_ID")
 OSUAPI_CLIENT_SECRET = os.getenv("OSUAPI_CLIENT_SECRET")
 
 ### autoreact configs
-autoreact_emojis = json_config["settings"]["autoreact_emojis"]
+autoreact_emojis = json_config["autoreact_emojis"]
 
 ### Ghostping detector configs
 enable_ghostping_detector = json_config["settings"]["enable_ghostping_detector"]
