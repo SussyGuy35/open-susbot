@@ -4,3 +4,4 @@ requests
 pytz
 pymongo[srv] >= 4.11.3
 boto3
+dotenv
