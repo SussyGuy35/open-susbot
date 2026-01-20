@@ -7,6 +7,7 @@ import random
 loca_sheet = "loca/loca - ryo.csv"
 
 cmd_names = ['ryo']
+image_db = []
 
 sh.HelpManager.add_command_help(
     sh.CommandHelp(
@@ -18,10 +19,15 @@ sh.HelpManager.add_command_help(
     sh.HelpSection.GENERAL2
 )
 
+def fetch_ryo_images():
+    global image_db
+    image_db = store.list_images(prefix='ryo/')
+
 
 def command_response():
-    return random.choice(store.list_images(prefix='ryo/'))
-
+    if not image_db:
+        fetch_ryo_images()
+    return random.choice(image_db)
 
 async def command_listener(message: discord.Message):
     await message.channel.send(command_response())

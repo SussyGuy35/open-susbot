@@ -323,6 +323,12 @@ async def on_message(message: discord.Message):
         elif command == 'getloca':
             await message.channel.send(get_string_by_id(f"loca/loca - {args[0]}.csv", args[1], args[2]))
 
+        elif command == 'fetchimg':
+            if message.author.id in config.dev_ids:
+                nijika.fetch_nijika_images()
+                ryo.fetch_ryo_images()
+                await message.channel.send("Fetched!")
+
         elif command in bot_help.cmd_names:
             await bot_help.command_listener(message, args)
 
