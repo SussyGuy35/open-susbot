@@ -1,13 +1,15 @@
+import requests
 import discord, random
-import os
 from lib.locareader import get_string_by_id
 import lib.sussyhelper as ssyhelper
-import lib.miniomanager as store
+import lib.sussyconfig as sussy_config
 import random
 
 
 loca_sheet = "loca/loca - khoa.csv"
 
+config = sussy_config.get_config()
+image_db = []
 
 ssyhelper.HelpManager.add_command_help(
     ssyhelper.CommandHelp(
@@ -36,8 +38,16 @@ ssyhelper.HelpManager.add_command_help(
     ssyhelper.HelpSection.GENERAL2
 )
 
-def search_files(path: str, name: str):
-    for files in store.list_images(prefix=path):
+def fetch_khoa_images_list():
+    global image_db
+    image_db = [i for i in requests.get(config.image_endpoint + config.file_list_name).text.splitlines() if i.startswith("./khoa/")]
+
+
+def search_files(name: str):
+    fetch_khoa_images_list()
+    if not name:
+        return config.image_endpoint + random.choice(image_db).replace(" ", "%20")
+    for files in image_db:
         for f in files:
             if name.lower() in f.lower():
                 return f
@@ -45,9 +55,9 @@ def search_files(path: str, name: str):
 
 def search_khoa(q: str):
     q = q.replace(" ","_")
-    matching_files = search_files("khoa/", q)
+    matching_files = search_files(q)
     if matching_files != None:
-        return matching_files
+        return config.image_endpoint + matching_files.replace(" ", "%20")
     else:
         return get_string_by_id(loca_sheet, "quote_not_found")
 
@@ -55,7 +65,7 @@ def search_khoa(q: str):
 def command_response(search: str | None = None) -> str:
     if search:
         return search_khoa(search)
-    return random.choice(store.list_images(prefix='khoa/'))
+    return search_files("")
 
 
 async def slash_command_listener(ctx: discord.Interaction, search: str | None = None):

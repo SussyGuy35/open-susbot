@@ -28,8 +28,8 @@ S3_CONFIG = {
 }
 S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")  # Bucket must be set to Public (Read Only or Public)
 
-NIJIKA_IMAGE_ENDPOINT : str = os.getenv("NIJIKA_IMAGE_ENDPOINT", "https://church-of-nijika.pages.dev/")
-NIJIKA_FILE_LIST_NAME : str = os.getenv("IMAGE_LIST_FILE_NAME", "file_list.txt")
+image_endpoint : str = os.getenv("IMAGE_ENDPOINT", "https://church-of-nijika.pages.dev/")
+file_list_name : str = os.getenv("IMAGE_LIST_FILE_NAME", "file_list.txt")
 
 language = json_config["settings"]["language"]
 

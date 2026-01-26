@@ -24,13 +24,13 @@ sh.HelpManager.add_command_help(
 
 def fetch_nijika_images_list():
     global img_db
-    img_db = requests.get(config.NIJIKA_IMAGE_ENDPOINT + os.getenv("IMAGE_LIST_FILE_NAME", "file_list.txt")).text.splitlines()
+    img_db = [i for i in requests.get(config.image_endpoint + config.file_list_name).text.splitlines() if i.startswith("./nijika/")]
 
 
 def command_response():
     if not img_db:
         fetch_nijika_images_list()
-    return config.NIJIKA_IMAGE_ENDPOINT + random.choice(img_db).replace(" ", "%20")
+    return config.image_endpoint + random.choice(img_db).replace(" ", "%20")
 
 async def command_listener(message: discord.Message):
     await message.channel.send(command_response())
