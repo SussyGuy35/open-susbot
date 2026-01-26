@@ -325,8 +325,9 @@ async def on_message(message: discord.Message):
 
         elif command == 'fetchimg':
             if message.author.id in config.dev_ids:
-                nijika.fetch_nijika_images()
-                ryo.fetch_ryo_images()
+                nijika.fetch_nijika_images_list()
+                ryo.fetch_ryo_images_list()
+                khoa.fetch_khoa_images_list()
                 await message.channel.send("Fetched!")
 
         elif command in bot_help.cmd_names:
