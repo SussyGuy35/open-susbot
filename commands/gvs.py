@@ -4,6 +4,7 @@ from lib.locareader import get_string_by_id
 from lib.sussyconfig import get_config
 from lib.mongomanager import MongoManager
 import lib.sussyhelper as ssyhelper
+from features.auto_react_emoji import supported_channel_types
 
 config = get_config()
 
@@ -157,7 +158,7 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
 async def command_listener(message: discord.Message, args: list):
     prefix = get_prefix(message.guild)
 
-    if message.channel.type in config.autoreact_emojis_supported_channel_types:
+    if message.channel.type in supported_channel_types:
         response = command_response(prefix, message.guild, message.author, args)
         if isinstance(response, discord.Embed):
             await message.channel.send(embed=response) # lb command response
@@ -172,7 +173,7 @@ async def slash_command_listener_count(ctx: discord.Interaction, user: discord.U
     prefix = get_prefix(ctx.guild)
     userid_to_get = user.id if user is not None else ctx.user.id
     await ctx.response.defer()
-    if ctx.channel.type in config.autoreact_emojis_supported_channel_types:
+    if ctx.channel.type in supported_channel_types:
         await ctx.followup.send(command_response(prefix, ctx.guild, ctx.user, ["count", f"<@{userid_to_get}>"]))
     else:
         await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported"))
@@ -182,7 +183,7 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
     print(f"{ctx.user} used gvs lb command!")
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
-    if ctx.channel.type in config.autoreact_emojis_supported_channel_types:
+    if ctx.channel.type in supported_channel_types:
         response = command_response(prefix, ctx.guild, ctx.user, ["lb"])
         if isinstance(response, discord.Embed):
             await ctx.followup.send(embed=response)
