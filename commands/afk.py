@@ -24,21 +24,29 @@ sh.HelpManager.add_command_help(
 )
 
 
+def afk_nickname(name: str, status: str) -> str:
+    if len(f"[{status}] {name}") < 32:
+        return f"[{status}] {name}"
+    elif len(f"[AFK] {name}") < 32:
+        return f"[AFK] {name}"
+    else:
+        return name
+
+
 async def command_listener(message: discord.Message, user: discord.Member | discord.User, status: str | None = None):
     if not message.guild or not isinstance(user, discord.Member):
         await message.channel.send("This command can only be used in a server.")
         return
     
     status = status or "AFK"
-
+    u = user.display_name
     try:
-        if len(f"[{status}] {user.display_name}") < 32:
-            await user.edit(nick=f"[{status}] {user.display_name}")
-        elif len(f"[AFK] {user.display_name}") < 32:
-            await user.edit(nick=f"[AFK] {user.display_name}")
+        new_nick = afk_nickname(user.display_name, status)
+        if new_nick != user.display_name:
+            await user.edit(nick=new_nick)
     except discord.Forbidden:
         pass
-    afk_notificer.set_afk_status(str(user.id), status)
+    afk_notificer.set_afk_status(str(user.id), status, u, message.guild.id)
 
 
     response = lib.locareader.get_string_by_id(loca_sheet, "afk_set").format(status)
@@ -58,15 +66,16 @@ async def slash_command_listener(ctx: discord.Interaction, status: str | None = 
     if member is None:
         return
 
+    u = member.display_name
+
     try:
-        if len(f"[{status}] {member.display_name}") < 32:
-            await member.edit(nick=f"[{status}] {member.display_name}")
-        elif len(f"[AFK] {member.display_name}") < 32:
-            await member.edit(nick=f"[AFK] {member.display_name}")
+        new_nick = afk_nickname(member.display_name, status)
+        if new_nick != member.display_name:
+            await member.edit(nick=new_nick)
     except discord.Forbidden:
         pass
 
-    afk_notificer.set_afk_status(str(ctx.user.id), status)
+    afk_notificer.set_afk_status(str(ctx.user.id), status, u, ctx.guild.id)
 
     response = lib.locareader.get_string_by_id(loca_sheet, "afk_set").format(status)
     await ctx.followup.send(response)
