@@ -2,11 +2,19 @@ import discord
 from lib.sussyconfig import get_config
 from lib.locareader import get_string_by_id
 from lib.mongomanager import MongoManager
-from commands.afk import afk_nickname
 
 config = get_config()
 loca_sheet = f"loca/loca - afk.csv"
 collection = MongoManager.get_collection("afk", config.MONGO_DB_NAME)
+
+
+def afk_nickname(name: str, status: str) -> str:
+    if len(f"[{status}] {name}") < 32:
+        return f"[{status}] {name}"
+    elif len(f"[AFK] {name}") < 32:
+        return f"[AFK] {name}"
+    else:
+        return name
 
 
 def set_afk_status(user_id: str | int, status: str, previous_nick: str, server_id: str | int):

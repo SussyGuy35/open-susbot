@@ -1,7 +1,9 @@
 import discord
 import lib.locareader
 import features.afk_notificer as afk_notificer
+from features.afk_notificer import afk_nickname
 import lib.sussyhelper as sh
+
 
 cmd_names = ["afk"]
 loca_sheet = f"loca/loca - {cmd_names[0]}.csv"
@@ -22,15 +24,6 @@ sh.HelpManager.add_command_help(
     ),
     sh.HelpSection.GENERAL
 )
-
-
-def afk_nickname(name: str, status: str) -> str:
-    if len(f"[{status}] {name}") < 32:
-        return f"[{status}] {name}"
-    elif len(f"[AFK] {name}") < 32:
-        return f"[AFK] {name}"
-    else:
-        return name
 
 
 async def command_listener(message: discord.Message, user: discord.Member | discord.User, status: str | None = None):
