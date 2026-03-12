@@ -8,6 +8,8 @@ help_footer,Trang: {0}/{1},Page: {0}/{1}
 help_footer2,Sử dụng {0}help [số trang] để xem các trang,Use {0}help [page number] to see another page
 help_invalid_command,Không thể tìm được lệnh đó!,Cannot find that command!
 help_invalid_command_desc,Vui lòng cung cấp đúng tên lệnh!,Please provide the correct command name!
+help_invalid_subcommand,Không thể tìm được lệnh con đó!,Cannot find that subcommand!
+help_invalid_subcommand_desc,Không tìm được lệnh con `{0}`! Vui lòng cung cấp đúng tên lệnh con!,Cannot find subcommand `{0}`! Please provide the correct subcommand name!
 help_usage,Công dụng,Usage
 help_parameters,Các tùy chọn,Options
 help_aliases,Tên khác,Aliases

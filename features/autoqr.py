@@ -115,10 +115,8 @@ async def check_auto_qr(message: discord.Message):
     
     content = message.content.lower()
 
-    # fix bot misinterpreting mentions as bank numbers
-    if message.mentions:
-        for mention in message.mentions:
-            content = content.replace(f"<@{mention.id}>", "")
+    # fix bot misinterpreting mentions and custom emoji ids as bank numbers
+    content = re.sub(r'<@!?\d+>|<a?:\w+:\d+>', '', content)
 
     stk_match = re.search(r'\b\d{6,19}\b', content)
     stk = stk_match.group() if stk_match else None
