@@ -18,6 +18,13 @@ loca_sheet = f"loca/loca - {CMD_NAME}.csv"
 collection = MongoManager.get_collection("nijipray", config.MONGO_DB_NAME)
 
 tz = config.timezone
+nijipray_allowed_channels = config.nijipray_allowed_channels
+
+
+def is_channel_allowed(channel_id: int) -> bool:
+    if len(nijipray_allowed_channels) == 0:
+        return True
+    return channel_id in nijipray_allowed_channels
 
 
 ssyhelper.HelpManager.add_command_help(
@@ -292,6 +299,10 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
     # endregion
 
 async def command_listener(message: discord.Message, bot: discord.Client, args: list[str]):
+    if not is_channel_allowed(message.channel.id):
+        await message.reply(get_string_by_id(loca_sheet, "channel_not_allowed"), mention_author=False)
+        return
+
     response = command_response(args, bot, message.author)
 
     if isinstance(response, discord.Embed):
@@ -307,6 +318,10 @@ async def command_listener(message: discord.Message, bot: discord.Client, args: 
 async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Client):
     print(f"{ctx.user} used nijipray commands!")
     await ctx.response.defer()
+    if not is_channel_allowed(ctx.channel_id):
+        await ctx.followup.send(get_string_by_id(loca_sheet, "channel_not_allowed"))
+        return
+
     response = command_response([], bot, ctx.user)
 
     if isinstance(response, discord.Embed):
@@ -323,6 +338,10 @@ async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Cli
 async def slash_command_listener_leaderboard(ctx: discord.Interaction, bot: discord.Client):
     print(f"{ctx.user} used nijipray leaderboard commands!")
     await ctx.response.defer()
+    if not is_channel_allowed(ctx.channel_id):
+        await ctx.followup.send(get_string_by_id(loca_sheet, "channel_not_allowed"))
+        return
+
     response = command_response(["leaderboard"], bot, ctx.user)
 
     if isinstance(response, discord.Embed):
@@ -335,6 +354,10 @@ async def slash_command_listener_leaderboard(ctx: discord.Interaction, bot: disc
 async def slash_command_listener_info(ctx: discord.Interaction, bot: discord.Client, user: discord.User | None = None):
     print(f"{ctx.user} used nijipray info commands!")
     await ctx.response.defer()
+    if not is_channel_allowed(ctx.channel_id):
+        await ctx.followup.send(get_string_by_id(loca_sheet, "channel_not_allowed"))
+        return
+
     userid = str(user.id) if user is not None else str(ctx.user.id)
     response = command_response(["info", userid], bot, ctx.user)
 

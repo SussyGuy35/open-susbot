@@ -24,3 +24,4 @@ info_cmd_usage,"Xem các thông tin của con chiên như điểm Nijikon, số 
 info_param_user_desc,Con chiên bạn muốn xem,
 bible_cmd_desc,Kinh thánh Nijika,
 bible_cmd_usage,Hiện bài kinh thánh Nijika,
+channel_not_allowed,Kênh này không phải nhà thờ!,**nijipray** is not available in this channel!

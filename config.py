@@ -48,6 +48,9 @@ OSUAPI_CLIENT_SECRET = os.getenv("OSUAPI_CLIENT_SECRET")
 ### autoreact configs
 autoreact_emojis = json_config["autoreact_emojis"]
 
+### nijipray configs
+nijipray_allowed_channels = [int(ch) for ch in json_config["nijipray_allowed_channels"]]
+
 ### Ghostping detector configs
 enable_ghostping_detector = json_config["settings"]["enable_ghostping_detector"]
 ghostping_check_time_range = json_config["settings"]["ghostping_detection_cooldown_seconds"]
