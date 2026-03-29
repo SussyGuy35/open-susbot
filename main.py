@@ -222,6 +222,11 @@ async def nijipray_info(ctx: discord.Interaction, user: discord.User | None = No
     await nijipray.slash_command_listener_info(ctx, client, user)
 
 
+@tree.command(name="nijipray_history", description=get_string("history_cmd_desc", "nijipray"))
+async def nijipray_history(ctx: discord.Interaction, user: discord.User | None = None):
+    await nijipray.slash_command_listener_history(ctx, client, user)
+
+
 @tree.command(name="momjoke")
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)

@@ -56,6 +56,20 @@ ssyhelper.HelpManager.add_command_help(
                 aliases=["userinfo"]
             ),
             ssyhelper.CommandHelp(
+                command_name="history",
+                command_type=ssyhelper.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "history_cmd_desc"),
+                usage=get_string_by_id(loca_sheet, "history_cmd_usage"),
+                parameters=[
+                    ssyhelper.CommandParameterDescription(
+                        name="user",
+                        description=get_string_by_id(loca_sheet, "info_param_user_desc"),
+                        required=False
+                    )
+                ],
+                aliases=["map"]
+            ),
+            ssyhelper.CommandHelp(
                 command_name="bible",
                 command_type=ssyhelper.CommandType.PREFIX,
                 description=get_string_by_id(loca_sheet, "bible_cmd_desc"),
@@ -77,7 +91,8 @@ def create_user(userid: str | int):
         "pray_count": 0,
         "special_pray_count": 0,
         "miss_count": 0,
-        "current_rate": 20
+        "current_rate": 20,
+        "pray_history": []
     }
     )
 
@@ -96,6 +111,10 @@ def get_user_data(userid: str | int, key: str):
     if not user:
         create_user(userid)
         user = collection.find_one({"_id": str(userid)})
+    # migration: nếu field chưa tồn tại thì trả về default
+    if key == "pray_history" and key not in user:
+        set_user_data(userid, "pray_history", [])
+        return []
     return user[key]
 
 
@@ -140,6 +159,127 @@ def calculate_lucky_rate(praynum: int, special_praynum: int) -> float | int:
         return r if not r%1==0 else int(r)
 
 
+# MARK: Pray history functions
+
+def record_pray_history(userid: str | int, pray_type: str):
+    """Ghi lại kết quả lạy vào lịch sử. pray_type: 'normal', 'special', 'miss'"""
+    today_str = datetime.now(tz).strftime("%Y-%m-%d")
+    history = get_user_data(userid, "pray_history")
+    
+    # tránh ghi trùng ngày
+    if history and history[-1]["date"] == today_str:
+        history[-1]["type"] = pray_type
+    else:
+        history.append({"date": today_str, "type": pray_type})
+    
+    # chỉ giữ 30 ngày gần nhất
+    cutoff = (datetime.now(tz) - timedelta(days=30)).strftime("%Y-%m-%d")
+    history = [h for h in history if h["date"] > cutoff]
+    
+    set_user_data(userid, "pray_history", history)
+
+
+def get_pray_history_map(userid: str | int) -> dict[str, str]:
+    """Trả về dict {date_str: pray_type} cho 30 ngày gần nhất"""
+    history = get_user_data(userid, "pray_history")
+    return {h["date"]: h["type"] for h in history}
+
+
+def calculate_streak_penalty(userid: str | int) -> float | int:
+    """Tính penalty dựa trên chuỗi nổ liên tiếp gần nhất. Miss hoặc normal sẽ reset streak."""
+    history = get_user_data(userid, "pray_history")
+    if not history:
+        return 0
+    
+    # đếm streak nổ liên tiếp từ cuối đi ngược lại
+    streak = 0
+    for entry in reversed(history):
+        if entry["type"] == "special":
+            streak += 1
+        else:
+            break  # miss hoặc normal đều reset streak
+    
+    if streak >= 5:
+        return -32
+    elif streak >= 4:
+        return -17
+    elif streak >= 3:
+        return -7
+    return 0
+
+
+def generate_history_map(userid: str | int) -> str:
+    """Tạo contribution map emoji giống GitHub cho 30 ngày gần nhất"""
+    history_dict = get_pray_history_map(userid)
+    today = datetime.now(tz).date()
+    
+    EMOJI_NORMAL = "🟩"
+    EMOJI_SPECIAL = "🟨"
+    EMOJI_MISS = "🟥"
+    EMOJI_TODAY = "⬜"
+    EMOJI_EMPTY = "⬛"
+    
+    DAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
+    
+    # tạo list 30 ngày, mỗi ngày là 1 emoji
+    days_data = []  # list of (date, weekday, emoji)
+    for i in range(29, -1, -1):  # 29 ngày trước -> hôm nay
+        day = today - timedelta(days=i)
+        day_str = day.strftime("%Y-%m-%d")
+        weekday = day.weekday()  # 0=Monday, 6=Sunday
+        
+        if day == today and day_str not in history_dict:
+            emoji = EMOJI_TODAY
+        elif day_str in history_dict:
+            ptype = history_dict[day_str]
+            if ptype == "special":
+                emoji = EMOJI_SPECIAL
+            elif ptype == "miss":
+                emoji = EMOJI_MISS
+            else:
+                emoji = EMOJI_NORMAL
+        else:
+            emoji = EMOJI_EMPTY
+        
+        days_data.append((day, weekday, emoji))
+    
+    # sắp xếp thành grid theo tuần (giống GitHub: cột = ngày trong tuần, hàng = tuần)
+    # tìm ngày đầu tiên và padding nó về đầu tuần (Monday)
+    first_day = days_data[0][0]
+    first_weekday = first_day.weekday()  # 0=Monday
+    
+    # tạo grid: list các tuần, mỗi tuần là list 7 emoji
+    weeks = []
+    current_week = [EMOJI_EMPTY] * first_weekday  # padding đầu
+    
+    for day, weekday, emoji in days_data:
+        current_week.append(emoji)
+        if len(current_week) == 7:
+            weeks.append(current_week)
+            current_week = []
+    
+    # padding cuối tuần hiện tại
+    if current_week:
+        while len(current_week) < 7:
+            current_week.append(EMOJI_EMPTY)
+        weeks.append(current_week)
+    
+    # build string
+    lines = []
+    header = "` ` " + " ".join(f"`{d}`" for d in DAY_LABELS)
+    lines.append(header)
+    
+    for week_idx, week in enumerate(weeks):
+        line = f"`{week_idx+1}` " + " ".join(week)
+        lines.append(line)
+    
+    # legend
+    lines.append("")
+    lines.append(f"{EMOJI_NORMAL} Lạy  {EMOJI_SPECIAL} Nổ  {EMOJI_MISS} Quên  {EMOJI_TODAY} Chưa lạy  {EMOJI_EMPTY} N/A")
+    
+    return "\n".join(lines)
+
+
 def command_response(args: list[str], bot: discord.Client, user: discord.User | discord.Member) -> str | discord.Embed:
     # region Normal pray
     if len(args) == 0:
@@ -157,8 +297,10 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
             bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
             # lucky rate base on user's luck
             lucky_rate = calculate_lucky_rate(get_user_data(user.id, "pray_count"), get_user_data(user.id, "special_pray_count"))
+            # streak penalty
+            streak_penalty = calculate_streak_penalty(user.id)
 
-            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent+ lucky_rate):
+            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent+ lucky_rate + streak_penalty):
                 set_user_data(user.id, "special_pray_count", get_user_data(user.id, "special_pray_count") + 1)
                 # point and multiplier
                 # x2 mult if weekend
@@ -169,11 +311,13 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
                 set_user_data(user.id, "prayers", pray_num + total_point)
                 set_user_data(user.id, "last_pray", today.timestamp())
                 set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 14)
+                record_pray_history(user.id, "special")
                 return get_string_by_id(loca_sheet, "pray_special").format(total_point)
                 
             set_user_data(user.id, "prayers", pray_num + 1)
             set_user_data(user.id, "last_pray", today.timestamp())
             set_user_data(user.id, "current_rate", current_rate + (3 if current_rate >=20 else 2))
+            record_pray_history(user.id, "normal")
             return get_string_by_id(loca_sheet, "pray")
 
         if last_pray.date() == today.date():
@@ -182,6 +326,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
         set_user_data(user.id, "last_pray", today.timestamp())
         set_user_data(user.id, "current_rate", current_rate + (2 if current_rate >=20 else 4))
         set_user_data(user.id, "miss_count", get_user_data(user.id, "miss_count") + 1)
+        record_pray_history(user.id, "miss")
 
         return get_string_by_id(loca_sheet, "pray_choke")
     # endregion
@@ -229,6 +374,7 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
         special_pray_count = get_user_data(user_to_show.id, "special_pray_count")
         top_player = get_leaderboard(1)[0]
         top_player_pray = top_player["prayers"]
+        streak_penalty = calculate_streak_penalty(user_to_show.id)
 
         response = discord.Embed(
             title=get_string_by_id(loca_sheet, "userinfo_embed_title"),
@@ -273,11 +419,52 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_current_rate", config.language),
-            # value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_num, special_pray_count)}%",
-            value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_count, special_pray_count)}%",
+            value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_count, special_pray_count)+streak_penalty}%",
             inline=False
         )
 
+        # hiện streak penalty nếu có
+        if streak_penalty != 0:
+            # đếm streak hiện tại để hiển thị
+            history = get_user_data(user_to_show.id, "pray_history")
+            streak = 0
+            for entry in reversed(history):
+                if entry["type"] == "special":
+                    streak += 1
+                else:
+                    break
+            response.add_field(
+                name=get_string_by_id(loca_sheet, "userinfo_streak", config.language),
+                value=get_string_by_id(loca_sheet, "userinfo_streak_value", config.language).format(streak),
+                inline=False
+            )
+
+        response.set_thumbnail(url=user_to_show.display_avatar.url)
+        return response
+    # endregion
+    # region history / map
+    if args[0] == "history" or args[0] == "map":
+        user_to_show = user
+        if len(args) >= 2:
+            try:
+                user_to_show = bot.get_user(sussyutils.get_user_id_from_snowflake(args[1]))
+                if user_to_show is None:
+                    user_to_show = user
+            except:
+                pass
+        
+        history = get_user_data(user_to_show.id, "pray_history")
+        if not history:
+            return get_string_by_id(loca_sheet, "history_empty")
+        
+        history_map = generate_history_map(user_to_show.id)
+        
+        response = discord.Embed(
+            title=get_string_by_id(loca_sheet, "history_embed_title"),
+            description=history_map,
+            color=0x00ff00
+        )
+        response.set_footer(text=f"{user_to_show.display_name}")
         response.set_thumbnail(url=user_to_show.display_avatar.url)
         return response
     # endregion
@@ -293,8 +480,9 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
         pray_num = get_user_data(user.id, "prayers")
 
         bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
+        streak_penalty = calculate_streak_penalty(user.id)
 
-        current_rate = get_user_data(user.id, "current_rate") + bonus_percent
+        current_rate = get_user_data(user.id, "current_rate") + bonus_percent + streak_penalty
         return str(current_rate) + "%"
     # endregion
 
@@ -360,6 +548,23 @@ async def slash_command_listener_info(ctx: discord.Interaction, bot: discord.Cli
 
     userid = str(user.id) if user is not None else str(ctx.user.id)
     response = command_response(["info", userid], bot, ctx.user)
+
+    if isinstance(response, discord.Embed):
+        await ctx.followup.send(embed=response)
+    
+    elif isinstance(response, str):
+        await ctx.followup.send(response)
+
+
+async def slash_command_listener_history(ctx: discord.Interaction, bot: discord.Client, user: discord.User | None = None):
+    print(f"{ctx.user} used nijipray history commands!")
+    await ctx.response.defer()
+    if not is_channel_allowed(ctx.channel_id):
+        await ctx.followup.send(get_string_by_id(loca_sheet, "channel_not_allowed"))
+        return
+
+    userid = str(user.id) if user is not None else str(ctx.user.id)
+    response = command_response(["history", userid], bot, ctx.user)
 
     if isinstance(response, discord.Embed):
         await ctx.followup.send(embed=response)
