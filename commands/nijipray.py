@@ -209,17 +209,23 @@ def calculate_streak_penalty(userid: str | int) -> float | int:
 
 
 def generate_history_map(userid: str | int) -> str:
-    """Tạo contribution map emoji giống GitHub cho 30 ngày gần nhất"""
+    """Tạo contribution map emoji cho 35 ngày gần nhất"""
     history_dict = get_pray_history_map(userid)
     today = datetime.now(tz).date()
     
     EMOJI_NORMAL = "🟩"
     EMOJI_SPECIAL = "🟨"
-    EMOJI_MISS = "🟥"
+    EMOJI_PENALTY = "🟥"
+    EMOJI_FORGOT = "🟪"
     EMOJI_TODAY = "⬜"
     EMOJI_EMPTY = "⬛"
     
     DAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
+    
+    # tìm ngày sớm nhất trong lịch sử để phân biệt "quên" vs "N/A"
+    earliest_history = None
+    if history_dict:
+        earliest_history = min(history_dict.keys())
     
     # tạo list 30 ngày, mỗi ngày là 1 emoji
     days_data = []  # list of (date, weekday, emoji)
@@ -235,22 +241,25 @@ def generate_history_map(userid: str | int) -> str:
             if ptype == "special":
                 emoji = EMOJI_SPECIAL
             elif ptype == "miss":
-                emoji = EMOJI_MISS
+                emoji = EMOJI_PENALTY
             else:
                 emoji = EMOJI_NORMAL
+        elif earliest_history and day_str > earliest_history:
+            # ngày nằm sau lần lạy đầu tiên nhưng không có dữ liệu = quên
+            emoji = EMOJI_FORGOT
         else:
+            # ngày trước khi user bắt đầu chơi = N/A
             emoji = EMOJI_EMPTY
         
         days_data.append((day, weekday, emoji))
     
-    # sắp xếp thành grid theo tuần (giống GitHub: cột = ngày trong tuần, hàng = tuần)
-    # tìm ngày đầu tiên và padding nó về đầu tuần (Monday)
+    # sắp xếp thành grid theo tuần, căn theo ngày trong tuần
     first_day = days_data[0][0]
     first_weekday = first_day.weekday()  # 0=Monday
     
     # tạo grid: list các tuần, mỗi tuần là list 7 emoji
     weeks = []
-    current_week = [EMOJI_EMPTY] * first_weekday  # padding đầu
+    current_week = [EMOJI_EMPTY] * first_weekday  # padding đầu tuần đầu
     
     for day, weekday, emoji in days_data:
         current_week.append(emoji)
@@ -258,11 +267,17 @@ def generate_history_map(userid: str | int) -> str:
             weeks.append(current_week)
             current_week = []
     
-    # padding cuối tuần hiện tại
+    # padding cuối tuần cuối
     if current_week:
         while len(current_week) < 7:
             current_week.append(EMOJI_EMPTY)
         weeks.append(current_week)
+    
+    # căn trên: dời các hàng toàn ⬛ ở đầu xuống cuối
+    leading_empty = []
+    while weeks and all(cell == EMOJI_EMPTY for cell in weeks[0]):
+        leading_empty.append(weeks.pop(0))
+    weeks.extend(leading_empty)
     
     # build string
     lines = []
@@ -275,7 +290,7 @@ def generate_history_map(userid: str | int) -> str:
     
     # legend
     lines.append("")
-    lines.append(f"{EMOJI_NORMAL} Lạy  {EMOJI_SPECIAL} Nổ  {EMOJI_MISS} Quên  {EMOJI_TODAY} Chưa lạy  {EMOJI_EMPTY} N/A")
+    lines.append(f"{EMOJI_NORMAL} Lạy  {EMOJI_SPECIAL} Nổ  {EMOJI_PENALTY} Phạt  {EMOJI_FORGOT} Quên  {EMOJI_TODAY} Chưa lạy  {EMOJI_EMPTY} N/A")
     
     return "\n".join(lines)
 

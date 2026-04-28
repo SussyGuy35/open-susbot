@@ -27,7 +27,7 @@ info_param_user_desc,Con chiên bạn muốn xem,
 bible_cmd_desc,Kinh thánh Nijika,
 bible_cmd_usage,Hiện bài kinh thánh Nijika,
 channel_not_allowed,Kênh này không phải nhà thờ!,**nijipray** is not available in this channel!
-history_cmd_desc,Xem lịch sử lạy 30 ngày,View 30-day pray history
-history_cmd_usage,Xem bản đồ lịch sử lạy 30 ngày gần nhất,View the last 30 days pray history
-history_embed_title,📅 Lịch sử lạy 30 ngày,📅 30-day pray history
+history_cmd_desc,Xem lịch sử lạy 35 ngày,View 35-day pray history
+history_cmd_usage,Xem bản đồ lịch sử lạy 35 ngày gần nhất,View the last 35 days pray history
+history_embed_title,📅 Lịch sử lạy 35 ngày,📅 35-day pray history
 history_empty,Con chiên này chưa lạy lần nào,No pray history found
