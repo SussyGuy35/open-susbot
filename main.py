@@ -11,7 +11,7 @@ from commands import (
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
     gacha, reactionroles, nijipray, momjoke, incase,
-    afk, ryo, encrypt, decrypt
+    afk, ryo, encrypt, decrypt, radio
 )
 
 # MARK: import features
@@ -253,6 +253,34 @@ async def get_ryo_image(ctx: discord.Interaction):
     await ryo.slash_command_listener(ctx)
 
 
+# MARK: Radio commands
+
+@tree.command(name="radio_play", description=get_string("play_cmd_desc", "radio"))
+@app_commands.choices(station=radio.STATION_CHOICES)
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+async def radio_play(ctx: discord.Interaction, station: app_commands.Choice[str]):
+    await radio.slash_play(ctx, station.value)
+
+
+@tree.command(name="radio_stop", description=get_string("stop_cmd_desc", "radio"))
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+async def radio_stop(ctx: discord.Interaction):
+    await radio.slash_stop(ctx)
+
+
+@tree.command(name="radio_list", description=get_string("list_cmd_desc", "radio"))
+@app_commands.allowed_installs(guilds=True, users=False)
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+async def radio_list(ctx: discord.Interaction):
+    await radio.slash_list(ctx)
+
+
+@tree.command(name="radio_status", description=get_string("status_cmd_desc", "radio"))
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+async def radio_status(ctx: discord.Interaction):
+    await radio.slash_status(ctx)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():
@@ -388,6 +416,9 @@ async def on_message(message: discord.Message):
         
         elif command in decrypt.cmd_names:
             await decrypt.command_listener(message, plain_args)
+        
+        elif command in radio.cmd_names:
+            await radio.command_listener(message, args)
 
         # Invalid command
         else:

@@ -1,0 +1,22 @@
+string_id,vi,en
+command_desc,Phát radio VOV trong voice channel 📻,Play VOV radio in a voice channel 📻
+play_cmd_desc,Tham gia voice channel và phát kênh radio,Join voice channel and play a radio station
+stop_cmd_desc,Dừng phát radio và rời voice channel,Stop radio and leave voice channel
+list_cmd_desc,Xem danh sách các kênh radio VOV,List all available VOV radio stations
+status_cmd_desc,Xem trạng thái phát radio hiện tại,Check the current radio playback status
+station_param_desc,Tên kênh radio (vov1/vov2/vov3/vovgt_hn/vovgt_hcm),Radio station name (vov1/vov2/vov3/vovgt_hn/vovgt_hcm)
+command_usage,"b!radio play <station> | b!radio stop | b!radio list | b!radio status","b!radio play <station> | b!radio stop | b!radio list | b!radio status"
+not_in_voice,Bạn cần vào voice channel trước! 🐧,You need to join a voice channel first! 🐧
+invalid_station,"Kênh radio không hợp lệ! Dùng `b!radio list` để xem danh sách kênh. 🐧","Invalid radio station! Use `b!radio list` to see available stations. 🐧"
+already_playing,"Bot đang phát radio ở kênh này rồi! Dùng `b!radio stop` để dừng trước. 🐧","Bot is already playing radio in this server! Use `b!radio stop` to stop first. 🐧"
+not_playing,Bot không phát radio nào cả. 🐧,Bot is not playing any radio. 🐧
+now_playing,🎵 Đang phát: **{0}**,🎵 Now playing: **{0}**
+stopped,📻 Đã dừng phát radio và rời voice channel.,📻 Stopped radio and left the voice channel.
+list_title,📻 Danh sách kênh Radio VOV,📻 VOV Radio Stations
+list_footer,Dùng lệnh play để phát radio!,Use the play command to start listening!
+status_title,📻 Trạng thái Radio,📻 Radio Status
+status_playing,Đang phát,Now Playing
+status_channel,Voice Channel,Voice Channel
+status_not_playing,Bot không phát radio nào tại server này.,Bot is not playing any radio in this server.
+connect_error,Không thể kết nối tới voice channel! Kiểm tra lại quyền của bot. 🐧,Cannot connect to voice channel! Check bot permissions. 🐧
+stream_unavailable,Không thể kết nối tới stream của kênh này. Server có thể đang bảo trì. Thử lại sau nhé! 🐧,Cannot connect to this station's stream. The server may be under maintenance. Try again later! 🐧

@@ -1,0 +1,362 @@
+import asyncio
+import discord
+import discord.app_commands as app_commands
+import requests
+from lib.locareader import get_string_by_id
+import lib.sussyhelper as sh
+
+loca_sheet = "loca/loca - radio.csv"
+
+cmd_names = ["radio"]
+
+# MARK: Station list
+# Each station has a list of URLs tried in order — first one that responds with
+# HTTP 2xx is used. This handles servers that are temporarily down (e.g. 502).
+STATIONS: dict[str, dict] = {
+    "vov1": {
+        "name": "VOV1 - Kênh Chính Trị Tổng Hợp",
+        "urls": [
+            "https://media-audio.vov.vn/vov1vov5Vietnamese.sdp_aac/playlist.m3u8",
+            "https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8",  # fallback
+        ],
+        "emoji": "📻"
+    },
+    "vov2": {
+        "name": "VOV2 - Kênh Văn Hóa và Đời Sống",
+        "urls": [
+            "https://media-audio.vov.vn/vov2.sdp_aac/playlist.m3u8",
+            "https://str.vov.gov.vn/vovlive/vov2.sdp_aac/playlist.m3u8",  # fallback
+        ],
+        "emoji": "🎵"
+    },
+    "vov3": {
+        "name": "VOV3 - Kênh Âm Nhạc Thông Tin Giải Trí",
+        "urls": [
+            "https://media-audio.vov.vn/vov3.sdp_aac/playlist.m3u8",
+            "https://str.vov.gov.vn/vovlive/vov3.sdp_aac/playlist.m3u8",  # fallback
+        ],
+        "emoji": "🎶"
+    },
+    "vovgt_hn": {
+        "name": "VOV Giao Thông Hà Nội",
+        "urls": [
+            "https://play.vovgiaothong.vn/live/gthn/playlist.m3u8",
+        ],
+        "emoji": "🚦"
+    },
+    "vovgt_hcm": {
+        "name": "VOV Giao Thông TP. Hồ Chí Minh",
+        "urls": [
+            "https://play.vovgiaothong.vn/live/gthcm/playlist.m3u8",
+        ],
+        "emoji": "🛣️"
+    }
+}
+
+# FFmpeg options for HLS live stream stability
+FFMPEG_OPTIONS = {
+    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+    'options': '-vn'
+}
+
+# Slash command dropdown choices — built from STATIONS so it's always in sync
+STATION_CHOICES: list[app_commands.Choice[str]] = [
+    app_commands.Choice(
+        name=f"{station['emoji']} {station['name']}",
+        value=key
+    )
+    for key, station in STATIONS.items()
+]
+
+# Track active voice sessions per guild: guild_id -> { voice_client, station_key, active_url }
+_active_sessions: dict[int, dict] = {}
+
+# MARK: Help registration
+sh.HelpManager.add_command_help(
+    sh.CommandHelpGroup(
+        group_name="radio",
+        command_type=sh.CommandType.HYBRID,
+        description=get_string_by_id(loca_sheet, "command_desc"),
+        usage=get_string_by_id(loca_sheet, "command_usage"),
+        commands=[
+            sh.CommandHelp(
+                command_name="play",
+                command_type=sh.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "play_cmd_desc"),
+                usage="b!radio play <station> | /radio_play <station>",
+                parameters=[
+                    sh.CommandParameterDescription(
+                        name="station",
+                        description=get_string_by_id(loca_sheet, "station_param_desc"),
+                        required=True
+                    )
+                ]
+            ),
+            sh.CommandHelp(
+                command_name="stop",
+                command_type=sh.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "stop_cmd_desc"),
+                usage="b!radio stop | /radio_stop"
+            ),
+            sh.CommandHelp(
+                command_name="list",
+                command_type=sh.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "list_cmd_desc"),
+                usage="b!radio list | /radio_list"
+            ),
+            sh.CommandHelp(
+                command_name="status",
+                command_type=sh.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "status_cmd_desc"),
+                usage="b!radio status | /radio_status"
+            )
+        ]
+    ),
+    sh.HelpSection.GENERAL
+)
+
+
+# MARK: Helpers
+
+def _get_string(id_: str) -> str:
+    return get_string_by_id(loca_sheet, id_)
+
+
+def _resolve_url(urls: list[str], timeout: int = 5) -> str | None:
+    """Try each URL in order and return the first one that responds with HTTP 2xx.
+    Runs a lightweight HEAD request — no audio data is downloaded."""
+    for url in urls:
+        try:
+            resp = requests.head(url, timeout=timeout, allow_redirects=True)
+            if resp.status_code < 400:
+                return url
+        except requests.RequestException:
+            continue
+    return None
+
+
+async def _resolve_url_async(urls: list[str]) -> str | None:
+    """Async wrapper for _resolve_url so it doesn't block the event loop."""
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, _resolve_url, urls)
+
+
+def _build_list_embed() -> discord.Embed:
+    embed = discord.Embed(
+        title=_get_string("list_title"),
+        color=discord.Color.blurple()
+    )
+    for key, station in STATIONS.items():
+        embed.add_field(
+            name=f"{station['emoji']} `{key}` — {station['name']}",
+            value="",
+            inline=False
+        )
+    embed.set_footer(text=_get_string("list_footer"))
+    return embed
+
+
+def _build_status_embed(guild_id: int) -> discord.Embed:
+    embed = discord.Embed(
+        title=_get_string("status_title"),
+        color=discord.Color.blurple()
+    )
+    if guild_id in _active_sessions:
+        session = _active_sessions[guild_id]
+        station = STATIONS[session["station_key"]]
+        vc: discord.VoiceClient = session["voice_client"]
+        embed.add_field(
+            name=_get_string("status_playing"),
+            value=f"{station['emoji']} **{station['name']}**",
+            inline=False
+        )
+        embed.add_field(
+            name=_get_string("status_channel"),
+            value=vc.channel.mention,
+            inline=False
+        )
+    else:
+        embed.description = _get_string("status_not_playing")
+    return embed
+
+
+# MARK: Core actions
+
+async def _action_play(
+    guild: discord.Guild,
+    voice_channel: discord.VoiceChannel,
+    station_key: str,
+    reply,  # callable(content=str | embed=discord.Embed)
+):
+    """Play a VOV radio station in the given voice channel.
+    Automatically tries fallback URLs if the primary one is unavailable.
+    If already playing, switches to the new station instead of returning an error."""
+    guild_id = guild.id
+
+    # Validate station
+    if station_key not in STATIONS:
+        await reply(content=_get_string("invalid_station"))
+        return
+
+    station = STATIONS[station_key]
+    urls: list[str] = station["urls"]
+
+    # Resolve a working URL (HEAD-checks each candidate, non-blocking)
+    print(f"[radio] Resolving stream URL for {station_key}...")
+    active_url = await _resolve_url_async(urls)
+
+    if active_url is None:
+        await reply(content=_get_string("stream_unavailable"))
+        print(f"[radio] All URLs for {station_key} are unavailable: {urls}")
+        return
+
+    print(f"[radio] Using URL: {active_url}")
+
+    # --- CASE 1: Already playing in this guild → switch station ---
+    if guild_id in _active_sessions:
+        voice_client: discord.VoiceClient = _active_sessions[guild_id]["voice_client"]
+
+        # Move to user's channel if different
+        if voice_client.channel != voice_channel:
+            try:
+                await voice_client.move_to(voice_channel)
+            except Exception as e:
+                print(f"[radio] Failed to move to voice channel: {e}")
+                await reply(content=_get_string("connect_error"))
+                return
+
+        # Stop current stream and start new one
+        voice_client.stop()
+        source = discord.FFmpegPCMAudio(active_url, **FFMPEG_OPTIONS)
+        voice_client.play(
+            source,
+            after=lambda e: print(f"[radio] Stream ended ({station_key}): {e}" if e else f"[radio] Stream ended ({station_key})")
+        )
+
+        _active_sessions[guild_id]["station_key"] = station_key
+        _active_sessions[guild_id]["active_url"] = active_url
+        await reply(content=_get_string("now_playing").format(station["name"]))
+        return
+
+    # --- CASE 2: Not playing → connect and start ---
+    try:
+        voice_client = await voice_channel.connect()
+    except Exception as e:
+        print(f"[radio] Failed to connect to voice channel: {e}")
+        await reply(content=_get_string("connect_error"))
+        return
+
+    source = discord.FFmpegPCMAudio(active_url, **FFMPEG_OPTIONS)
+    voice_client.play(
+        source,
+        after=lambda e: print(f"[radio] Stream ended ({station_key}): {e}" if e else f"[radio] Stream ended ({station_key})")
+    )
+
+    _active_sessions[guild_id] = {
+        "voice_client": voice_client,
+        "station_key": station_key,
+        "active_url": active_url
+    }
+
+    await reply(content=_get_string("now_playing").format(station["name"]))
+
+
+async def _action_stop(guild: discord.Guild, reply):
+    """Stop radio and disconnect from voice channel."""
+    guild_id = guild.id
+
+    if guild_id not in _active_sessions:
+        await reply(content=_get_string("not_playing"))
+        return
+
+    voice_client: discord.VoiceClient = _active_sessions[guild_id]["voice_client"]
+    await voice_client.disconnect()
+    del _active_sessions[guild_id]
+
+    await reply(content=_get_string("stopped"))
+
+
+async def _action_list(reply):
+    """Send the list of available stations."""
+    await reply(embed=_build_list_embed())
+
+
+async def _action_status(guild: discord.Guild, reply):
+    """Send the current playback status."""
+    await reply(embed=_build_status_embed(guild.id))
+
+
+# MARK: Prefix command listener
+
+async def command_listener(message: discord.Message, args: list[str]):
+    if not message.guild:
+        return
+
+    async def reply(**kwargs):
+        await message.channel.send(**kwargs)
+
+    if not args:
+        await reply(embed=_build_list_embed())
+        return
+
+    subcommand = args[0].lower()
+
+    if subcommand == "play":
+        if len(args) < 2:
+            await reply(content=_get_string("invalid_station"))
+            return
+        if not message.author.voice or not message.author.voice.channel:
+            await reply(content=_get_string("not_in_voice"))
+            return
+        station_key = args[1].lower()
+        await _action_play(message.guild, message.author.voice.channel, station_key, reply)
+
+    elif subcommand == "stop":
+        await _action_stop(message.guild, reply)
+
+    elif subcommand == "list":
+        await _action_list(reply)
+
+    elif subcommand == "status":
+        await _action_status(message.guild, reply)
+
+    else:
+        await reply(content=_get_string("invalid_station"))
+
+
+# MARK: Slash command listeners
+
+async def slash_play(ctx: discord.Interaction, station: str):
+    await ctx.response.defer()
+    print(f"{ctx.user} used /radio_play {station}")
+
+    async def reply(**kwargs):
+        await ctx.followup.send(**kwargs)
+
+    if not ctx.user.voice or not ctx.user.voice.channel:  # type: ignore
+        await reply(content=_get_string("not_in_voice"))
+        return
+
+    await _action_play(ctx.guild, ctx.user.voice.channel, station.lower(), reply)  # type: ignore
+
+
+async def slash_stop(ctx: discord.Interaction):
+    await ctx.response.defer()
+    print(f"{ctx.user} used /radio_stop")
+
+    async def reply(**kwargs):
+        await ctx.followup.send(**kwargs)
+
+    await _action_stop(ctx.guild, reply)  # type: ignore
+
+
+async def slash_list(ctx: discord.Interaction):
+    await ctx.response.defer()
+    print(f"{ctx.user} used /radio_list")
+    await ctx.followup.send(embed=_build_list_embed())
+
+
+async def slash_status(ctx: discord.Interaction):
+    await ctx.response.defer()
+    print(f"{ctx.user} used /radio_status")
+    await ctx.followup.send(embed=_build_status_embed(ctx.guild_id))  # type: ignore
