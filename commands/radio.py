@@ -178,18 +178,30 @@ def _build_list_embed() -> discord.Embed:
     return embed
 
 
-def _build_status_embed(guild_id: int) -> discord.Embed:
+async def _build_status_embed(guild_id: int) -> discord.Embed:
     embed = discord.Embed(
         title=_get_string("status_title"),
         color=discord.Color.blurple()
     )
     if guild_id in _active_sessions:
         session = _active_sessions[guild_id]
-        station = STATIONS[session["station_key"]]
+        station_key = session["station_key"]
+        station = STATIONS[station_key]
         vc: discord.VoiceClient = session["voice_client"]
+        
+        desc = f"{station['emoji']} **{station['name']}**"
+        
+        # Try fetching schedule to show current program
+        if station_key in [c.value for c in SCHEDULE_SUPPORTED_CHOICES]:
+            schedule = await scraper.get_schedule(station_key)
+            if schedule:
+                current_program = scraper.get_current_program(schedule)
+                if current_program:
+                    desc += f"\n\n**{_get_string('schedule_program_list')}**: {current_program}"
+                    
         embed.add_field(
             name=_get_string("status_playing"),
-            value=f"{station['emoji']} **{station['name']}**",
+            value=desc,
             inline=False
         )
         embed.add_field(
@@ -305,7 +317,7 @@ async def _action_list(reply):
 
 async def _action_status(guild: discord.Guild, reply):
     """Send the current playback status."""
-    await reply(embed=_build_status_embed(guild.id))
+    await reply(embed=await _build_status_embed(guild.id))
 
 
 async def _build_schedule_embed(station_key: str, schedule: list[tuple[str, str]]) -> discord.Embed:
@@ -331,7 +343,7 @@ async def _build_schedule_embed(station_key: str, schedule: list[tuple[str, str]
         chunks.append(current_chunk)
         
     for i, chunk in enumerate(chunks):
-        field_name = "Chương trình" if i == 0 else "Tiếp theo..."
+        field_name = _get_string("schedule_program_list") if i == 0 else "\u200b"
         embed.add_field(name=field_name, value=chunk, inline=False)
         
     return embed
@@ -431,7 +443,8 @@ async def slash_list(ctx: discord.Interaction):
 async def slash_status(ctx: discord.Interaction):
     await ctx.response.defer()
     print(f"{ctx.user} used /radio_status")
-    await ctx.followup.send(embed=_build_status_embed(ctx.guild_id))  # type: ignore
+    embed = await _build_status_embed(ctx.guild_id)  # type: ignore
+    await ctx.followup.send(embed=embed)
 
 async def slash_schedule(ctx: discord.Interaction, station: str):
     await ctx.response.defer()

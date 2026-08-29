@@ -93,3 +93,28 @@ async def get_schedule(station_key: str) -> list[tuple[str, str]] | None:
         }
         
     return schedule
+
+def get_current_program(schedule: list[tuple[str, str]]) -> str | None:
+    """Find the currently playing program based on the current time."""
+    now = datetime.now(_tz)
+    current_mins = now.hour * 60 + now.minute
+    
+    for time_str, program in schedule:
+        clean_str = time_str.replace(" ", "").replace(":", "h")
+        if "-" not in clean_str:
+            continue
+        try:
+            start_str, end_str = clean_str.split("-")
+            start_mins = int(start_str.split("h")[0]) * 60 + int(start_str.split("h")[1])
+            end_mins = int(end_str.split("h")[0]) * 60 + int(end_str.split("h")[1])
+            
+            # Handle cases like 23h00-00h00 (crosses midnight)
+            if end_mins == 0:
+                end_mins = 1440
+                
+            if start_mins <= current_mins < end_mins:
+                return f"{time_str} - {program}"
+        except Exception:
+            continue
+            
+    return None
