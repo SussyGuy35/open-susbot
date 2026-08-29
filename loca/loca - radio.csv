@@ -20,3 +20,7 @@ status_channel,Voice Channel,Voice Channel
 status_not_playing,Bot không phát radio nào tại server này.,Bot is not playing any radio in this server.
 connect_error,Không thể kết nối tới voice channel! Kiểm tra lại quyền của bot. 🐧,Cannot connect to voice channel! Check bot permissions. 🐧
 stream_unavailable,Không thể kết nối tới stream của kênh này. Server có thể đang bảo trì. Thử lại sau nhé! 🐧,Cannot connect to this station's stream. The server may be under maintenance. Try again later! 🐧
+schedule_cmd_desc,Xem lịch phát sóng trong ngày của kênh radio.,View the daily broadcast schedule of a radio station.
+schedule_title,Lịch phát sóng 📅,Broadcast Schedule 📅
+schedule_unsupported,Kênh `{0}` hiện chưa hỗ trợ xem lịch phát sóng. Các kênh hỗ trợ: VOV3, VOVGT Hà Nội, VOVGT TP.HCM.,Station `{0}` does not support schedule viewing yet. Supported: VOV3, VOVGT HN, VOVGT HCM.
+scraping_error,Không thể tải lịch phát sóng lúc này, hãy thử lại sau! 🐧,Cannot load the broadcast schedule at this time, please try again later! 🐧

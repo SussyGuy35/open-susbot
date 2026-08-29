@@ -1,0 +1,95 @@
+import asyncio
+import aiohttp
+from bs4 import BeautifulSoup
+from datetime import datetime
+import pytz
+
+# In-memory cache to avoid scraping multiple times a day
+# Format: { "station_key": { "date": "YYYY-MM-DD", "schedule": [(time, program), ...] } }
+_cache = {}
+_tz = pytz.timezone("Asia/Ho_Chi_Minh")
+
+async def _fetch_html(url: str) -> str:
+    """Fetch HTML content from a URL."""
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=15) as response:
+            response.raise_for_status()
+            return await response.text()
+
+async def _scrape_vov3() -> list[tuple[str, str]]:
+    url = "https://vov3.vov.vn/lich-phat-song"
+    html = await _fetch_html(url)
+    soup = BeautifulSoup(html, 'html.parser')
+    
+    results = []
+    seen_times = set()
+    
+    for li in soup.find_all('li', class_='sidebar-nav-item'):
+        time_span = li.find('span', class_='view-field-airtime')
+        title_span = li.find('span', class_='views-field-title')
+        
+        if time_span and title_span:
+            time_text = time_span.text.strip()
+            title_text = title_span.text.strip()
+            
+            if time_text and time_text not in seen_times:
+                seen_times.add(time_text)
+                results.append((time_text, title_text))
+                
+    return results
+
+async def _scrape_vovgt(region: str) -> list[tuple[str, str]]:
+    url = f"https://vovgiaothong.vn/lich-phat-song-{region}/"
+    html = await _fetch_html(url)
+    soup = BeautifulSoup(html, 'html.parser')
+    
+    results = []
+    seen_times = set()
+    
+    for tr in soup.find_all('tr', class_='trlps'):
+        tds = tr.find_all('td')
+        if len(tds) >= 2:
+            time_text = tds[0].text.strip()
+            title_span = tds[1].find('span', class_='titletable')
+            
+            if title_span:
+                title_text = title_span.text.strip()
+                if time_text and time_text not in seen_times:
+                    seen_times.add(time_text)
+                    results.append((time_text, title_text))
+                    
+    return results
+
+async def get_schedule(station_key: str) -> list[tuple[str, str]] | None:
+    """
+    Get the schedule for a given station key.
+    Returns a list of (time_str, program_name_str) or None if unsupported/error.
+    """
+    today_str = datetime.now(_tz).strftime("%Y-%m-%d")
+    
+    # Check cache
+    if station_key in _cache:
+        cached_data = _cache[station_key]
+        if cached_data["date"] == today_str:
+            return cached_data["schedule"]
+
+    # Scrape if not in cache or outdated
+    schedule = None
+    try:
+        if station_key == "vov3":
+            schedule = await _scrape_vov3()
+        elif station_key == "vovgt_hn":
+            schedule = await _scrape_vovgt("hn")
+        elif station_key == "vovgt_hcm":
+            schedule = await _scrape_vovgt("hcm")
+    except Exception as e:
+        print(f"[vov_scraper] Error scraping {station_key}: {e}")
+        return None
+
+    if schedule:
+        _cache[station_key] = {
+            "date": today_str,
+            "schedule": schedule
+        }
+        
+    return schedule

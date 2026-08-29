@@ -281,6 +281,13 @@ async def radio_status(ctx: discord.Interaction):
     await radio.slash_status(ctx)
 
 
+@tree.command(name="radio_schedule", description=get_string("schedule_cmd_desc", "radio"))
+@app_commands.choices(station=radio.SCHEDULE_SUPPORTED_CHOICES)
+@app_commands.allowed_contexts(guilds=True, dms=False, private_channels=False)
+async def radio_schedule(ctx: discord.Interaction, station: app_commands.Choice[str]):
+    await radio.slash_schedule(ctx, station.value)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():

@@ -4,6 +4,7 @@ import discord.app_commands as app_commands
 import requests
 from lib.locareader import get_string_by_id
 import lib.sussyhelper as sh
+import lib.vov_scraper as scraper
 
 loca_sheet = "loca/loca - radio.csv"
 
@@ -16,24 +17,27 @@ STATIONS: dict[str, dict] = {
     "vov1": {
         "name": "VOV1 - Kênh Chính Trị Tổng Hợp",
         "urls": [
+            "https://audio-lss.vov.vn/live/vov1.m3u8",
             "https://media-audio.vov.vn/vov1vov5Vietnamese.sdp_aac/playlist.m3u8",
-            "https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8",  # fallback
+            "https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8",
         ],
         "emoji": "📻"
     },
     "vov2": {
         "name": "VOV2 - Kênh Văn Hóa và Đời Sống",
         "urls": [
+            "https://audio-lss.vov.vn/live/vov2.m3u8",
             "https://media-audio.vov.vn/vov2.sdp_aac/playlist.m3u8",
-            "https://str.vov.gov.vn/vovlive/vov2.sdp_aac/playlist.m3u8",  # fallback
+            "https://str.vov.gov.vn/vovlive/vov2.sdp_aac/playlist.m3u8",
         ],
         "emoji": "🎵"
     },
     "vov3": {
         "name": "VOV3 - Kênh Âm Nhạc Thông Tin Giải Trí",
         "urls": [
+            "https://audio-lss.vov.vn/live/vov3.m3u8",
             "https://media-audio.vov.vn/vov3.sdp_aac/playlist.m3u8",
-            "https://str.vov.gov.vn/vovlive/vov3.sdp_aac/playlist.m3u8",  # fallback
+            "https://str.vov.gov.vn/vovlive/vov3.sdp_aac/playlist.m3u8",
         ],
         "emoji": "🎶"
     },
@@ -66,6 +70,11 @@ STATION_CHOICES: list[app_commands.Choice[str]] = [
         value=key
     )
     for key, station in STATIONS.items()
+]
+
+# Schedule only supports specific stations for now
+SCHEDULE_SUPPORTED_CHOICES: list[app_commands.Choice[str]] = [
+    c for c in STATION_CHOICES if c.value in ["vov3", "vovgt_hn", "vovgt_hcm"]
 ]
 
 # Track active voice sessions per guild: guild_id -> { voice_client, station_key, active_url }
@@ -109,6 +118,19 @@ sh.HelpManager.add_command_help(
                 command_type=sh.CommandType.HYBRID,
                 description=get_string_by_id(loca_sheet, "status_cmd_desc"),
                 usage="b!radio status | /radio_status"
+            ),
+            sh.CommandHelp(
+                command_name="schedule",
+                command_type=sh.CommandType.HYBRID,
+                description=get_string_by_id(loca_sheet, "schedule_cmd_desc"),
+                usage="b!radio schedule <station> | /radio_schedule <station>",
+                parameters=[
+                    sh.CommandParameterDescription(
+                        name="station",
+                        description=get_string_by_id(loca_sheet, "station_param_desc"),
+                        required=True
+                    )
+                ]
             )
         ]
     ),
@@ -286,6 +308,49 @@ async def _action_status(guild: discord.Guild, reply):
     await reply(embed=_build_status_embed(guild.id))
 
 
+async def _build_schedule_embed(station_key: str, schedule: list[tuple[str, str]]) -> discord.Embed:
+    station_name = STATIONS[station_key]["name"]
+    embed = discord.Embed(
+        title=f"{_get_string('schedule_title')} - {station_name}",
+        color=discord.Color.blue()
+    )
+    
+    # Discord embed fields have a max length of 1024 chars
+    # We will combine schedule items into chunks
+    chunks = []
+    current_chunk = ""
+    for time_str, program_str in schedule:
+        line = f"**{time_str}** - {program_str}\n"
+        if len(current_chunk) + len(line) > 1000:
+            chunks.append(current_chunk)
+            current_chunk = line
+        else:
+            current_chunk += line
+            
+    if current_chunk:
+        chunks.append(current_chunk)
+        
+    for i, chunk in enumerate(chunks):
+        field_name = "Chương trình" if i == 0 else "Tiếp theo..."
+        embed.add_field(name=field_name, value=chunk, inline=False)
+        
+    return embed
+
+async def _action_schedule(reply, station_key: str):
+    """Fetch and send the broadcast schedule for a station."""
+    if station_key not in [c.value for c in SCHEDULE_SUPPORTED_CHOICES]:
+        await reply(content=_get_string("schedule_unsupported").format(STATIONS.get(station_key, {}).get("name", station_key)))
+        return
+        
+    schedule_data = await scraper.get_schedule(station_key)
+    if not schedule_data:
+        await reply(content=_get_string("scraping_error"))
+        return
+        
+    embed = await _build_schedule_embed(station_key, schedule_data)
+    await reply(embed=embed)
+
+
 # MARK: Prefix command listener
 
 async def command_listener(message: discord.Message, args: list[str]):
@@ -319,6 +384,13 @@ async def command_listener(message: discord.Message, args: list[str]):
 
     elif subcommand == "status":
         await _action_status(message.guild, reply)
+
+    elif subcommand == "schedule":
+        if len(args) < 2:
+            await reply(content=_get_string("invalid_station"))
+            return
+        station_key = args[1].lower()
+        await _action_schedule(reply, station_key)
 
     else:
         await reply(content=_get_string("invalid_station"))
@@ -360,3 +432,12 @@ async def slash_status(ctx: discord.Interaction):
     await ctx.response.defer()
     print(f"{ctx.user} used /radio_status")
     await ctx.followup.send(embed=_build_status_embed(ctx.guild_id))  # type: ignore
+
+async def slash_schedule(ctx: discord.Interaction, station: str):
+    await ctx.response.defer()
+    print(f"{ctx.user} used /radio_schedule {station}")
+
+    async def reply(**kwargs):
+        await ctx.followup.send(**kwargs)
+
+    await _action_schedule(reply, station.lower())
