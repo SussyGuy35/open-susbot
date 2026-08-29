@@ -41,6 +41,14 @@ STATIONS: dict[str, dict] = {
         ],
         "emoji": "🎶"
     },
+    "vov5": {
+        "name": "VOV5 - Hệ Phát Thanh Đối Ngoại",
+        "urls": [
+            "https://audio-lss.vov.vn/live/vov5.m3u8",
+            "https://str.vov.gov.vn/vovlive/vov5.sdp_aac/playlist.m3u8",
+        ],
+        "emoji": "🌍"
+    },
     "vovgt_hn": {
         "name": "VOV Giao Thông Hà Nội",
         "urls": [
