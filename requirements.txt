@@ -5,4 +5,5 @@ pytz
 pymongo[srv] >= 4.11.3
 boto3
 dotenv
-PyNaClbeautifulsoup4
+PyNaCl
+beautifulsoup4
