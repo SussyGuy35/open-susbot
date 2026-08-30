@@ -186,16 +186,18 @@ def _build_list_embed() -> discord.Embed:
     return embed
 
 
-async def _build_status_embed(guild_id: int) -> discord.Embed:
+async def _build_status_embed(guild: discord.Guild) -> discord.Embed:
     embed = discord.Embed(
         title=_get_string("status_title"),
         color=discord.Color.blurple()
     )
-    if guild_id in _active_sessions:
+    guild_id = guild.id
+    
+    if guild.voice_client and guild_id in _active_sessions:
         session = _active_sessions[guild_id]
         station_key = session["station_key"]
         station = STATIONS[station_key]
-        vc: discord.VoiceClient = session["voice_client"]
+        vc = guild.voice_client
         
         desc = f"{station['emoji']} **{station['name']}**"
         
@@ -254,11 +256,25 @@ async def _action_play(
 
     print(f"[radio] Using URL: {active_url}")
 
-    # --- CASE 1: Already playing in this guild → switch station ---
-    if guild_id in _active_sessions:
-        voice_client: discord.VoiceClient = _active_sessions[guild_id]["voice_client"]
+    # Get or create VoiceClient robustly
+    voice_client: discord.VoiceClient = guild.voice_client
 
-        # Move to user's channel if different
+    if voice_client is not None:
+        if not voice_client.is_connected():
+            # Stale connection (e.g. kicked from channel but state wasn't cleared)
+            await voice_client.disconnect(force=True)
+            voice_client = None
+
+    if voice_client is None:
+        # Case: Not playing -> connect and start
+        try:
+            voice_client = await voice_channel.connect(timeout=10.0, reconnect=True)
+        except Exception as e:
+            print(f"[radio] Failed to connect to voice channel: {e}")
+            await reply(content=_get_string("connect_error"))
+            return
+    else:
+        # Case: Already playing -> switch station
         if voice_client.channel != voice_channel:
             try:
                 await voice_client.move_to(voice_channel)
@@ -266,33 +282,29 @@ async def _action_play(
                 print(f"[radio] Failed to move to voice channel: {e}")
                 await reply(content=_get_string("connect_error"))
                 return
-
-        # Stop current stream and start new one
+        # Stop current stream to prepare for new one
         voice_client.stop()
-        source = discord.FFmpegPCMAudio(active_url, **FFMPEG_OPTIONS)
-        voice_client.play(
-            source,
-            after=lambda e: print(f"[radio] Stream ended ({station_key}): {e}" if e else f"[radio] Stream ended ({station_key})")
-        )
 
-        _active_sessions[guild_id]["station_key"] = station_key
-        _active_sessions[guild_id]["active_url"] = active_url
-        await reply(content=_get_string("now_playing").format(station["name"]))
-        return
+    def after_play(error):
+        print(f"[radio] Stream ended ({station_key}): {error}" if error else f"[radio] Stream ended ({station_key})")
+        # Optional: cleanup _active_sessions if we want, but we rely on guild.voice_client now
+        if guild_id in _active_sessions and _active_sessions[guild_id].get("station_key") == station_key:
+            # We don't delete the session here because the stream might end during a switch,
+            # but if it genuinely stops and voice_client.is_playing() is false, we could clean up.
+            pass
 
-    # --- CASE 2: Not playing → connect and start ---
     try:
-        voice_client = await voice_channel.connect()
-    except Exception as e:
-        print(f"[radio] Failed to connect to voice channel: {e}")
-        await reply(content=_get_string("connect_error"))
+        # Try FFmpegOpusAudio first for lower CPU, fallback to FFmpegPCMAudio
+        try:
+            source = discord.FFmpegOpusAudio(active_url, **FFMPEG_OPTIONS)
+        except Exception:
+            source = discord.FFmpegPCMAudio(active_url, **FFMPEG_OPTIONS)
+            
+        voice_client.play(source, after=after_play)
+    except discord.ClientException as e:
+        print(f"[radio] ClientException playing audio: {e}")
+        await reply(content=_get_string("stream_unavailable"))
         return
-
-    source = discord.FFmpegPCMAudio(active_url, **FFMPEG_OPTIONS)
-    voice_client.play(
-        source,
-        after=lambda e: print(f"[radio] Stream ended ({station_key}): {e}" if e else f"[radio] Stream ended ({station_key})")
-    )
 
     _active_sessions[guild_id] = {
         "voice_client": voice_client,
@@ -306,14 +318,18 @@ async def _action_play(
 async def _action_stop(guild: discord.Guild, reply):
     """Stop radio and disconnect from voice channel."""
     guild_id = guild.id
+    
+    voice_client = guild.voice_client
 
-    if guild_id not in _active_sessions:
+    if voice_client is None:
+        if guild_id in _active_sessions:
+            del _active_sessions[guild_id]
         await reply(content=_get_string("not_playing"))
         return
 
-    voice_client: discord.VoiceClient = _active_sessions[guild_id]["voice_client"]
-    await voice_client.disconnect()
-    del _active_sessions[guild_id]
+    await voice_client.disconnect(force=True)
+    if guild_id in _active_sessions:
+        del _active_sessions[guild_id]
 
     await reply(content=_get_string("stopped"))
 
@@ -325,7 +341,7 @@ async def _action_list(reply):
 
 async def _action_status(guild: discord.Guild, reply):
     """Send the current playback status."""
-    await reply(embed=await _build_status_embed(guild.id))
+    await reply(embed=await _build_status_embed(guild))
 
 
 async def _build_schedule_embed(station_key: str, schedule: list[tuple[str, str]]) -> discord.Embed:
@@ -451,7 +467,7 @@ async def slash_list(ctx: discord.Interaction):
 async def slash_status(ctx: discord.Interaction):
     await ctx.response.defer()
     print(f"{ctx.user} used /radio_status")
-    embed = await _build_status_embed(ctx.guild_id)  # type: ignore
+    embed = await _build_status_embed(ctx.guild)  # type: ignore
     await ctx.followup.send(embed=embed)
 
 async def slash_schedule(ctx: discord.Interaction, station: str):
