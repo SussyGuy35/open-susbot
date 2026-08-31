@@ -87,6 +87,8 @@ SCHEDULE_SUPPORTED_CHOICES: list[app_commands.Choice[str]] = [
 
 # Track active voice sessions per guild: guild_id -> { voice_client, station_key, active_url }
 _active_sessions: dict[int, dict] = {}
+_empty_channel_timers: dict[int, asyncio.Task] = {}
+_paused_sessions: dict[int, dict] = {}
 
 # MARK: Help registration
 sh.HelpManager.add_command_help(
@@ -219,6 +221,13 @@ async def _build_status_embed(guild: discord.Guild) -> discord.Embed:
             value=vc.channel.mention,
             inline=False
         )
+    elif guild.voice_client and guild_id in _paused_sessions:
+        session = _paused_sessions[guild_id]
+        station_key = session["station_key"]
+        station = STATIONS[station_key]
+        vc = guild.voice_client
+        
+        embed.description = f"⏸️ **Tạm dừng** (không có người nghe)\nĐang phát dở: {station['emoji']} **{station['name']}**\nKênh: {vc.channel.mention}"
     else:
         embed.description = _get_string("status_not_playing")
     return embed
@@ -255,6 +264,13 @@ async def _action_play(
         return
 
     print(f"[radio] Using URL: {active_url}")
+
+    # Clear any pause timers since we are starting playback manually
+    if guild_id in _empty_channel_timers:
+        _empty_channel_timers[guild_id].cancel()
+        del _empty_channel_timers[guild_id]
+    if guild_id in _paused_sessions:
+        del _paused_sessions[guild_id]
 
     # Get or create VoiceClient robustly
     voice_client: discord.VoiceClient = guild.voice_client
@@ -330,6 +346,12 @@ async def _action_stop(guild: discord.Guild, reply):
     await voice_client.disconnect(force=True)
     if guild_id in _active_sessions:
         del _active_sessions[guild_id]
+        
+    if guild_id in _empty_channel_timers:
+        _empty_channel_timers[guild_id].cancel()
+        del _empty_channel_timers[guild_id]
+    if guild_id in _paused_sessions:
+        del _paused_sessions[guild_id]
 
     await reply(content=_get_string("stopped"))
 
@@ -478,3 +500,87 @@ async def slash_schedule(ctx: discord.Interaction, station: str):
         await ctx.followup.send(**kwargs)
 
     await _action_schedule(reply, station.lower())
+
+
+# MARK: Voice State Auto-Pause Logic
+
+async def _pause_timer(guild: discord.Guild, timeout: int):
+    try:
+        await asyncio.sleep(timeout)
+    except asyncio.CancelledError:
+        return
+        
+    guild_id = guild.id
+    if guild_id in _active_sessions:
+        session = _active_sessions[guild_id]
+        
+        _paused_sessions[guild_id] = {
+            "station_key": session["station_key"],
+            "active_url": session["active_url"]
+        }
+        
+        voice_client = guild.voice_client
+        if voice_client and voice_client.is_playing():
+            print(f"[radio] Auto-pausing radio in {guild_id} due to empty channel.")
+            voice_client.stop()
+            
+        del _active_sessions[guild_id]
+        
+    if guild_id in _empty_channel_timers:
+        del _empty_channel_timers[guild_id]
+
+async def _resume_play(guild: discord.Guild, voice_channel: discord.VoiceChannel, station_key: str, active_url: str):
+    print(f"[radio] Resuming radio in {guild.id} as channel is no longer empty.")
+    voice_client = guild.voice_client
+    if not voice_client or not voice_client.is_connected():
+        return
+        
+    def after_play(error):
+        print(f"[radio] Stream ended ({station_key}): {error}" if error else f"[radio] Stream ended ({station_key})")
+        
+    try:
+        try:
+            source = discord.FFmpegOpusAudio(active_url, **FFMPEG_OPTIONS)
+        except Exception:
+            source = discord.FFmpegPCMAudio(active_url, **FFMPEG_OPTIONS)
+            
+        voice_client.play(source, after=after_play)
+    except discord.ClientException as e:
+        print(f"[radio] ClientException playing audio on resume: {e}")
+        return
+
+    _active_sessions[guild.id] = {
+        "voice_client": voice_client,
+        "station_key": station_key,
+        "active_url": active_url
+    }
+
+async def handle_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+    if member.bot:
+        return
+        
+    guild = member.guild
+    guild_id = guild.id
+    voice_client = guild.voice_client
+    
+    if voice_client is None or not voice_client.is_connected():
+        return
+
+    bot_channel = voice_client.channel
+    
+    def is_empty(channel):
+        return len([m for m in channel.members if not m.bot]) == 0
+
+    if before.channel == bot_channel and after.channel != bot_channel:
+        if is_empty(bot_channel):
+            if guild_id in _active_sessions and guild_id not in _empty_channel_timers:
+                _empty_channel_timers[guild_id] = asyncio.create_task(_pause_timer(guild, 180)) # 3 minutes
+                
+    elif after.channel == bot_channel and before.channel != bot_channel:
+        if guild_id in _empty_channel_timers:
+            _empty_channel_timers[guild_id].cancel()
+            del _empty_channel_timers[guild_id]
+            
+        if guild_id in _paused_sessions:
+            session_data = _paused_sessions.pop(guild_id)
+            await _resume_play(guild, bot_channel, session_data["station_key"], session_data["active_url"])

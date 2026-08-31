@@ -288,6 +288,12 @@ async def radio_schedule(ctx: discord.Interaction, station: app_commands.Choice[
     await radio.slash_schedule(ctx, station.value)
 
 
+# MARK: On Voice State Update
+@client.event
+async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+    await radio.handle_voice_state_update(member, before, after)
+
+
 # MARK: On ready
 @client.event
 async def on_ready():

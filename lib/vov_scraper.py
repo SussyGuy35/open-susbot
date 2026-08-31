@@ -5,9 +5,10 @@ from datetime import datetime
 import pytz
 
 # In-memory cache to avoid scraping multiple times a day
-# Format: { "station_key": { "date": "YYYY-MM-DD", "schedule": [(time, program), ...] } }
+# Format: { "station_key": { "timestamp": float, "schedule": [(time, program), ...] } }
 _cache = {}
 _tz = pytz.timezone("Asia/Ho_Chi_Minh")
+CACHE_TTL = 3600  # 1 hour in seconds
 
 async def _fetch_html(url: str) -> str:
     """Fetch HTML content from a URL."""
@@ -65,12 +66,12 @@ async def get_schedule(station_key: str) -> list[tuple[str, str]] | None:
     Get the schedule for a given station key.
     Returns a list of (time_str, program_name_str) or None if unsupported/error.
     """
-    today_str = datetime.now(_tz).strftime("%Y-%m-%d")
+    now_ts = datetime.now(_tz).timestamp()
     
     # Check cache
     if station_key in _cache:
         cached_data = _cache[station_key]
-        if cached_data["date"] == today_str:
+        if now_ts - cached_data["timestamp"] < CACHE_TTL:
             return cached_data["schedule"]
 
     # Scrape if not in cache or outdated
@@ -88,7 +89,7 @@ async def get_schedule(station_key: str) -> list[tuple[str, str]] | None:
 
     if schedule:
         _cache[station_key] = {
-            "date": today_str,
+            "timestamp": now_ts,
             "schedule": schedule
         }
         
