@@ -58,8 +58,8 @@ ssyhelper.HelpManager.add_command_help(
 )
 
 
-def get_gvs(guildid: str, userid: str):
-    guilddata = collection.find_one({"_id": str(guildid)})
+async def get_gvs(guildid: str, userid: str):
+    guilddata = await collection.find_one({"_id": str(guildid)})
     if guilddata is None:
         return 0
     if userid not in guilddata:
@@ -67,21 +67,21 @@ def get_gvs(guildid: str, userid: str):
     return guilddata[userid]
 
 
-def set_gvs(guildid: str, userid: str, gvs_count: int):
-    guilddata = collection.find_one({"_id": str(guildid)})
+async def set_gvs(guildid: str, userid: str, gvs_count: int):
+    guilddata = await collection.find_one({"_id": str(guildid)})
     if guilddata is None:
         collection.insert_one({"_id": str(guildid), userid: gvs_count})
     else:
-        collection.update_one({"_id": str(guildid)}, {"$set": {userid: gvs_count}})
+        await collection.update_one({"_id": str(guildid)}, {"$set": {userid: gvs_count}})
 
 
 
-def gvs(userid: str, guildid: str):
-    current_gvs = get_gvs(guildid, userid)
-    set_gvs(guildid, userid, current_gvs + 1)
+async def gvs(userid: str, guildid: str):
+    current_gvs = await get_gvs(guildid, userid)
+    await set_gvs(guildid, userid, current_gvs + 1)
 
 
-def command_response(prefix: str, guild: discord.Guild, author: discord.User, args: list[str]):
+async def command_response(prefix: str, guild: discord.Guild, author: discord.User, args: list[str]):
     guildid = str(guild.id)
 
     if len(args) <= 0:
@@ -94,19 +94,19 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
             else:
                 userid_to_get = str(author.id)
 
-            gvs = get_gvs(guildid, userid_to_get)
-            if gvs != 0:
+            gvs_val = await get_gvs(guildid, userid_to_get)
+            if gvs_val != 0:
                 return get_string_by_id(loca_sheet, "count_result").format(
                     f"<@{userid_to_get}>",
                     guild.name,
-                    gvs
+                    gvs_val
                 )
             else:
                 return get_string_by_id(loca_sheet, "zero_gvs")
         case "lb":
             msg = ""
             lb = {}
-            guild_data = collection.find_one({"_id": str(guildid)})
+            guild_data = await collection.find_one({"_id": str(guildid)})
 
             if guild_data is None:
                 return get_string_by_id(loca_sheet, "empty_leaderboard")
@@ -149,7 +149,7 @@ def command_response(prefix: str, guild: discord.Guild, author: discord.User, ar
                 userid = str(get_user_id_from_snowflake(args[1]))
                 gvs_count = args[2]
 
-                set_gvs(guildid, userid, int(gvs_count))            
+                await set_gvs(guildid, userid, int(gvs_count))            
         
         case _:
             return get_string_by_id(loca_sheet, "command_help").format(prefix)
@@ -159,7 +159,7 @@ async def command_listener(message: discord.Message, args: list):
     prefix = get_prefix(message.guild)
 
     if message.channel.type in supported_channel_types:
-        response = command_response(prefix, message.guild, message.author, args)
+        response = await command_response(prefix, message.guild, message.author, args)
         if isinstance(response, discord.Embed):
             await message.channel.send(embed=response) # lb command response
         elif isinstance(response, str):
@@ -174,7 +174,7 @@ async def slash_command_listener_count(ctx: discord.Interaction, user: discord.U
     userid_to_get = user.id if user is not None else ctx.user.id
     await ctx.response.defer()
     if ctx.channel.type in supported_channel_types:
-        await ctx.followup.send(command_response(prefix, ctx.guild, ctx.user, ["count", f"<@{userid_to_get}>"]))
+        await ctx.followup.send(await command_response(prefix, ctx.guild, ctx.user, ["count", f"<@{userid_to_get}>"]))
     else:
         await ctx.followup.send(get_string_by_id(loca_sheet, "not_supported"))
 
@@ -184,7 +184,7 @@ async def slash_command_listener_lb(ctx: discord.Interaction):
     prefix = get_prefix(ctx.guild)
     await ctx.response.defer()
     if ctx.channel.type in supported_channel_types:
-        response = command_response(prefix, ctx.guild, ctx.user, ["lb"])
+        response = await command_response(prefix, ctx.guild, ctx.user, ["lb"])
         if isinstance(response, discord.Embed):
             await ctx.followup.send(embed=response)
         elif isinstance(response, str):

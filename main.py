@@ -355,10 +355,10 @@ async def on_message(message: discord.Message):
             await message.channel.send(get_string("banned_user_prompt"))
             return
 
-        # Get requested command
-        command = message.content.split()[0].replace(prefix, '')
+        # Get requested command correctly by slicing the prefix length
+        command = message.content[len(prefix):].split()[0]
 
-        plain_args = message.content[len(prefix + command) + 1:]
+        plain_args = message.content[len(prefix) + len(command) + 1:]
         args = parse_command(plain_args)
 
         # MARK: Prefix commands
@@ -371,9 +371,9 @@ async def on_message(message: discord.Message):
 
         elif command == 'fetchimg':
             if message.author.id in config.dev_ids:
-                nijika.fetch_nijika_images_list()
-                ryo.fetch_ryo_images_list()
-                khoa.fetch_khoa_images_list()
+                await nijika.fetch_nijika_images_list()
+                await ryo.fetch_ryo_images_list()
+                await khoa.fetch_khoa_images_list()
                 await message.channel.send("Fetched!")
 
         elif command in bot_help.cmd_names:

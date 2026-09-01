@@ -38,40 +38,45 @@ ssyhelper.HelpManager.add_command_help(
     ssyhelper.HelpSection.GENERAL2
 )
 
-def fetch_khoa_images_list():
+async def fetch_khoa_images_list():
     global image_db
-    image_db = [i for i in requests.get(config.image_endpoint + config.file_list_name).text.splitlines() if i.startswith("./khoa/")]
+    from lib.sussyutils import get_text_async
+    text = await get_text_async(config.image_endpoint + config.file_list_name)
+    image_db = [i for i in text.splitlines() if i.startswith("./khoa/")]
 
 
-def search_files(name: str):
-    fetch_khoa_images_list()
+async def search_files(name: str):
+    await fetch_khoa_images_list()
     if not name:
-        return config.image_endpoint + random.choice(image_db).replace(" ", "%20")
+        return random.choice(image_db)
     for files in image_db:
-        for f in files:
-            if name.lower() in f.lower():
-                return f
-            
+        if name.lower() in files.lower():
+            return files
+    return None
 
-def search_khoa(q: str):
+async def search_khoa(q: str):
     q = q.replace(" ","_")
-    matching_files = search_files(q)
-    if matching_files != None:
+    matching_files = await search_files(q)
+    if matching_files is not None:
         return config.image_endpoint + matching_files.replace(" ", "%20")
     else:
-        return get_string_by_id(loca_sheet, "quote_not_found")
+        return get_string_by_id(loca_sheet, "prompt_not_found")
 
 
-def command_response(search: str | None = None) -> str:
-    if search:
-        return search_khoa(search)
-    return search_files("")
+async def command_response(search: str | None = None) -> str:
+    try:
+        if not search:
+            return config.image_endpoint + (await search_files("")).replace(" ", "%20")
+        else:
+            return await search_khoa(search)
+    except Exception as e:
+        return f"Error: {e}"
 
 
 async def slash_command_listener(ctx: discord.Interaction, search: str | None = None):
-    print(f"{ctx.user} used khoabug command with search: {search}")
+    print(f"{ctx.user} used khoa commands!")
     await ctx.response.defer(ephemeral=True)
-    responce = command_response(search)
+    responce = await command_response(search)
     await ctx.followup.send(responce)
 
 

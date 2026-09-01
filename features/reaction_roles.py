@@ -10,8 +10,8 @@ loca_sheet = "loca/loca - reactionrole.csv"
 collection = MongoManager.get_collection("reactionroles", config.MONGO_DB_NAME)
 
 
-def create_reaction_role(message_id: int | str,  one_role: bool):
-    collection.insert_one(
+async def create_reaction_role(message_id: int | str,  one_role: bool):
+    await collection.insert_one(
         {
             "_id": str(message_id),
             "roles": [],
@@ -20,8 +20,8 @@ def create_reaction_role(message_id: int | str,  one_role: bool):
     )
 
 
-def add_reaction_role(message_id: int | str, emoji: str, role_id: int):
-    collection.update_one(
+async def add_reaction_role(message_id: int | str, emoji: str, role_id: int):
+    await collection.update_one(
         {"_id": str(message_id)},
         {"$push": {"roles": {
             "emoji": emoji,
@@ -37,7 +37,7 @@ async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReac
     role_to_add_or_remove: discord.Role | None = None
     if user.bot:
         return
-    reaction_roles = collection.find_one({"_id": str(payload.message_id)})
+    reaction_roles = await collection.find_one({"_id": str(payload.message_id)})
     if not reaction_roles:
         return
     
@@ -81,4 +81,4 @@ async def reaction_roles_on_raw_reaction_add_and_remove(payload: discord.RawReac
 
 
 async def reaction_roles_on_message_delete(message_id: int | str):
-    collection.delete_one({"_id": str(message_id)})
+    await collection.delete_one({"_id": str(message_id)})

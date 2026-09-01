@@ -1,5 +1,5 @@
 import discord
-import requests
+from lib.sussyutils import get_json_async
 import lib.sussyhelper as sh
 import lib.locareader as loca_reader
 
@@ -22,14 +22,17 @@ sh.HelpManager.add_command_help(
     sh.HelpSection.FUN
 )
 
-def command_response(is_cat_girl):
+async def command_response(is_cat_girl):
     if is_cat_girl:
-        return requests.get("https://nekos.life/api/v2/img/neko").json()["url"]
+        resp = await get_json_async("https://nekos.life/api/v2/img/neko")
+        return resp["url"]
     else:
-        return requests.get("https://api.thecatapi.com/v1/images/search").json()[0]["url"]
+        resp = await get_json_async("https://api.thecatapi.com/v1/images/search")
+        return resp[0]["url"]
 
 
 async def slash_command_listener(ctx: discord.Interaction, is_cat_girl: bool):
     print(f"{ctx.user} used randcat commands!")
     await ctx.response.defer()
-    await ctx.followup.send(command_response(is_cat_girl))
+    resp = await command_response(is_cat_girl)
+    await ctx.followup.send(resp)

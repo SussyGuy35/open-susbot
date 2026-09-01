@@ -44,6 +44,27 @@ def pick_random_file_from_dir(dir_path: str) -> str:
 def roll_percentage(percent: float | int) -> bool:
     return random.random()*100 <= percent
 
+# MARK: async HTTP helpers
+import aiohttp
+
+async def get_text_async(url: str) -> str:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=15) as response:
+            response.raise_for_status()
+            return await response.text()
+
+async def get_json_async(url: str) -> dict:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=15) as response:
+            response.raise_for_status()
+            return await response.json()
+
+async def get_bytes_async(url: str) -> bytes:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=15) as response:
+            response.raise_for_status()
+            return await response.read()
+
 
 # MARK: snowflake functions
 

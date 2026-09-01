@@ -90,8 +90,13 @@ async def slash_command_listener(
     if accountname:
         link += f'accountName={accountname.replace(" ", "%20")}&'
 
-    if requests.get(link).content == b'invalid acqId':
-        rs = get_string_by_id(loca_sheet, "invalid_bank_name")
-    else:
+    from lib.sussyutils import get_bytes_async
+    try:
+        content = await get_bytes_async(link)
+        if content == b'invalid acqId':
+            rs = get_string_by_id(loca_sheet, "invalid_bank_name")
+        else:
+            rs = link
+    except Exception:
         rs = link
     await ctx.followup.send(rs)

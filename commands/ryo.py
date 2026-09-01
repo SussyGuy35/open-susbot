@@ -23,22 +23,24 @@ sh.HelpManager.add_command_help(
     sh.HelpSection.GENERAL2
 )
 
-def fetch_ryo_images_list():
+async def fetch_ryo_images_list():
     global image_db
-    image_db = [i for i in requests.get(config.image_endpoint + config.file_list_name).text.splitlines() if i.startswith("./ryo/")]
+    from lib.sussyutils import get_text_async
+    text = await get_text_async(config.image_endpoint + config.file_list_name)
+    image_db = [i for i in text.splitlines() if i.startswith("./ryo/")]
 
 
-def command_response():
+async def command_response():
     if not image_db:
-        fetch_ryo_images_list()
+        await fetch_ryo_images_list()
     return config.image_endpoint + random.choice(image_db).replace(" ", "%20")
 
 async def command_listener(message: discord.Message):
-    await message.channel.send(command_response())
+    await message.channel.send(await command_response())
 
 
 async def slash_command_listener(ctx: discord.Interaction):
-    print(f"{ctx.user} used nijika commands!")
+    print(f"{ctx.user} used ryo commands!")
     await ctx.response.defer()
-    await ctx.followup.send(command_response())
+    await ctx.followup.send(await command_response())
 

@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 from lib.sussyconfig import get_config
 
 
@@ -11,7 +11,7 @@ class MongoManager:
     @staticmethod
     def get_client():
         if MongoManager._client is None:
-            MongoManager._client = MongoClient(config.MONGO_URI)
+            MongoManager._client = AsyncIOMotorClient(config.MONGO_URI)
         return MongoManager._client
 
     @staticmethod

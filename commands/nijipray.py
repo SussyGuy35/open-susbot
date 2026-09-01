@@ -83,8 +83,8 @@ ssyhelper.HelpManager.add_command_help(
 
 
 
-def create_user(userid: str | int):
-    collection.insert_one({
+async def create_user(userid: str | int):
+    await collection.insert_one({
         "_id": str(userid), 
         "prayers": 0, 
         "last_pray": 0, 
@@ -97,41 +97,44 @@ def create_user(userid: str | int):
     )
 
 
-def set_user_data(userid: str | int, key: str, value):
-    if not collection.find_one({"_id": str(userid)}):
-        create_user(userid)
-    collection.update_one(
+async def set_user_data(userid: str | int, key: str, value):
+    if not await collection.find_one({"_id": str(userid)}):
+        await create_user(userid)
+    await collection.update_one(
         {"_id": str(userid)},
         {"$set": {key: value}}
     )
 
 
-def get_user_data(userid: str | int, key: str):
-    user = collection.find_one({"_id": str(userid)})
+async def get_user_data(userid: str | int, key: str):
+    user = await collection.find_one({"_id": str(userid)})
     if not user:
-        create_user(userid)
-        user = collection.find_one({"_id": str(userid)})
+        await create_user(userid)
+        user = await collection.find_one({"_id": str(userid)})
     # migration: nếu field chưa tồn tại thì trả về default
     if key == "pray_history" and key not in user:
-        set_user_data(userid, "pray_history", [])
+        await set_user_data(userid, "pray_history", [])
         return []
     return user[key]
 
 
-def get_leaderboard(limit : int | None = None) -> list:
+async def get_leaderboard(limit : int | None = None) -> list:
     if limit:
-        return list(collection.aggregate([
+        cursor = collection.aggregate([
             {"$sort": {"prayers": -1}},
             {"$limit": limit}
-        ]))
-    return list(collection.aggregate([
+        ])
+        return await cursor.to_list(length=limit)
+    
+    cursor = collection.aggregate([
         {"$sort": {"prayers": -1}},
-    ]))
+    ])
+    return await cursor.to_list(length=100000)
 
 
-def get_user_rank(userid: str | int) -> int | None:
+async def get_user_rank(userid: str | int) -> int | None:
     userid = str(userid)
-    leaderboard = get_leaderboard()
+    leaderboard = await get_leaderboard()
     for rank, user in enumerate(leaderboard, start=1):
         if user["_id"] == userid:
             return rank
@@ -161,10 +164,10 @@ def calculate_lucky_rate(praynum: int, special_praynum: int) -> float | int:
 
 # MARK: Pray history functions
 
-def record_pray_history(userid: str | int, pray_type: str):
+async def record_pray_history(userid: str | int, pray_type: str):
     """Ghi lại kết quả lạy vào lịch sử. pray_type: 'normal', 'special', 'miss'"""
     today_str = datetime.now(tz).strftime("%Y-%m-%d")
-    history = get_user_data(userid, "pray_history")
+    history = await get_user_data(userid, "pray_history")
     
     # tránh ghi trùng ngày
     if history and history[-1]["date"] == today_str:
@@ -176,18 +179,18 @@ def record_pray_history(userid: str | int, pray_type: str):
     cutoff = (datetime.now(tz) - timedelta(days=30)).strftime("%Y-%m-%d")
     history = [h for h in history if h["date"] > cutoff]
     
-    set_user_data(userid, "pray_history", history)
+    await set_user_data(userid, "pray_history", history)
 
 
-def get_pray_history_map(userid: str | int) -> dict[str, str]:
+async def get_pray_history_map(userid: str | int) -> dict[str, str]:
     """Trả về dict {date_str: pray_type} cho 30 ngày gần nhất"""
-    history = get_user_data(userid, "pray_history")
+    history = await get_user_data(userid, "pray_history")
     return {h["date"]: h["type"] for h in history}
 
 
-def calculate_streak_penalty(userid: str | int) -> float | int:
+async def calculate_streak_penalty(userid: str | int) -> float | int:
     """Tính penalty dựa trên chuỗi nổ liên tiếp gần nhất. Miss hoặc normal sẽ reset streak."""
-    history = get_user_data(userid, "pray_history")
+    history = await get_user_data(userid, "pray_history")
     if not history:
         return 0
     
@@ -208,9 +211,9 @@ def calculate_streak_penalty(userid: str | int) -> float | int:
     return 0
 
 
-def generate_history_map(userid: str | int) -> str:
+async def generate_history_map(userid: str | int) -> str:
     """Tạo contribution map emoji cho 35 ngày gần nhất"""
-    history_dict = get_pray_history_map(userid)
+    history_dict = await get_pray_history_map(userid)
     today = datetime.now(tz).date()
     
     EMOJI_NORMAL = "🟩"
@@ -295,59 +298,59 @@ def generate_history_map(userid: str | int) -> str:
     return "\n".join(lines)
 
 
-def command_response(args: list[str], bot: discord.Client, user: discord.User | discord.Member) -> str | discord.Embed:
+async def command_response(args: list[str], bot: discord.Client, user: discord.User | discord.Member) -> str | discord.Embed:
     # region Normal pray
     if len(args) == 0:
         today = datetime.now(tz)
-        last_pray = datetime.fromtimestamp(get_user_data(user.id, "last_pray"), tz)
-        pray_num = get_user_data(user.id, "prayers")
-        current_rate = get_user_data(user.id, "current_rate")
+        last_pray = datetime.fromtimestamp(await get_user_data(user.id, "last_pray"), tz)
+        pray_num = await get_user_data(user.id, "prayers")
+        current_rate = await get_user_data(user.id, "current_rate")
         # check if pray yesterday
-        if last_pray.date() == today.date() - timedelta(days=1) or get_user_data(user.id, "last_pray") == 0:
-            set_user_data(user.id, "pray_count", get_user_data(user.id, "pray_count") + 1)
+        if last_pray.date() == today.date() - timedelta(days=1) or await get_user_data(user.id, "last_pray") == 0:
+            await set_user_data(user.id, "pray_count", await get_user_data(user.id, "pray_count") + 1)
             # get top #1 player point
-            top_player = get_leaderboard(1)[0]
+            top_player = await get_leaderboard(1)[0]
             top_player_pray = top_player["prayers"]
             # bonus percent base on point difference to top player
             bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
             # lucky rate base on user's luck
-            lucky_rate = calculate_lucky_rate(get_user_data(user.id, "pray_count"), get_user_data(user.id, "special_pray_count"))
+            lucky_rate = calculate_lucky_rate(await get_user_data(user.id, "pray_count"), await get_user_data(user.id, "special_pray_count"))
             # streak penalty
-            streak_penalty = calculate_streak_penalty(user.id)
+            streak_penalty = await calculate_streak_penalty(user.id)
 
-            if sussyutils.roll_percentage(get_user_data(user.id, "current_rate")+bonus_percent+ lucky_rate + streak_penalty):
-                set_user_data(user.id, "special_pray_count", get_user_data(user.id, "special_pray_count") + 1)
+            if sussyutils.roll_percentage(await get_user_data(user.id, "current_rate")+bonus_percent+ lucky_rate + streak_penalty):
+                await set_user_data(user.id, "special_pray_count", await get_user_data(user.id, "special_pray_count") + 1)
                 # point and multiplier
                 # x2 mult if weekend
                 mult = 2 if today.weekday() in (5, 6) else 1
                 point_earned = 2 if pray_num >= 50 else 3
                 total_point = point_earned * mult
                 
-                set_user_data(user.id, "prayers", pray_num + total_point)
-                set_user_data(user.id, "last_pray", today.timestamp())
-                set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 14)
-                record_pray_history(user.id, "special")
+                await set_user_data(user.id, "prayers", pray_num + total_point)
+                await set_user_data(user.id, "last_pray", today.timestamp())
+                await set_user_data(user.id, "current_rate", 12 if pray_num+point_earned*mult < 35 else 14)
+                await record_pray_history(user.id, "special")
                 return get_string_by_id(loca_sheet, "pray_special").format(total_point)
                 
-            set_user_data(user.id, "prayers", pray_num + 1)
-            set_user_data(user.id, "last_pray", today.timestamp())
-            set_user_data(user.id, "current_rate", current_rate + (3 if current_rate >=20 else 2))
-            record_pray_history(user.id, "normal")
+            await set_user_data(user.id, "prayers", pray_num + 1)
+            await set_user_data(user.id, "last_pray", today.timestamp())
+            await set_user_data(user.id, "current_rate", current_rate + (3 if current_rate >=20 else 2))
+            await record_pray_history(user.id, "normal")
             return get_string_by_id(loca_sheet, "pray")
 
         if last_pray.date() == today.date():
             return get_string_by_id(loca_sheet, "already_prayed")
 
-        set_user_data(user.id, "last_pray", today.timestamp())
-        set_user_data(user.id, "current_rate", current_rate + (2 if current_rate >=20 else 4))
-        set_user_data(user.id, "miss_count", get_user_data(user.id, "miss_count") + 1)
-        record_pray_history(user.id, "miss")
+        await set_user_data(user.id, "last_pray", today.timestamp())
+        await set_user_data(user.id, "current_rate", current_rate + (2 if current_rate >=20 else 4))
+        await set_user_data(user.id, "miss_count", await get_user_data(user.id, "miss_count") + 1)
+        await record_pray_history(user.id, "miss")
 
         return get_string_by_id(loca_sheet, "pray_choke")
     # endregion
     # region leaderboard
     if args[0] == "leaderboard" or args[0] == "rank" or args[0] == "lb":
-        leaderboard = get_leaderboard(limit=10)
+        leaderboard = await get_leaderboard(limit=10)
 
         if len(leaderboard) == 0:
             return get_string_by_id(loca_sheet, "leaderboard_empty")
@@ -381,15 +384,15 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
             except:
                 pass
         
-        if get_user_data(user_to_show.id, "prayers") == 0:
+        if await get_user_data(user_to_show.id, "prayers") == 0:
             return get_string_by_id(loca_sheet, "userinfo_blank")
         
-        pray_num = get_user_data(user_to_show.id, "prayers")
-        pray_count = get_user_data(user_to_show.id, "pray_count")
-        special_pray_count = get_user_data(user_to_show.id, "special_pray_count")
-        top_player = get_leaderboard(1)[0]
+        pray_num = await get_user_data(user_to_show.id, "prayers")
+        pray_count = await get_user_data(user_to_show.id, "pray_count")
+        special_pray_count = await get_user_data(user_to_show.id, "special_pray_count")
+        top_player = await get_leaderboard(1)[0]
         top_player_pray = top_player["prayers"]
-        streak_penalty = calculate_streak_penalty(user_to_show.id)
+        streak_penalty = await calculate_streak_penalty(user_to_show.id)
 
         response = discord.Embed(
             title=get_string_by_id(loca_sheet, "userinfo_embed_title"),
@@ -410,38 +413,38 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_rank"),
-            value=f"#{get_user_rank(user_to_show.id)}",
+            value=f"#{await get_user_rank(user_to_show.id)}",
             inline=False
         )
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_pray", config.language),
-            value=get_user_data(user_to_show.id, "pray_count"),
+            value=await get_user_data(user_to_show.id, "pray_count"),
             inline=False
         )
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_special_pray", config.language),
-            value=get_user_data(user_to_show.id, "special_pray_count"),
+            value=await get_user_data(user_to_show.id, "special_pray_count"),
             inline=False
         )
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_miss", config.language),
-            value=get_user_data(user_to_show.id, "miss_count"),
+            value=await get_user_data(user_to_show.id, "miss_count"),
             inline=False
         )
 
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_current_rate", config.language),
-            value=f"{get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_count, special_pray_count)+streak_penalty}%",
+            value=f"{await get_user_data(user_to_show.id, 'current_rate')+calculate_bonus_percent(pray_num, top_player_pray)+calculate_lucky_rate(pray_count, special_pray_count)+streak_penalty}%",
             inline=False
         )
 
         # hiện streak penalty nếu có
         if streak_penalty != 0:
             # đếm streak hiện tại để hiển thị
-            history = get_user_data(user_to_show.id, "pray_history")
+            history = await get_user_data(user_to_show.id, "pray_history")
             streak = 0
             for entry in reversed(history):
                 if entry["type"] == "special":
@@ -468,11 +471,11 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
             except:
                 pass
         
-        history = get_user_data(user_to_show.id, "pray_history")
+        history = await get_user_data(user_to_show.id, "pray_history")
         if not history:
             return get_string_by_id(loca_sheet, "history_empty")
         
-        history_map = generate_history_map(user_to_show.id)
+        history_map = await generate_history_map(user_to_show.id)
         
         response = discord.Embed(
             title=get_string_by_id(loca_sheet, "history_embed_title"),
@@ -490,14 +493,14 @@ def command_response(args: list[str], bot: discord.Client, user: discord.User | 
     # region nextpercent
     if args[0] == "nextpercent":
         
-        top_player = get_leaderboard(1)[0]
+        top_player = await get_leaderboard(1)[0]
         top_player_pray = top_player["prayers"]
-        pray_num = get_user_data(user.id, "prayers")
+        pray_num = await get_user_data(user.id, "prayers")
 
         bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
-        streak_penalty = calculate_streak_penalty(user.id)
+        streak_penalty = await calculate_streak_penalty(user.id)
 
-        current_rate = get_user_data(user.id, "current_rate") + bonus_percent + streak_penalty
+        current_rate = await get_user_data(user.id, "current_rate") + bonus_percent + streak_penalty
         return str(current_rate) + "%"
     # endregion
 
@@ -506,7 +509,7 @@ async def command_listener(message: discord.Message, bot: discord.Client, args: 
         await message.reply(get_string_by_id(loca_sheet, "channel_not_allowed"), mention_author=False)
         return
 
-    response = command_response(args, bot, message.author)
+    response = await command_response(args, bot, message.author)
 
     if isinstance(response, discord.Embed):
         await message.reply(embed=response, mention_author=False)
@@ -525,7 +528,7 @@ async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Cli
         await ctx.followup.send(get_string_by_id(loca_sheet, "channel_not_allowed"))
         return
 
-    response = command_response([], bot, ctx.user)
+    response = await command_response([], bot, ctx.user)
 
     if isinstance(response, discord.Embed):
         await ctx.followup.send(embed=response)
@@ -545,7 +548,7 @@ async def slash_command_listener_leaderboard(ctx: discord.Interaction, bot: disc
         await ctx.followup.send(get_string_by_id(loca_sheet, "channel_not_allowed"))
         return
 
-    response = command_response(["leaderboard"], bot, ctx.user)
+    response = await command_response(["leaderboard"], bot, ctx.user)
 
     if isinstance(response, discord.Embed):
         await ctx.followup.send(embed=response)
@@ -562,7 +565,7 @@ async def slash_command_listener_info(ctx: discord.Interaction, bot: discord.Cli
         return
 
     userid = str(user.id) if user is not None else str(ctx.user.id)
-    response = command_response(["info", userid], bot, ctx.user)
+    response = await command_response(["info", userid], bot, ctx.user)
 
     if isinstance(response, discord.Embed):
         await ctx.followup.send(embed=response)
@@ -579,7 +582,7 @@ async def slash_command_listener_history(ctx: discord.Interaction, bot: discord.
         return
 
     userid = str(user.id) if user is not None else str(ctx.user.id)
-    response = command_response(["history", userid], bot, ctx.user)
+    response = await command_response(["history", userid], bot, ctx.user)
 
     if isinstance(response, discord.Embed):
         await ctx.followup.send(embed=response)

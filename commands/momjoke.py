@@ -1,5 +1,5 @@
 import discord
-import requests
+from lib.sussyutils import get_json_async
 import lib.sussyhelper as sh
 
 sh.HelpManager.add_command_help(
@@ -13,11 +13,13 @@ sh.HelpManager.add_command_help(
 )
 
 
-def command_response():
-    return requests.get("https://www.yomama-jokes.com/api/v1/jokes/random/").json()["joke"]
+async def command_response():
+    resp = await get_json_async("https://www.yomama-jokes.com/api/v1/jokes/random/")
+    return resp["joke"]
 
 
 async def slash_command_listener(ctx: discord.Interaction):
     print(f"{ctx.user} used momjoke commands!")
     await ctx.response.defer()
-    await ctx.followup.send(command_response())
+    resp = await command_response()
+    await ctx.followup.send(resp)

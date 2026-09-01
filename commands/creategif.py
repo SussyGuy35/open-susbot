@@ -25,17 +25,14 @@ sh.HelpManager.add_command_help(
 )
 
 
-def get_file(url, file_name) -> str:
+async def get_file(url, file_name) -> str:
     """Get a file from given url. Return file's name if the request was successful, raise error if not."""
     if file_name.split(".")[-1] in ["png", "jpg", "webp", "bmp"]:
-        # Send a GET request to the URL
-        response = get(url)
-        # Check if the request was successful
-        if response.status_code == 200:
-            # Get the content of the response (i.e., the file data)
-            file_data = response.content
+        from lib.sussyutils import get_bytes_async
+        try:
+            file_data = await get_bytes_async(url)
             new_file_name = file_name[:-len(file_name.split(".")[-1])] + "gif"
-        else:
+        except Exception:
             raise Exception("Can't download the file for some reasons")
         with file_temp_open_write(new_file_name, "wb+") as f:
             f.write(file_data)
@@ -46,12 +43,15 @@ def get_file(url, file_name) -> str:
 
 def post_response_cleanup(response: discord.File | str):
     if isinstance(response, discord.File):
-        remove(get_temp_file_path(response.filename))
+        try:
+            remove(get_temp_file_path(response.filename))
+        except OSError:
+            pass
 
 
-def command_response(attachment: discord.Attachment) -> discord.File | str:
+async def command_response(attachment: discord.Attachment) -> discord.File | str:
     try:
-        file_name = get_file(attachment.url, attachment.filename)
+        file_name = await get_file(attachment.url, attachment.filename)
     except ValueError:
         return get_string_by_id(loca_sheet, "prompt_dont_support")
     except:
@@ -63,7 +63,7 @@ def command_response(attachment: discord.Attachment) -> discord.File | str:
 async def slash_command_listener(ctx: discord.Interaction, file: discord.Attachment):
     print(f"{ctx.user} used create_gif commands!")
     await ctx.response.defer()
-    response = command_response(file)
+    response = await command_response(file)
     if isinstance(response, discord.File):
         await ctx.followup.send(file=response)
     elif isinstance(response, str):

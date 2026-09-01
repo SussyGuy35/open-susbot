@@ -187,8 +187,8 @@ give_requirement_level = 3
 card_transform_price = 25
 
 
-def create_user(userid: str | int):
-    collection.insert_one({
+async def create_user(userid: str | int):
+    await collection.insert_one({
         "_id": str(userid),
         "exp": 0,
         "level": 1,
@@ -202,61 +202,61 @@ def create_user(userid: str | int):
     })
 
 
-def set_user_data(userid: str | int, key: str, value):
-    if not collection.find_one({"_id": str(userid)}):
-        create_user(userid)
-    collection.update_one(
+async def set_user_data(userid: str | int, key: str, value):
+    if not await collection.find_one({"_id": str(userid)}):
+        await create_user(userid)
+    await collection.update_one(
         {"_id": str(userid)},
         {"$set": {key: value}}
     )
 
 
-def get_user_data(userid: str | int, key: str):
+async def get_user_data(userid: str | int, key: str):
     userid = str(userid)
-    user = collection.find_one({"_id" : userid})
+    user = await collection.find_one({"_id" : userid})
     if not user: 
-        create_user(userid)
-        user = collection.find_one({"_id": userid})
+        await create_user(userid)
+        user = await collection.find_one({"_id": userid})
     return user[key]
 
 
-def add_card_to_user(userid: str | int, cardid: str):
+async def add_card_to_user(userid: str | int, cardid: str):
     userid = str(userid)
-    user = collection.find_one({"_id" : userid})
+    user = await collection.find_one({"_id" : userid})
     if not user:
-        create_user(userid)
-        user = collection.find_one({"_id" : userid})
+        await create_user(userid)
+        user = await collection.find_one({"_id" : userid})
     update_query = {
         "$addToSet": {
             "cards": cardid
         }
     }
-    collection.update_one({"_id": userid}, update_query)
+    await collection.update_one({"_id": userid}, update_query)
 
 
 
 
-def remove_card_from_user(userid: str | int, cardid: str):
+async def remove_card_from_user(userid: str | int, cardid: str):
     userid = str(userid)
-    user = collection.find_one({"_id" : userid})
+    user = await collection.find_one({"_id" : userid})
     if not user:
-        create_user(userid)
-        user = collection.find_one({"_id" : userid})
+        await create_user(userid)
+        user = await collection.find_one({"_id" : userid})
     update_query = {
         "$pull": {
             "cards": cardid
         }
     }
-    collection.update_one({"_id": userid}, update_query)
+    await collection.update_one({"_id": userid}, update_query)
 
 
 
-def get_user_cards_rarity(userid: str | int, rarity: str) -> list[str]:
+async def get_user_cards_rarity(userid: str | int, rarity: str) -> list[str]:
     userid = str(userid)
-    user = collection.find_one({"_id" : userid})
+    user = await collection.find_one({"_id" : userid})
     if not user:
-        create_user(userid)
-        user = collection.find_one({"_id" : userid})
+        await create_user(userid)
+        user = await collection.find_one({"_id" : userid})
     cards = []
     for card in user["cards"]:
         if get_card_rarity_by_id(card) == rarity:
@@ -274,20 +274,20 @@ def rps_bonus_exp(bet: int) -> int:
 
 async def check_user_level_up(userid: str | int, channel: discord.TextChannel):
     userid = str(userid)
-    user = collection.find_one({"_id" : userid})
+    user = await collection.find_one({"_id" : userid})
     if not user:
-        create_user(userid)
-        user = collection.find_one({"_id" : userid})
+        await create_user(userid)
+        user = await collection.find_one({"_id" : userid})
     total_bonus_money = 0
     total_bonus_guarantee = 0
-    while get_user_data(userid, "exp") >= exp_to_advance_level(get_user_data(userid, "level")):
-        total_bonus_money += bonus_credit_when_level_up * get_user_data(userid, "level")
+    while await get_user_data(userid, "exp") >= exp_to_advance_level(await get_user_data(userid, "level")):
+        total_bonus_money += bonus_credit_when_level_up * await get_user_data(userid, "level")
         total_bonus_guarantee += 1
-        set_user_data(userid, "level", get_user_data(userid, "level") + 1)
+        await set_user_data(userid, "level", await get_user_data(userid, "level") + 1)
     if total_bonus_money > 0:
-        set_user_data(userid, "money", get_user_data(userid, "money") + total_bonus_money)
-        set_user_data(userid, "guarantee", get_user_data(userid, "guarantee") + total_bonus_guarantee)
-        user = collection.find_one({"_id" : userid})
+        await set_user_data(userid, "money", await get_user_data(userid, "money") + total_bonus_money)
+        await set_user_data(userid, "guarantee", await get_user_data(userid, "guarantee") + total_bonus_guarantee)
+        user = await collection.find_one({"_id" : userid})
         await channel.send(get_string_by_id(loca_sheet, "level_up_message").format(
             "<@" + userid + ">",
             user["level"],
@@ -298,40 +298,42 @@ async def check_user_level_up(userid: str | int, channel: discord.TextChannel):
 
 async def check_user_beaten(userid: str | int, channel: discord.TextChannel):
     userid = str(userid)
-    user = collection.find_one({"_id" : userid})
+    user = await collection.find_one({"_id" : userid})
     if not user:
-        create_user(userid)
-        user = collection.find_one({"_id" : userid})
+        await create_user(userid)
+        user = await collection.find_one({"_id" : userid})
     if "Super player" in user["badges"]:
         return
-    if len(get_user_cards_rarity(userid, "Legendary")) < len(get_card_list_by_rarity("Legendary")):
+    if len(await get_user_cards_rarity(userid, "Legendary")) < len(get_card_list_by_rarity("Legendary")):
         return
-    if len(get_user_cards_rarity(userid, "Epic")) < len(get_card_list_by_rarity("Epic")):
+    if len(await get_user_cards_rarity(userid, "Epic")) < len(get_card_list_by_rarity("Epic")):
         return
-    if len(get_user_cards_rarity(userid, "Rare")) < len(get_card_list_by_rarity("Rare")):
+    if len(await get_user_cards_rarity(userid, "Rare")) < len(get_card_list_by_rarity("Rare")):
         return
-    if len(get_user_cards_rarity(userid, "Uncommon")) < len(get_card_list_by_rarity("Uncommon")):
+    if len(await get_user_cards_rarity(userid, "Uncommon")) < len(get_card_list_by_rarity("Uncommon")):
         return
-    if len(get_user_cards_rarity(userid, "Common")) < len(get_card_list_by_rarity("Common")):
+    if len(await get_user_cards_rarity(userid, "Common")) < len(get_card_list_by_rarity("Common")):
         return
     user["badges"].append("Super player")
     await channel.send(get_string_by_id(loca_sheet, "game_complete").format(f"<@{userid}>"))
 
 
-def get_leaderboard(limit : int | None = None) -> list:
+async def get_leaderboard(limit : int | None = None) -> list:
     if limit:
-        return list(collection.aggregate([
+        cursor = collection.aggregate([
             {"$sort": {"exp": -1}},
             {"$limit": limit}
-        ]))
-    return list(collection.aggregate([
+        ])
+        return await cursor.to_list(length=limit)
+    cursor = collection.aggregate([
         {"$sort": {"exp": -1}},
-    ]))
+    ])
+    return await cursor.to_list(length=10000)
 
 
-def get_user_rank(userid: str | int) -> int:
+async def get_user_rank(userid: str | int) -> int:
     userid = str(userid)
-    leaderboard = get_leaderboard()
+    leaderboard = await get_leaderboard()
     for rank, user in enumerate(leaderboard, start=1):
         if user["_id"] == userid:
             return rank
@@ -461,7 +463,7 @@ def card_class_to_enum(class_name: str) -> RpsClass:
 
 
 # MARK: Command Response
-def command_response(args: list[str], user: discord.Member, bot: discord.Client) -> str | discord.Embed | discord.File:
+async def command_response(args: list[str], user: discord.Member, bot: discord.Client) -> str | discord.Embed | discord.File:
     args_len = len(args)
     
     # region no args
@@ -487,9 +489,9 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                     maxiumum_gacha_pull
             )
         
-        if get_user_data(user.id, "money") < roll_count * roll_price: # cant afford
+        if await get_user_data(user.id, "money") < roll_count * roll_price: # cant afford
             return get_string_by_id(loca_sheet, "roll_cant_afford").format(
-                roll_count * roll_price - get_user_data(user.id, "money"),
+                roll_count * roll_price - await get_user_data(user.id, "money"),
                 roll_count
             )
 
@@ -499,7 +501,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
         for n in range(roll_count):
             rarity = get_card_roll_rarity(2,5,8,20,65)
             pulled_card = get_random_card_by_rarity(rarity)
-            if pulled_card not in get_user_data(user.id, "cards"): # if user dont have the card
+            if pulled_card not in await get_user_data(user.id, "cards"): # if user dont have the card
                 total_bonus_exp += get_bonus_exp_by_rarity(rarity)
                 msg += get_string_by_id(loca_sheet, "roll_result").format(
                     n + 1,
@@ -507,7 +509,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                     get_card_name_by_id(pulled_card),
                     get_bonus_exp_by_rarity(rarity)
                 ) + "\n"
-                add_card_to_user(user.id, pulled_card)
+                await add_card_to_user(user.id, pulled_card)
             else: # if user already have the card
                 total_bonus_money += bonus_money_when_pull_same_card
                 msg += get_string_by_id(loca_sheet, "roll_result_already_have").format(
@@ -518,9 +520,9 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                 ) + "\n"
         
         # update user data
-        set_user_data(user.id, "exp", get_user_data(user.id, "exp") + total_bonus_exp)
-        set_user_data(user.id, "money", get_user_data(user.id, "money") - roll_count * roll_price + total_bonus_money)
-        set_user_data(user.id, "roll", get_user_data(user.id, "roll") + roll_count)
+        await set_user_data(user.id, "exp", await get_user_data(user.id, "exp") + total_bonus_exp)
+        await set_user_data(user.id, "money", await get_user_data(user.id, "money") - roll_count * roll_price + total_bonus_money)
+        await set_user_data(user.id, "roll", await get_user_data(user.id, "roll") + roll_count)
         
         return discord.Embed(
             title=get_string_by_id(loca_sheet, "roll_embed_title"),
@@ -544,12 +546,12 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
             color=0x00ff00
         )
         
-        common_cards = get_user_cards_rarity(user_to_show.id, "Common")
-        uncommon_cards = get_user_cards_rarity(user_to_show.id, "Uncommon")
-        rare_cards = get_user_cards_rarity(user_to_show.id, "Rare")
-        epic_cards = get_user_cards_rarity(user_to_show.id, "Epic")
-        legendary_cards = get_user_cards_rarity(user_to_show.id, "Legendary")
-        limited_cards = get_user_cards_rarity(user_to_show.id, "Limited")
+        common_cards = await get_user_cards_rarity(user_to_show.id, "Common")
+        uncommon_cards = await get_user_cards_rarity(user_to_show.id, "Uncommon")
+        rare_cards = await get_user_cards_rarity(user_to_show.id, "Rare")
+        epic_cards = await get_user_cards_rarity(user_to_show.id, "Epic")
+        legendary_cards = await get_user_cards_rarity(user_to_show.id, "Legendary")
+        limited_cards = await get_user_cards_rarity(user_to_show.id, "Limited")
         
         if not common_cards+uncommon_cards+rare_cards+epic_cards+legendary_cards+limited_cards: # if user dont have any card
             return get_string_by_id(loca_sheet, "show_card_no_card").format(user_to_show.display_name)
@@ -597,31 +599,31 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
     elif args[0] == "daily":
         today = datetime.datetime.today()
         today = int(today.strftime("%Y%m%d"))
-        last_daily = get_user_data(user.id, "last_daily")
+        last_daily = await get_user_data(user.id, "last_daily")
         if today == last_daily:
             return get_string_by_id(loca_sheet, "daily_claimed_message")
         else:
-            set_user_data(user.id, "money", get_user_data(user.id, "money") + daily_bonus)
-            bonus_exp = get_user_data(user.id, "level") * 2
-            set_user_data(user.id, "exp", get_user_data(user.id, "exp") + bonus_exp)
-            set_user_data(user.id, "last_daily", today)
+            await set_user_data(user.id, "money", await get_user_data(user.id, "money") + daily_bonus)
+            bonus_exp = await get_user_data(user.id, "level") * 2
+            await set_user_data(user.id, "exp", await get_user_data(user.id, "exp") + bonus_exp)
+            await set_user_data(user.id, "last_daily", today)
             return get_string_by_id(loca_sheet, "daily_message").format(
                 daily_bonus,
                 bonus_exp,
-                get_user_data(user.id, "money")
+                await get_user_data(user.id, "money")
             )
 
     # endregion
 
     # region newplayer
     elif args[0] == "newplayer":
-        if not get_user_data(user.id, "newbie"):
+        if not await get_user_data(user.id, "newbie"):
             return get_string_by_id(loca_sheet, "newplayer_claimed_message")
-        set_user_data(user.id, "money", get_user_data(user.id, "money") + newbie_bonus)
-        set_user_data(user.id, "newbie", False)
+        await set_user_data(user.id, "money", await get_user_data(user.id, "money") + newbie_bonus)
+        await set_user_data(user.id, "newbie", False)
         return get_string_by_id(loca_sheet, "newplayer_message").format(
             newbie_bonus,
-            get_user_data(user.id, "money")
+            await get_user_data(user.id, "money")
         )
     # endregion
 
@@ -645,36 +647,36 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
         )
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_level"),
-            value=get_user_data(user_to_show.id, "level")
+            value=await get_user_data(user_to_show.id, "level")
         )
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_exp"),
-            value=get_user_data(user_to_show.id, "exp")
+            value=await get_user_data(user_to_show.id, "exp")
         )
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_exp_left"),
-            value=exp_to_advance_level(get_user_data(user_to_show.id, "level"))-get_user_data(user_to_show.id, "exp")
+            value=exp_to_advance_level(await get_user_data(user_to_show.id, "level"))-await get_user_data(user_to_show.id, "exp")
         )
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_rank"),
-            value=f"#{get_user_rank(user_to_show.id)}"
+            value=f"#{await get_user_rank(user_to_show.id)}"
         )
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_credit"),
-            value=get_user_data(user_to_show.id, "money")
+            value=await get_user_data(user_to_show.id, "money")
         )
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_guarantee"),
-            value=get_user_data(user_to_show.id, "guarantee")
+            value=await get_user_data(user_to_show.id, "guarantee")
         )
         response.add_field(
             name=get_string_by_id(loca_sheet, "userinfo_roll"),
-            value=get_user_data(user_to_show.id, "roll")
+            value=await get_user_data(user_to_show.id, "roll")
         )
-        if len(get_user_data(user_to_show.id, "badges")) > 0:
+        if len(await get_user_data(user_to_show.id, "badges")) > 0:
             response.add_field(
                 name=get_string_by_id(loca_sheet, "userinfo_badges"),
-                value="\n".join([f"- {badge}" for badge in get_user_data(user_to_show.id, "badges")])
+                value="\n".join([f"- {badge}" for badge in await get_user_data(user_to_show.id, "badges")])
             )
         response.set_thumbnail(url=user_to_show.display_avatar.url)
         return response
@@ -682,7 +684,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
 
     # region leaderboard
     elif args[0] == "lb":
-        leaderboard = get_leaderboard(10)
+        leaderboard = await get_leaderboard(10)
         if len(leaderboard) == 0:
             return get_string_by_id(loca_sheet, "leaderboard_empty")
         
@@ -710,22 +712,22 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
         if args_len < 2:
             return get_string_by_id(loca_sheet, "invalid_bet_point").format(
                 rps_min_bet,
-                rps_max_bet_multiplier*get_user_data(user.id, "level")
+                rps_max_bet_multiplier*await get_user_data(user.id, "level")
             )
         try:
             bet = int(args[1])
         except:
             return get_string_by_id(loca_sheet, "invalid_bet_point").format(
                 rps_min_bet,
-                rps_max_bet_multiplier*get_user_data(user.id, "level")
+                rps_max_bet_multiplier*await get_user_data(user.id, "level")
             )
         
-        if bet < rps_min_bet or bet > rps_max_bet_multiplier*get_user_data(user.id, "level"):
+        if bet < rps_min_bet or bet > rps_max_bet_multiplier*await get_user_data(user.id, "level"):
             return get_string_by_id(loca_sheet, "invalid_bet_point").format(
                 rps_min_bet,
-                rps_max_bet_multiplier*get_user_data(user.id, "level")
+                rps_max_bet_multiplier*await get_user_data(user.id, "level")
             )
-        if get_user_data(user.id, "money") < bet:
+        if await get_user_data(user.id, "money") < bet:
             return get_string_by_id(loca_sheet, "rps_cant_afford")
         
         if args_len < 3:
@@ -734,7 +736,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
         card_to_play = args[2]
         if not get_card_id_by_name(card_to_play):
             return get_string_by_id(loca_sheet, "non_existent_card")
-        if not get_card_id_by_name(card_to_play) in get_user_data(user.id, "cards"):
+        if not get_card_id_by_name(card_to_play) in await get_user_data(user.id, "cards"):
             return get_string_by_id(loca_sheet, "invalid_card")
 
         bot_card = get_random_card_by_rarity(get_card_roll_rarity(5,20,25,30,20))
@@ -770,10 +772,10 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                 result = "draw"
         
         if result == "win":
-            set_user_data(user.id, "money", get_user_data(user.id, "money") + bet)
-            set_user_data(user.id, "exp", get_user_data(user.id, "exp") + rps_bonus_exp(bet))
-            if not bot_card in get_user_data(user.id, "cards"):
-                add_card_to_user(user.id, bot_card)
+            await set_user_data(user.id, "money", await get_user_data(user.id, "money") + bet)
+            await set_user_data(user.id, "exp", await get_user_data(user.id, "exp") + rps_bonus_exp(bet))
+            if not bot_card in await get_user_data(user.id, "cards"):
+                await add_card_to_user(user.id, bot_card)
                 return get_string_by_id(loca_sheet, "rps_win").format(
                     get_card_name_by_id(bot_card),
                     user_card_class.value,
@@ -791,8 +793,8 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                 )
         
         elif result == "lose":
-            set_user_data(user.id, "money", get_user_data(user.id, "money") - bet)
-            remove_card_from_user(user.id, get_card_id_by_name(card_to_play))
+            await set_user_data(user.id, "money", await get_user_data(user.id, "money") - bet)
+            await remove_card_from_user(user.id, get_card_id_by_name(card_to_play))
             return get_string_by_id(loca_sheet, "rps_lose").format(
                 get_card_name_by_id(bot_card),
                 user_card_class.value,
@@ -803,10 +805,10 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
 
         elif result == "draw":
             if user_card_rank > bot_card_rank:
-                set_user_data(user.id, "money", get_user_data(user.id, "money") + bet)
-                set_user_data(user.id, "exp", get_user_data(user.id, "exp") + rps_bonus_exp(bet))
-                if not bot_card in get_user_data(user.id, "cards"):
-                    add_card_to_user(user.id, bot_card)
+                await set_user_data(user.id, "money", await get_user_data(user.id, "money") + bet)
+                await set_user_data(user.id, "exp", await get_user_data(user.id, "exp") + rps_bonus_exp(bet))
+                if not bot_card in await get_user_data(user.id, "cards"):
+                    await add_card_to_user(user.id, bot_card)
                     return get_string_by_id(loca_sheet, "rps_tie_win").format(
                         get_card_name_by_id(bot_card),
                         user_card_class.value,
@@ -822,8 +824,8 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                     )
             
             elif user_card_rank < bot_card_rank:
-                set_user_data(user.id, "money", get_user_data(user.id, "money") - bet)
-                remove_card_from_user(user.id, get_card_id_by_name(card_to_play))
+                await set_user_data(user.id, "money", await get_user_data(user.id, "money") - bet)
+                await remove_card_from_user(user.id, get_card_id_by_name(card_to_play))
                 return get_string_by_id(loca_sheet, "rps_tie_lose").format(
                     get_card_name_by_id(bot_card),
                     user_card_class.value,
@@ -855,9 +857,9 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                     maxiumum_gacha_pull
             )
         
-        if get_user_data(user.id, "guarantee") < roll_count: # cant afford
+        if await get_user_data(user.id, "guarantee") < roll_count: # cant afford
             return get_string_by_id(loca_sheet, "roll_supra_cant_afford").format(
-                roll_count - get_user_data(user.id, "guarantee"),
+                roll_count - await get_user_data(user.id, "guarantee"),
                 roll_count
             )
 
@@ -867,7 +869,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
         for n in range(roll_count):
             rarity = get_card_roll_rarity(10,20,25,35,10)
             pulled_card = get_random_card_by_rarity(rarity)
-            if pulled_card not in get_user_data(user.id, "cards"): # if user dont have the card
+            if pulled_card not in await get_user_data(user.id, "cards"): # if user dont have the card
                 total_bonus_exp += get_bonus_exp_by_rarity(rarity)
                 msg += get_string_by_id(loca_sheet, "roll_result").format(
                     n + 1,
@@ -875,7 +877,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                     get_card_name_by_id(pulled_card),
                     get_bonus_exp_by_rarity(rarity)
                 ) + "\n"
-                add_card_to_user(user.id, pulled_card)
+                await add_card_to_user(user.id, pulled_card)
             else: # if user already have the card
                 total_bonus_money += bonus_money_when_pull_same_card
                 msg += get_string_by_id(loca_sheet, "roll_result_already_have").format(
@@ -886,10 +888,10 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
                 ) + "\n"
         
         # update user data
-        set_user_data(user.id, "exp", get_user_data(user.id, "exp") + total_bonus_exp)
-        set_user_data(user.id, "money", get_user_data(user.id, "money") + total_bonus_money)
-        set_user_data(user.id, "guarantee", get_user_data(user.id, "guarantee") - roll_count)
-        set_user_data(user.id, "roll", get_user_data(user.id, "roll") + roll_count)
+        await set_user_data(user.id, "exp", await get_user_data(user.id, "exp") + total_bonus_exp)
+        await set_user_data(user.id, "money", await get_user_data(user.id, "money") + total_bonus_money)
+        await set_user_data(user.id, "guarantee", await get_user_data(user.id, "guarantee") - roll_count)
+        await set_user_data(user.id, "roll", await get_user_data(user.id, "roll") + roll_count)
         
         return discord.Embed(
             title=get_string_by_id(loca_sheet, "roll_embed_title"),
@@ -905,7 +907,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
 
     # region give
     if args[0] == "give":
-        if get_user_data(user.id, "level") < give_requirement_level:
+        if await get_user_data(user.id, "level") < give_requirement_level:
             return get_string_by_id(loca_sheet, "give_requirement").format(
                 give_requirement_level
             )
@@ -928,11 +930,11 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
         if amount < 1:
             return get_string_by_id(loca_sheet, "give_invalid_amount")
         
-        if get_user_data(user.id, "money") < amount:
+        if await get_user_data(user.id, "money") < amount:
             return get_string_by_id(loca_sheet, "give_invalid_amount")
         
-        set_user_data(user.id, "money", get_user_data(user.id, "money") - amount)
-        set_user_data(target_user.id, "money", get_user_data(target_user.id, "money") + amount)
+        await set_user_data(user.id, "money", await get_user_data(user.id, "money") - amount)
+        await set_user_data(target_user.id, "money", await get_user_data(target_user.id, "money") + amount)
         return get_string_by_id(loca_sheet, "give_success").format(
             target_user.display_name,
             amount
@@ -943,10 +945,10 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
     elif args[0] == "transform":
         if args_len < 2:
             return get_string_by_id(loca_sheet, "missing_card_name")
-        if not get_card_id_by_name(args[1]) in get_user_data(user.id, "cards"):
+        if not get_card_id_by_name(args[1]) in await get_user_data(user.id, "cards"):
             return get_string_by_id(loca_sheet, "invalid_card")
-        remove_card_from_user(user.id, get_card_id_by_name(args[1]))
-        set_user_data(user.id, "money", get_user_data(user.id, "money") + card_transform_price)
+        await remove_card_from_user(user.id, get_card_id_by_name(args[1]))
+        await set_user_data(user.id, "money", await get_user_data(user.id, "money") + card_transform_price)
         return get_string_by_id(loca_sheet, "transform_success").format(
             args[1],
             card_transform_price
@@ -956,18 +958,18 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
     # region dev only commands
     if sussyutils.is_dev(user.id):
         if args[0] == "set":
-            set_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2], int(args[3]))
+            await set_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2], int(args[3]))
             return "done"
         if args[0] == "get":
-            return str(get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2]))
+            return str(await get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2]))
         if args[0] == "addbadge":
-            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").append(args[2])
+            await get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").append(args[2])
             return "done"
         if args[0] == "removebadge":
-            get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").remove(args[2])
+            await get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").remove(args[2])
             return "done"
         if args[0] == "addcard":
-            add_card_to_user(sussyutils.get_user_id_from_snowflake(args[1]), args[2])
+            await add_card_to_user(sussyutils.get_user_id_from_snowflake(args[1]), args[2])
             return "done"
     # endregion
 
@@ -976,7 +978,7 @@ def command_response(args: list[str], user: discord.Member, bot: discord.Client)
 
 # MARK: Command Listener
 async def command_listener(message: discord.Message, args: list[str], bot: discord.Client):
-    response = command_response(args, message.author, bot)
+    response = await command_response(args, message.author, bot)
 
     if isinstance(response, discord.Embed):
         await message.reply(embed=response, mention_author=False)

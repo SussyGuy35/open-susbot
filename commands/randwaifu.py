@@ -1,5 +1,5 @@
 import discord
-import requests
+from lib.sussyutils import get_json_async
 import random
 import lib.sussyhelper as sh
 
@@ -47,11 +47,13 @@ types = [
 ]
 
 
-def command_response():
-    return requests.get("https://waifu.pics/api/sfw/" + random.choice(types)).json()["url"]
+async def command_response():
+    resp = await get_json_async("https://waifu.pics/api/sfw/" + random.choice(types))
+    return resp["url"]
 
 
 async def slash_command_listener(ctx: discord.Interaction):
     print(f"{ctx.user} used randwaifu commands!")
     await ctx.response.defer()
-    await ctx.followup.send(command_response())
+    resp = await command_response()
+    await ctx.followup.send(resp)

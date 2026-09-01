@@ -39,7 +39,7 @@ async def command_listener(message: discord.Message, user: discord.Member | disc
             await user.edit(nick=new_nick)
     except discord.Forbidden:
         pass
-    afk_notificer.set_afk_status(str(user.id), status, u, message.guild.id)
+    await afk_notificer.set_afk_status(str(user.id), status, u, message.guild.id)
 
 
     response = lib.locareader.get_string_by_id(loca_sheet, "afk_set").format(status)
@@ -68,7 +68,7 @@ async def slash_command_listener(ctx: discord.Interaction, status: str | None = 
     except discord.Forbidden:
         pass
 
-    afk_notificer.set_afk_status(str(ctx.user.id), status, u, ctx.guild.id)
+    await afk_notificer.set_afk_status(str(ctx.user.id), status, u, ctx.guild.id)
 
     response = lib.locareader.get_string_by_id(loca_sheet, "afk_set").format(status)
     await ctx.followup.send(response)
