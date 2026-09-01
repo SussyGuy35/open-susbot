@@ -309,7 +309,7 @@ async def command_response(args: list[str], bot: discord.Client, user: discord.U
         if last_pray.date() == today.date() - timedelta(days=1) or await get_user_data(user.id, "last_pray") == 0:
             await set_user_data(user.id, "pray_count", await get_user_data(user.id, "pray_count") + 1)
             # get top #1 player point
-            top_player = await get_leaderboard(1)[0]
+            top_player = (await get_leaderboard(1))[0]
             top_player_pray = top_player["prayers"]
             # bonus percent base on point difference to top player
             bonus_percent = calculate_bonus_percent(pray_num, top_player_pray)
@@ -390,7 +390,7 @@ async def command_response(args: list[str], bot: discord.Client, user: discord.U
         pray_num = await get_user_data(user_to_show.id, "prayers")
         pray_count = await get_user_data(user_to_show.id, "pray_count")
         special_pray_count = await get_user_data(user_to_show.id, "special_pray_count")
-        top_player = await get_leaderboard(1)[0]
+        top_player = (await get_leaderboard(1))[0]
         top_player_pray = top_player["prayers"]
         streak_penalty = await calculate_streak_penalty(user_to_show.id)
 
@@ -493,7 +493,7 @@ async def command_response(args: list[str], bot: discord.Client, user: discord.U
     # region nextpercent
     if args[0] == "nextpercent":
         
-        top_player = await get_leaderboard(1)[0]
+        top_player = (await get_leaderboard(1))[0]
         top_player_pray = top_player["prayers"]
         pray_num = await get_user_data(user.id, "prayers")
 
@@ -515,7 +515,7 @@ async def command_listener(message: discord.Message, bot: discord.Client, args: 
         await message.reply(embed=response, mention_author=False)
     
     elif isinstance(response, str):
-        nijika_img = get_nijika_image()
+        nijika_img = await get_nijika_image()
         rs = discord.Embed(title="Nijipray",description=response,type="image",color=0xfff47a)
         rs.set_image(url=nijika_img)
         await message.reply(embed=rs, mention_author=False)
@@ -534,7 +534,7 @@ async def slash_command_listener_pray(ctx: discord.Interaction, bot: discord.Cli
         await ctx.followup.send(embed=response)
     
     elif isinstance(response, str):
-        nijika_img = get_nijika_image()
+        nijika_img = await get_nijika_image()
         rs = discord.Embed(title="Nijipray",description=response,type="image",color=0xfff47a)
         rs.set_image(url=nijika_img)
         await ctx.followup.send(embed=rs)

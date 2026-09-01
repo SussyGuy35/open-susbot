@@ -47,20 +47,25 @@ def roll_percentage(percent: float | int) -> bool:
 # MARK: async HTTP helpers
 import aiohttp
 
+import socket
+
 async def get_text_async(url: str) -> str:
-    async with aiohttp.ClientSession() as session:
+    connector = aiohttp.TCPConnector(family=socket.AF_INET)
+    async with aiohttp.ClientSession(connector=connector) as session:
         async with session.get(url, timeout=15) as response:
             response.raise_for_status()
             return await response.text()
 
 async def get_json_async(url: str) -> dict:
-    async with aiohttp.ClientSession() as session:
+    connector = aiohttp.TCPConnector(family=socket.AF_INET)
+    async with aiohttp.ClientSession(connector=connector) as session:
         async with session.get(url, timeout=15) as response:
             response.raise_for_status()
             return await response.json()
 
 async def get_bytes_async(url: str) -> bytes:
-    async with aiohttp.ClientSession() as session:
+    connector = aiohttp.TCPConnector(family=socket.AF_INET)
+    async with aiohttp.ClientSession(connector=connector) as session:
         async with session.get(url, timeout=15) as response:
             response.raise_for_status()
             return await response.read()

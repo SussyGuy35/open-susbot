@@ -963,10 +963,18 @@ async def command_response(args: list[str], user: discord.Member, bot: discord.C
         if args[0] == "get":
             return str(await get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), args[2]))
         if args[0] == "addbadge":
-            await get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").append(args[2])
+            uid = sussyutils.get_user_id_from_snowflake(args[1])
+            badges = await get_user_data(uid, "badges")
+            if args[2] not in badges:
+                badges.append(args[2])
+                await set_user_data(uid, "badges", badges)
             return "done"
         if args[0] == "removebadge":
-            await get_user_data(sussyutils.get_user_id_from_snowflake(args[1]), "badges").remove(args[2])
+            uid = sussyutils.get_user_id_from_snowflake(args[1])
+            badges = await get_user_data(uid, "badges")
+            if args[2] in badges:
+                badges.remove(args[2])
+                await set_user_data(uid, "badges", badges)
             return "done"
         if args[0] == "addcard":
             await add_card_to_user(sussyutils.get_user_id_from_snowflake(args[1]), args[2])

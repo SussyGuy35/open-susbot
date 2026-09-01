@@ -10,4 +10,4 @@ async def gvs(message: discord.Message, userid: str):
         return
     if message.channel.type in autoreact_emojis_supported_channel_types:
         if "gvs" in message.content.lower():
-            gkevaysao.gvs(userid, str(message.guild.id))
+            await gkevaysao.gvs(userid, str(message.guild.id))

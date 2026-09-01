@@ -12,7 +12,9 @@ CACHE_TTL = 3600  # 1 hour in seconds
 
 async def _fetch_html(url: str) -> str:
     """Fetch HTML content from a URL."""
-    async with aiohttp.ClientSession() as session:
+    import socket
+    connector = aiohttp.TCPConnector(family=socket.AF_INET)
+    async with aiohttp.ClientSession(connector=connector) as session:
         async with session.get(url, timeout=15) as response:
             response.raise_for_status()
             return await response.text()
