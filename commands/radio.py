@@ -514,17 +514,17 @@ async def _pause_timer(guild: discord.Guild, timeout: int):
     if guild_id in _active_sessions:
         session = _active_sessions[guild_id]
         
-        _paused_sessions[guild_id] = {
-            "station_key": session["station_key"],
-            "active_url": session["active_url"]
-        }
-        
         voice_client = guild.voice_client
         if voice_client and voice_client.is_playing():
             print(f"[radio] Auto-pausing radio in {guild_id} due to empty channel.")
             voice_client.stop()
-            
-        del _active_sessions[guild_id]
+        
+        # Save paused info for resume, but keep _active_sessions intact
+        # so discord.py doesn't disconnect
+        _paused_sessions[guild_id] = {
+            "station_key": session["station_key"],
+            "active_url": session["active_url"]
+        }
         
     if guild_id in _empty_channel_timers:
         del _empty_channel_timers[guild_id]
