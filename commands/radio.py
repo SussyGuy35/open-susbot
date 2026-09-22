@@ -518,9 +518,19 @@ async def _pause_timer(guild: discord.Guild, timeout: int):
         if voice_client and voice_client.is_playing():
             print(f"[radio] Auto-pausing radio in {guild_id} due to empty channel.")
             voice_client.stop()
+            
+            # Play silence to keep the voice session alive and prevent Discord
+            # from expiring the connection (which resets the channel timer)
+            try:
+                silence = discord.FFmpegPCMAudio(
+                    'anullsrc=r=48000:cl=stereo',
+                    before_options='-f lavfi'
+                )
+                voice_client.play(silence)
+            except Exception as e:
+                print(f"[radio] Failed to play silence: {e}")
         
         # Save paused info for resume, but keep _active_sessions intact
-        # so discord.py doesn't disconnect
         _paused_sessions[guild_id] = {
             "station_key": session["station_key"],
             "active_url": session["active_url"]
@@ -534,6 +544,10 @@ async def _resume_play(guild: discord.Guild, voice_channel: discord.VoiceChannel
     voice_client = guild.voice_client
     if not voice_client or not voice_client.is_connected():
         return
+    
+    # Stop silence source (or any leftover source) before playing real stream
+    if voice_client.is_playing():
+        voice_client.stop()
         
     def after_play(error):
         print(f"[radio] Stream ended ({station_key}): {error}" if error else f"[radio] Stream ended ({station_key})")

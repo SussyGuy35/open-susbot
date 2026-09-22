@@ -10,7 +10,7 @@ from commands import (
     gvs, amogus, nijika, osu, pick,
     ping, randcaps, randcat, randwaifu, getprefix,
     avatar, bean, feedback, khoa, doino, clear,
-    gacha, reactionroles, nijipray, momjoke, incase,
+    gacha, reactionroles, nijipray, incase,
     afk, ryo, encrypt, decrypt, radio
 )
 
@@ -226,12 +226,6 @@ async def nijipray_info(ctx: discord.Interaction, user: discord.User | None = No
 async def nijipray_history(ctx: discord.Interaction, user: discord.User | None = None):
     await nijipray.slash_command_listener_history(ctx, client, user)
 
-
-@tree.command(name="momjoke")
-@app_commands.allowed_installs(guilds=True, users=True)
-@app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
-async def get_momjoke(ctx: discord.Interaction):
-    await momjoke.slash_command_listener(ctx)
 
 
 @tree.command(name="trongtruonghop")
